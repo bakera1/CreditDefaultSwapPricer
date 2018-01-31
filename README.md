@@ -21,7 +21,7 @@ The idea behind this library is ease of use, the underlying [ISDA C functions](h
 
 ## How do I get started? 
 
-The module can be downloaded along with a suitable version of the [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/) using the make.sh script to invoke the swig and gcc builds needed to generate and compile the wrapper and underlying code modules. The g++ invoke is also managed by this file which in turn builds the C++ wrapper ahead of linking the entire module into a library called isda. This libray can then be easily imported into the Python C runtime as shown below.
+The module can be downloaded along with a suitable version of the [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/) using the make.sh script to invoke the [SWIG](http://www.swig.org/) and gcc builds needed to generate and compile the wrapper and underlying code modules. The g++ invoke is also managed by this file which in turn builds the C++ wrapper ahead of linking the entire module into a library called isda. This libray can then be easily imported into the Python C runtime as shown below.
 
 ```python
 from isda import cds_all_in_one
@@ -29,7 +29,7 @@ from isda import cds_all_in_one
 
 ### CDS All In One
 
-Once you have downloaded and built the project a simple function cds_all_in_one will provide a swig wrapped C++ function that invokes the underlying C library functions from the [ISDA CDS model](http://www.cdsmodel.com/cdsmodel/). The interface has been constructed to make the usage as simple and easy as possible. Python native types are used and no custom objects are used. 
+Once you have downloaded and built the project a simple function cds_all_in_one will provide a [SWIG](http://www.swig.org/) wrapped C++ function that invokes the underlying C library functions from the [ISDA CDS model](http://www.cdsmodel.com/cdsmodel/). The interface has been constructed to make the usage as simple and easy as possible. Python native types are used and no custom objects are used. 
 
 
 ```python
