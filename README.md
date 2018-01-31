@@ -59,9 +59,9 @@ value_date = sdate.strftime('%d/%m/%Y')
 recovery_rate = 0.4
 coupon = 100
 trade_date = '14/12/2017'
-effective_date = '20/09/2017'
-maturity_date = '20/12/2019'
-accrual_start_date = '20/09/2017'
+effective_date = '15/12/2017'
+maturity_date = '20/12/2011'
+accrual_start_date = '20/12/2017'
 notional = 1.0 # 1MM EUR
 is_buy_protection = 0
 
