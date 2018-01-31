@@ -49,8 +49,9 @@ imm_dates = [f[1] for f in imm_date_helper(start_date=sdate,
                                            tenor_list=tenor_list)]
 
 value_date = sdate.strftime('%d/%m/%Y')
-pv_dirty, cs01, dv01, pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y, 
-            duration_in_milliseconds = cds_all_in_one(trade_date,
+pv_dirty, cs01, dv01, pvbp6m, pvbp1y, pvbp2y, pvbp3y, 
+    pvbp4y, pvbp5y, pvbp7y, pvbp10y, duration_in_milliseconds 
+            = cds_all_in_one(trade_date,
                    effective_date,
                    maturity_date,
                    value_date,
@@ -66,6 +67,24 @@ pv_dirty, cs01, dv01, pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pv
                    imm_dates,
                    verbose)
 ```
+
+#### Pricing & Risk Measures ####
+
+The cds_all_in_one function call returns a tuple of measures in a positional format, these are detailed as below.
+
+* return measures
++ pv_dirty - net present value of the CDS, including accrued interest from the current coupon period.
++ cs01 - change in net present value of the CDS, based on a parallel shift of 1bps across the whole CDS spread curve.
++ dv01 - change in net present value of the CDS, based on a parallel shift of 1bps across the whole Interest Rate curve.
++ pvbp6m - present value of a basis point based on a 1bps shift of 6M IMM tenor date.
++ pvbp1y - present value of a basis point based on a 1bps shift of 1Y IMM tenor date.
++ pvbp2y - present value of a basis point based on a 1bps shift of 2Y IMM tenor date.
++ pvbp3y - present value of a basis point based on a 1bps shift of 3y IMM tenor date.
++ pvbp4y - present value of a basis point based on a 1bps shift of 4Y IMM tenor date.
++ pvbp5y - present value of a basis point based on a 1bps shift of 5Y IMM tenor date.
++ pvbp7y - present value of a basis point based on a 1bps shift of 7Y IMM tenor date.
++ pvbp10y - present value of a basis point based on a 1bps shift of 10Y IMM tenor date.
++ duration_in_milliseconds - total wall time in terms of execution of the routine
 
 ### IMM CDS Dates ###
 
