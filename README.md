@@ -1,5 +1,5 @@
 # Credit Default Swap Pricer
-Credit Default Swap Pricer project brings together the ISDA CDS pricer and some critical modules that are needed to make best use of the underlying C library functions.
+Credit Default Swap Pricer project brings together the ISDA CDS pricer and some critical modules that are needed to make best use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running quickly using either Python or C++ calling conventions. 
 
 ## Why create another CDS Pricing library?
 
