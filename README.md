@@ -122,7 +122,7 @@ Quite often the first hurdle when computing anything realted to CDS contracts is
    
 #### Example Semi-Annual IMM Date Roll
 
-The example below shows how the IMM date roll logic is embedded accurately into the helper based on the semi annual roll, with a before and after roll date vector generated along the entire swap curve tenors. If you are pricing and need IMM dates before the ISDA 2015 semi annual roll change then this is automatially applied in the helper function base don the value of start_date parameter.
+The example below shows how the IMM date roll logic is embedded accurately into the helper based on the semi annual roll, with a before and after roll date vector generated along the entire swap curve tenors. If you are pricing and need IMM dates before the ISDA 2015 semi annual roll change then this is automatially applied in the helper function. The function looks at the value of start_date parameter to determine if this latest rule needs to be applied.
 
 
 ```python
