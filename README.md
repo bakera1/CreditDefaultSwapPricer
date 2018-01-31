@@ -3,13 +3,11 @@ Credit Default Swap Pricer project brings together the ISDA CDS pricer and some 
 
 ## Why create another CDS Pricing library?
 
-The idea behind this library is ease of use, the underlying ISDA C functions whilst usable are pretty difficult to integrate and often folks revert to other 3rd party or open source 
-CDS pricing libraries. Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly
-build and start writing code Python and to price and compute risk on CDS positions.
+The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to other 3rd party or open source CDS pricing libraries. Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and to price and compute risk on CDS positions.
 
-1. Not another really another CDS pricer?
+1. Is this not just another CDS pricer?
 
-...This library is really only a wrapper around the underlyin ISDA CDS Pricing library. The
+   This library is really only a thin wrapper around the underlying [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/). The complexity of wiring the spread, interest rate and pricing routines together with some array passing and imm date logic completes an integration task. None of these steps is particularly difficult and or troublin but together they all surmount to a barrier to adoption of the ISDA CDS pricer. By making this library available to use along side the existing [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) 
 
 2. Is the only system that can model the weather is the weather?
 
@@ -96,9 +94,21 @@ The cds_all_in_one function call returns a tuple of measures in a positional for
 + pvbp10y - present value of a basis point based on a 1bps shift of 10Y IMM tenor date.
 + duration_in_milliseconds - total wall time in terms of execution of the routine
 
-### IMM CDS Dates ###
+### IMM CDS Dates
 
-Quite often thr first hurdleis how to compute and feed in IMM dates that play nicely with CDS contracts; the imm_date_helper routine has been constructed and tested for this purpose. You can easily bootstrap the necessary IMM date vector for any business date. As you can see in the example below the IMM date roll logic is embedded accurately into the helper based on the semi annual roll. If you are pricing and need IMM dates before the ISDA 2015 semi annual roll change then this is also supported.
+Quite often the first hurdle is how to compute and make available accurate IMM dates that play nicely with all CDS contracts; 
+
+1. imm_date_helper 
+
+   The imm_date_helper function has been written and tested for the explicit purpose to provide accurate IMM dates that comply with the CDS market convention. Using this function you can easily bootstrap the necessary IMM date vector for any business date. 
+   
+2. semi-annual roll 
+ 
+   Since 2015 IMM date logic for CDS contracts has changed to a semi-annual roll; this change impacts all future tenors along the CDS curve and should be accurately applied to ensure consistent CDS contract pricing.
+   
+#### Example Semi-Annual IMM Date Roll
+
+The example below shows how the IMM date roll logic is embedded accurately into the helper based on the semi annual roll, with a before and after roll date vector generated along the entire swap curve tenors. If you are pricing and need IMM dates before the ISDA 2015 semi annual roll change then this is automatially applied in the helper function base don the value of start_date parameter.
 
 
 ```python
@@ -118,7 +128,6 @@ Quite often thr first hurdleis how to compute and feed in IMM dates that play ni
                                  tenor_list=tenor_list,
                                  format='%d/%m/%Y')
 
-        #print sdate, local_result
 
         for (r,l) in zip(real_result, local_result):
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
@@ -138,8 +147,6 @@ Quite often thr first hurdleis how to compute and feed in IMM dates that play ni
         local_result = imm_date_helper(start_date=sdate,
                                  tenor_list=tenor_list,
                                  format='%d/%m/%Y')
-
-        #print sdate, local_result
 
         for (r,l) in zip(real_result, local_result):
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
