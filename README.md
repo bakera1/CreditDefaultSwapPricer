@@ -3,9 +3,9 @@ Simple Credit Default Swap Pricer project brings together the ISDA CDS pricer an
 
 ## Why create another library ##
 
-The idea behind this library is ease of use, the underlying ISDA C functions whilst usable are pretty difficult to integrate and often folks revert to other 3rd party pay or QuantLib style 
-CDS pricing libraries. Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms precisely to the ISDA CDS model then this library allows you to download
-build and install the code and run some simple scripts to price and compute risk on CDS positions.
+The idea behind this library is ease of use, the underlying ISDA C functions whilst usable are pretty difficult to integrate and often folks revert to other 3rd party or open source 
+CDS pricing libraries. Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly
+build and start writing code Python and to price and compute risk on CDS positions.
 
 ### CDS All In One ###
 
