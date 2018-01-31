@@ -1,25 +1,25 @@
 # Credit Default Swap Pricer
-Credit Default Swap Pricer project brings together the ISDA CDS pricer and some critical modules that are needed to make best use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly pricing and computing risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including 
+Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
 
- + PDDirty to support NAV calculations & back tests.
+ + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
  + PVBP sensitivities to support credit risk hedging analysis.
 
-Further measures can easily be added such as Equivalent Notional, PVClean and Accrued Interest, these measures are likely to be added as part of the next release candidate.
+Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
 ## Why create another CDS Pricing library?
 
-The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to either [3rd party](https://www.google.co.uk/search?q=fincad+cds+pricer&oq=fincad+cds+pricer&aqs=chrome..69i57j0.3457j0j7&sourceid=chrome&ie=UTF-8) or [open source CDS pricing libraries](http://quantlib.org/index.shtml). Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and to price and compute risk on CDS positions.
+The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to either [3rd party](https://www.google.co.uk/search?q=fincad+cds+pricer&oq=fincad+cds+pricer&aqs=chrome..69i57j0.3457j0j7&sourceid=chrome&ie=UTF-8) or [open source CDS pricing libraries](http://quantlib.org/index.shtml). Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and price and compute risk on real CDS positions.
 
 1. Is this not just another CDS pricer?
 
-   This library is really only a thin wrapper around the underlying [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/). The complexity of wiring the spread, interest rate and pricing routines together with some array passing and imm date logic completes an integration task. None of these steps is particularly difficult and or troublin but together they all surmount to a barrier to adoption of the ISDA CDS pricer. By making this library available to use along side the existing [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) 
+   This library is really only a thin wrapper around the underlying [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/). The complexity of wiring the spread, interest rate and pricing routines together with some array passing and imm date logic completes an integration task. None of these steps is particularly difficult but together they build a barrier to adoption of the ISDA CDS pricer. By making this library available to use along side the existing [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) it is hoped to lower the barrier and make adoption much easier.
 
-2. Is the only system that can model the weather is the weather?
+2. Is the only system that can model the weather really only the weather?
 
-   If what you need is ISDA pricing then why settle for anything other than the ISDA pricer; however using this CDS pricer avoid the hastle of figuring out all the correct C functions to call and how to pass objects easily into these extern "C" style functions with double* and custom typedef objects.
+   If what you need is safe accurate ISDA pricing then why settle for anything other than the ISDA pricer? however using this CDS pricer avoids the hastle of figuring out all the correct C functions to call and how to pass objects easily into these extern "C" style functions with double* and variety of custom typedef objects like TDateInterval. I just want to create a datetime and pass this into a function right!
 
-## Getting started? 
+## How do I get started? 
 
 The module can be downloaded along with a suitable version of the [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/) using the make.sh script to invoke the swig and gcc builds needed to generate and compile the wrapper and underlying code modules. The g++ invoke is also managed by this file which in turn builds the C++ wrapper ahead of linking the entire module into a library called isda. This libray can then be easily imported into the Python C runtime as shown below.
 
@@ -29,7 +29,7 @@ from isda import cds_all_in_one
 
 ### CDS All In One
 
-Once you have downloaded and built the project a simple function cds_all_in_one will provide a swig wrapped C++ function that invokes the underlying C library functions from the ISDA CDS model. The interface has been constructed to make the usage as simple and easy as possible. Python native types are used and no custom objects are used. 
+Once you have downloaded and built the project a simple function cds_all_in_one will provide a swig wrapped C++ function that invokes the underlying C library functions from the [ISDA CDS model](http://www.cdsmodel.com/cdsmodel/). The interface has been constructed to make the usage as simple and easy as possible. Python native types are used and no custom objects are used. 
 
 
 ```python
@@ -110,15 +110,15 @@ The cds_all_in_one function call returns a tuple of measures in a positional for
 
 ### IMM CDS Dates
 
-Quite often the first hurdle is how to compute and make available accurate IMM dates that play nicely with all CDS contracts; 
+Quite often the first hurdle when computing anything realted to CDS contracts is how to compute and make available accurate [IMM dates](https://en.wikipedia.org/wiki/IMM_dates) that play nicely with all CDS contracts and business date rules? For this reason this module ships with an imm_date_helper class that takes all the effort away. 
 
 1. imm_date_helper 
 
-   The imm_date_helper function has been written and tested for the explicit purpose to provide accurate IMM dates that comply with the CDS market convention. Using this function you can easily bootstrap the necessary IMM date vector for any business date. 
+   The imm_date_helper function has been written and tested for the explicit purpose of providing accurate IMM dates that comply fully with the CDS market convention. Using the imm_date_helper function you can easily bootstrap the necessary IMM date vector for any business date. 
    
-2. semi-annual roll 
+2. [semi-annual roll](https://www.isda.org//2015/12/10/updated-faq-amend-single-name-on-the-run-frequency) 
  
-   Since 2015 IMM date logic for CDS contracts has changed to a semi-annual roll; this change impacts all future tenors along the CDS curve and should be accurately applied to ensure consistent CDS contract pricing.
+   Since 2015 IMM date logic for CDS contracts has changed to a [semi-annual roll](https://www.isda.org//2015/12/10/updated-faq-amend-single-name-on-the-run-frequency); this change impacts all future tenors along the CDS curve and should be accurately applied to ensure consistent CDS contract pricing.
    
 #### Example Semi-Annual IMM Date Roll
 
