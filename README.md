@@ -72,8 +72,9 @@ imm_dates = [f[1] for f in imm_date_helper(start_date=sdate,
                                            tenor_list=tenor_list)]
 
 value_date = sdate.strftime('%d/%m/%Y')
-pv_dirty, cs01, dv01, pvbp6m, pvbp1y, pvbp2y, pvbp3y, 
-    pvbp4y, pvbp5y, pvbp7y, pvbp10y, duration_in_milliseconds 
+pv_dirty, pv_clean, ai, cs01, dv01, 
+    pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, 
+    pvbp5y, pvbp7y, pvbp10y, duration_in_milliseconds 
             = cds_all_in_one(trade_date,
                    effective_date,
                    maturity_date,
