@@ -13,7 +13,7 @@ build and start writing code Python and to price and compute risk on CDS positio
 
 2. Is the only system that can model the weather is the weather?
 
-...If what you need is ISDA pricing then why settle for anything other than the ISDA pricer; however using this CDS pricer avoid the hastle of figuring out all the correct C functions to call and how to pass objects easily into these extern "C" style functions with double* and custom typedef objects.
+   If what you need is ISDA pricing then why settle for anything other than the ISDA pricer; however using this CDS pricer avoid the hastle of figuring out all the correct C functions to call and how to pass objects easily into these extern "C" style functions with double* and custom typedef objects.
 
 ### CDS All In One
 
