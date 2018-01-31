@@ -1,9 +1,15 @@
 # Credit Default Swap Pricer
-Credit Default Swap Pricer project brings together the ISDA CDS pricer and some critical modules that are needed to make best use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running quickly using either Python or C++ calling code. 
+Credit Default Swap Pricer project brings together the ISDA CDS pricer and some critical modules that are needed to make best use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly pricing and computing risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including 
+
+ + PDDirty to support NAV calculations & back tests.
+ + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
+ + PVBP sensitivities to support credit risk hedging analysis.
+
+Further measures can easily be added such as Equivalent Notional, PVClean and Accrued Interest, these measures are likely to be added as part of the next release candidate.
 
 ## Why create another CDS Pricing library?
 
-The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to other 3rd party or open source CDS pricing libraries. Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and to price and compute risk on CDS positions.
+The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to either [3rd party](https://www.google.co.uk/search?q=fincad+cds+pricer&oq=fincad+cds+pricer&aqs=chrome..69i57j0.3457j0j7&sourceid=chrome&ie=UTF-8) or [open source CDS pricing libraries](http://quantlib.org/index.shtml). Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and to price and compute risk on CDS positions.
 
 1. Is this not just another CDS pricer?
 
