@@ -1,5 +1,5 @@
 # Credit Default Swap Pricer
-Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
+Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
 
  + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
@@ -9,15 +9,15 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 
 ## Why create another CDS Pricing library?
 
-The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to either [3rd party](https://www.google.co.uk/search?q=fincad+cds+pricer&oq=fincad+cds+pricer&aqs=chrome..69i57j0.3457j0j7&sourceid=chrome&ie=UTF-8) or [open source CDS pricing libraries](http://quantlib.org/index.shtml). Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and price and compute risk on real CDS positions.
+The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to either [3rd party](https://www.google.co.uk/search?q=fincad+cds+pricier&oq=fincad+cds+pricier&aqs=chrome..69i57j0.3457j0j7&sourceid=chrome&ie=UTF-8) or [open source CDS pricing libraries](http://quantlib.org/index.shtml). Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and price and compute risk on real CDS positions.
 
-1. Is this not just another CDS pricer?
+1. Is this not just another CDS pricier?
 
-   This library is really only a thin wrapper around the underlying [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/). The complexity of wiring the spread, interest rate and pricing routines together with some array passing and imm date logic completes an integration task. None of these steps is particularly difficult but together they build a barrier to adoption of the ISDA CDS pricer. By making this library available to use along side the existing [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) it is hoped to lower the barrier and make adoption much easier.
+   This library is really only a thin wrapper around the underlying [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/). The complexity of wiring the spread, interest rate and pricing routines together with some array passing and imm date logic completes an integration task. None of these steps is particularly difficult but together they build a barrier to adoption of the ISDA CDS pricier. By making this library available to use along side the existing [ISDA CDS pricier](http://www.cdsmodel.com/cdsmodel/) it is hoped to lower the barrier and make adoption much easier.
 
 2. Is the only system that can model the weather really only the weather?
 
-   If what you need is safe accurate ISDA pricing then why settle for anything other than the ISDA pricer? however using this CDS pricer avoids the hastle of figuring out all the correct C functions to call and how to pass objects easily into these extern "C" style functions with double* and variety of custom typedef objects like TDateInterval. I just want to create a datetime and pass this into a function right!
+   If what you need is safe accurate ISDA pricing then why settle for anything other than the ISDA pricier? however using this CDS pricier avoids the hastle of figuring out all the correct C functions to call and how to pass objects easily into these extern "C" style functions with double* and variety of custom typedef objects like TDateInterval. I just want to create a datetime and pass this into a function right!
 
 ## How do I get started? 
 
@@ -111,7 +111,7 @@ The cds_all_in_one function call returns a tuple of measures in a positional for
 
 ### IMM CDS Dates
 
-Quite often the first hurdle when computing anything realted to CDS contracts is how to compute and make available accurate [IMM dates](https://en.wikipedia.org/wiki/IMM_dates) that play nicely with all CDS contracts and business date rules? For this reason this module ships with an imm_date_helper class that takes all the effort away. 
+Quite often the first hurdle when computing anything related to CDS contracts is how to compute and make available accurate [IMM dates](https://en.wikipedia.org/wiki/IMM_dates) that play nicely with all CDS contracts and business date rules? For this reason this module ships with an imm_date_helper class that takes all the effort away. 
 
 1. imm_date_helper 
 
@@ -123,11 +123,11 @@ Quite often the first hurdle when computing anything realted to CDS contracts is
    
 #### Example Semi-Annual IMM Date Roll
 
-The example below shows how the IMM date roll logic is embedded accurately into the helper based on the semi annual roll, with a before and after roll date vector generated along the entire swap curve tenors. If you are pricing and need IMM dates before the ISDA 2015 semi annual roll change then this is automatially applied in the helper function. The function looks at the value of start_date parameter to determine if this latest rule needs to be applied.
+The example below shows how the IMM date roll logic is embedded accurately into the helper based on the semi annual roll, with a before and after roll date vector generated along the entire swap curve tenors. If you are pricing and need IMM dates before the ISDA 2015 semi annual roll change then this is automatically applied in the helper function. The function looks at the value of start_date parameter to determine if this latest rule needs to be applied.
 
 
 ```python
-    def test_single_rolldate_day_before_rolldate(self):
+    def test_single_roll date_day_before_roll date(self):
 
         # accepted results
         real_result = [('6M', '20/06/2017'),
@@ -147,7 +147,7 @@ The example below shows how the IMM date roll logic is embedded accurately into 
         for (r,l) in zip(real_result, local_result):
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
 
-    def test_single_rolldate_day_after_rolldate(self):
+    def test_single_roll date_day_after_roll date(self):
 
         # accepted results
         real_result = [('6M', '20/12/2017'),
