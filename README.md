@@ -34,7 +34,7 @@ Once you have downloaded and built the project a simple function cds_all_in_one 
 
 #### Array of Arrays
 
-The return response of the cds_all_in_one call has been simplified to return a vector of vectors of doubles, effectively a list of jagged arrays or a jagged matrix. The primary reason being that the python code is much easier to manipulate as three core objects
+The return response of the cds_all_in_one call has been simplified to return a vector of vectors of doubles, effectively a list of jagged arrays or a jagged matrix. The primary reason being that the python code is much easier to manipulate as a list of tuple objects rather than just a tuple.
 
 + base - list of primary pricing and risk measures
 + pbvp - forward looking price array
