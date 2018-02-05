@@ -107,7 +107,7 @@ base, pvbp, roll, bucket = cds_all_in_one(trade_date,
                            verbose)
 
 # expand return arrays base, pvbp, roll & bucket into discrete variables
-pv_dirty, cs01, dv01, duration_in_milliseconds = base
+pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = base
 pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = pvbp
 roll1d, roll1w, roll1m, roll2m, roll3m, roll4m, roll6m, roll1y, roll2y, roll3y, roll5y = roll
 bucket_cs01_6m, bucket_cs01_1y, bucket_cs01_2y, bucket_cs01_3y, bucket_cs01_4y, bucket_cs01_5y, bucket_cs01_7y, bucket_cs01_10y = bucket
@@ -119,6 +119,8 @@ bucket_cs01_6m, bucket_cs01_1y, bucket_cs01_2y, bucket_cs01_3y, bucket_cs01_4y, 
 The cds_all_in_one function call returns a tuple of measures in a positional format, these are detailed as below.
 
 + pv_dirty - net present value of the CDS, including accrued interest from the current coupon period.
++ pv_clean - net present value of the CDS excluding accrued interest from the current coupon period.
++ ai - accrued interest on the CDS trade in the current coupon period. 
 + cs01 - change in net present value of the CDS, based on a parallel shift of 1bps across the whole CDS spread curve.
 + dv01 - change in net present value of the CDS, based on a parallel shift of 1bps across the whole Interest Rate curve.
 + pvbp6m - present value of a basis point based on a 1bps shift of 6M IMM tenor date.
