@@ -32,6 +32,15 @@ from isda import cds_all_in_one
 Once you have downloaded and built the project a simple function cds_all_in_one will provide a [SWIG](http://www.swig.org/) wrapped C++ function that invokes the underlying C library functions from the [ISDA CDS model](http://www.cdsmodel.com/cdsmodel/). The interface has been constructed to make the usage as simple and easy as possible. Python native types are used and no custom objects are used. 
 
 
+#### Array of Arrays
+
+The return response of the cds_all_in_one call has been simplified to return a vector of vectors of doubles, effectively a list of jagged arrays or a jagged matrix. The primary reason being that the python code is much easier to manipulate as three core objects
+
++ base - list of primary pricing and risk measures
++ pbvp - forward looking price array
++ roll - array of roll down delta pv values 
++ bucket - array of bucketed cs01 values
+
 ```python
 
 from isda import cds_all_in_one
@@ -50,6 +59,7 @@ swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y',
 # spread curve
 credit_spreads = [0.00141154155739384] * 8
 credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
+spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y']
 
 # value asofdate
 sdate = datetime.datetime(2018, 1, 23)
@@ -72,24 +82,27 @@ imm_dates = [f[1] for f in imm_date_helper(start_date=sdate,
                                            tenor_list=tenor_list)]
 
 value_date = sdate.strftime('%d/%m/%Y')
-pv_dirty, pv_clean, ai, cs01, dv01, 
-    pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, 
-    pvbp5y, pvbp7y, pvbp10y, duration_in_milliseconds 
-            = cds_all_in_one(trade_date,
-                   effective_date,
-                   maturity_date,
-                   value_date,
-                   accrual_start_date,
-                   recovery_rate,
-                   coupon,
-                   notional,
-                   is_buy_protection,
-                   swap_rates,
-                   swap_tenors,
-                   credit_spreads,
-                   credit_spread_tenors,
-                   imm_dates,
-                   verbose)
+base, pvbp, roll, bucket = cds_all_in_one(trade_date,
+                           effective_date,
+                           maturity_date,
+                           value_date,
+                           accrual_start_date,
+                           recovery_rate,
+                           coupon,
+                           notional,
+                           is_buy_protection,
+                           swap_rates,
+                           swap_tenors,
+                           credit_spreads,
+                           credit_spread_tenors,
+                           spread_roll_tenors,
+                           imm_dates,
+                           verbose)
+pv_dirty, cs01, dv01, duration_in_milliseconds = base
+pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = pvbp
+roll1d, roll1w, roll1m, roll2m, roll3m, roll4m, roll6m, roll1y, roll2y, roll3y, roll5y = roll
+bucket_cs01_6m, bucket_cs01_1y, bucket_cs01_2y, bucket_cs01_3y, bucket_cs01_4y, bucket_cs01_5y, bucket_cs01_7y, bucket_cs01_10y = bucket
+
 ```
 
 #### Pricing & Risk Measures ####
@@ -108,6 +121,25 @@ The cds_all_in_one function call returns a tuple of measures in a positional for
 + pvbp7y - present value of a basis point based on a 1bps shift of 7Y IMM tenor date.
 + pvbp10y - present value of a basis point based on a 1bps shift of 10Y IMM tenor date.
 + duration_in_milliseconds - total wall time in terms of execution of the routine
++ roll1d - 1 day roll down delta PV in base currency of position. 
++ roll1w - 1 week roll down delta PV in base currency of position.
++ roll1m - 1 month roll down delta PV in base currency of position.
++ roll2m - 2 months roll down delta PV in base currency of position.
++ roll3m - 3 months roll down delta PV in base currency of position.
++ roll4m - 4 months roll down delta PV in base currency of position.
++ roll6m - 6 months roll down delta PV in base currency of position.
++ roll1y - 1 year roll down delta PV in base currency of position.
++ roll2y - 2 year roll down delta PV in base currency of position.
++ roll3y - 3 year roll down delta PV in base currency of position.
++ roll5y - 5 year roll down delta PV in base currency of position.
++ bucket_cs01_6m - delta PV of CDS when we move 6m spread tenor by 1bps.
++ bucket_cs01_1y - delta PV of CDS when we move 1y spread tenor by 1bps.
++ bucket_cs01_2y - delta PV of CDS when we move 2y spread tenor by 1bps.
++ bucket_cs01_3y - delta PV of CDS when we move 3y spread tenor by 1bps.
++ bucket_cs01_4y - delta PV of CDS when we move 4y spread tenor by 1bps.
++ bucket_cs01_5y - delta PV of CDS when we move 5y spread tenor by 1bps.
++ bucket_cs01_7y - delta PV of CDS when we move 7y spread tenor by 1bps.
++ bucket_cs01_10y - delta PV of CDS when we move 10y spread tenor by 1bps.
 
 ### IMM CDS Dates
 
