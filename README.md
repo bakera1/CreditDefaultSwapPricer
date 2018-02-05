@@ -51,14 +51,15 @@ swap_rates = [-0.00369, -0.00341, -0.00328, -0.00274, -0.00223, -0.00186,
             -0.00128, 0.00046, 0.00217, 0.003, 0.00504,
             0.00626, 0.00739, 0.00844, 0.00941, 0.01105, 
             0.01281, 0.01436, 0.01506]
-
 swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', 
             '4Y', '5Y', '6Y', '7Y', '8Y', '9Y, 
             '10Y', '15Y', '20Y', '30Y']
 
-# spread curve
+# credit spread curve
 credit_spreads = [0.00141154155739384] * 8
 credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
+
+# specify n roll tenor
 spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y']
 
 # value asofdate
@@ -75,13 +76,14 @@ accrual_start_date = '20/12/2017'
 notional = 1.0 # 1MM EUR
 is_buy_protection = 0
 
+# numeric tenor list for imm_date_helper
 tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
 
 # build imm_dates
 imm_dates = [f[1] for f in imm_date_helper(start_date=sdate,
                                            tenor_list=tenor_list)]
 
-value_date = sdate.strftime('%d/%m/%Y')
+# call to cds_all_in_one
 base, pvbp, roll, bucket = cds_all_in_one(trade_date,
                            effective_date,
                            maturity_date,
@@ -98,6 +100,8 @@ base, pvbp, roll, bucket = cds_all_in_one(trade_date,
                            spread_roll_tenors,
                            imm_dates,
                            verbose)
+
+# expand return arrays base, pvbp, roll & bucket into discrete variables
 pv_dirty, cs01, dv01, duration_in_milliseconds = base
 pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = pvbp
 roll1d, roll1w, roll1m, roll2m, roll3m, roll4m, roll6m, roll1y, roll2y, roll3y, roll5y = roll
