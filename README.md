@@ -76,6 +76,10 @@ accrual_start_date = '20/12/2017'
 notional = 1.0 # 1MM EUR
 is_buy_protection = 0
 
+# holiday calender for EUR zone
+holiday = [datetime.datetime(2017, 12, 25).strftime('%d/%m/%Y'), 
+    datetime.datetime(2017, 12, 24).strftime('%d/%m/%Y')]
+
 # numeric tenor list for imm_date_helper
 tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
 
@@ -99,6 +103,7 @@ base, pvbp, roll, bucket = cds_all_in_one(trade_date,
                            credit_spread_tenors,
                            spread_roll_tenors,
                            imm_dates,
+                           holiday,
                            verbose)
 
 # expand return arrays base, pvbp, roll & bucket into discrete variables
