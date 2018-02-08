@@ -7,6 +7,68 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## Getting Started on Windows
+
+The repo includes a make.bat file that is intended for Windows support. You will first need to ensure that you have at least first two in this list installed.
+
++ [Python Installer](https://www.python.org/downloads/release/python-2713/)
++ [MinGW Installer](https://vorboss.dl.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe)
++ [Swig Installer](https://sourceforge.net/projects/swig/?source=typ_redirect)
+
+### Steps to Test 
+
++ git clone https://github.com/bakera1/CreditDefaultSwapPricer.git
++ cd CreditDefaultSwapPricer
++ make.bat
+
+The build step should result in the _isda.pyd and isda.py file being copied into the cds directory. You can then test the binary with the following steps
+
++ python isda_test.py
+
+The following example output should then be shown on the console from the Python script.
+
+```python
+C:\github\CreditDefaultSwapPricer\cds>python isda_test.py
+23/01/2018      pv_dirty (-1.07226)     cs01 (-8298.48) dv01 (-9.87001e-05)     pvbp5y 0.00049088    5yeqnot (16.9053)  1day roll (-1806.69)    time (32.0)
+24/01/2018      pv_dirty (-1.0707)      cs01 (-8286.24) dv01 (-9.78226e-05)     pvbp5y 0.000490599   5yeqnot (16.8901)  1day roll (-1773.74)    time (51.0)
+25/01/2018      pv_dirty (-1.06917)     cs01 (-8274.28) dv01 (-9.78311e-05)     pvbp5y 0.000490335   5yeqnot (16.8747)  1day roll (-5329.83)    time (60.0)
+26/01/2018      pv_dirty (-1.06457)     cs01 (-8238.78) dv01 (-9.78402e-05)     pvbp5y 0.000489523   5yeqnot (16.8302)  1day roll (-1798.08)    time (66.0)
+29/01/2018      pv_dirty (-1.06302)     cs01 (-8226.13) dv01 (-9.69741e-05)     pvbp5y 0.000489267   5yeqnot (16.8132)  1day roll (-1784.68)    time (64.0)
+30/01/2018      pv_dirty (-1.06148)     cs01 (-8214.07) dv01 (-9.66886e-05)     pvbp5y 0.000488996   5yeqnot (16.7978)  1day roll (-1806.4)     time (50.0)
+31/01/2018      pv_dirty (-1.05992)     cs01 (-8201.83) dv01 (-9.58224e-05)     pvbp5y 0.000488714   5yeqnot (16.7825)  1day roll (-1773.78)    time (37.0)
+01/02/2018      pv_dirty (-1.0584)      cs01 (-8189.87) dv01 (-9.58308e-05)     pvbp5y 0.000488455   5yeqnot (16.7669)  1day roll (-5329.87)    time (36.0)
+02/02/2018      pv_dirty (-1.05379)     cs01 (-8154.38) dv01 (-9.58399e-05)     pvbp5y 0.000487642   5yeqnot (16.7221)  1day roll (-1797.88)    time (32.0)
+05/02/2018      pv_dirty (-1.05225)     cs01 (-8141.73) dv01 (-9.4985e-05)      pvbp5y 0.000487387   5yeqnot (16.7049)  1day roll (-1784.61)    time (35.0)
+06/02/2018      pv_dirty (-1.05071)     cs01 (-8129.68) dv01 (-9.47032e-05)     pvbp5y 0.000487119   5yeqnot (16.6893)  1day roll (-1806.11)    time (33.0)
+07/02/2018      pv_dirty (-1.04915)     cs01 (-8117.44) dv01 (-9.38483e-05)     pvbp5y 0.000486838   5yeqnot (16.6738)  1day roll (-1773.82)    time (31.0)
+08/02/2018      pv_dirty (-1.04762)     cs01 (-8105.49) dv01 (-9.38566e-05)     pvbp5y 0.000486574   5yeqnot (16.6583)  1day roll (-5329.91)    time (41.0)
+09/02/2018      pv_dirty (-1.04302)     cs01 (-8069.99) dv01 (-9.38657e-05)     pvbp5y 0.000485761   5yeqnot (16.6131)  1day roll (-1797.68)    time (36.0)
+12/02/2018      pv_dirty (-1.04148)     cs01 (-8057.36) dv01 (-9.3022e-05)      pvbp5y 0.000485506   5yeqnot (16.5958)  1day roll (-1784.55)    time (33.0)
+13/02/2018      pv_dirty (-1.03994)     cs01 (-8045.31) dv01 (-9.27439e-05)     pvbp5y 0.000485238   5yeqnot (16.5801)  1day roll (-1805.82)    time (36.0)
+
+C:\github\CreditDefaultSwapPricer\cds>history
+
+``
+
+
+### Possible bug in Python pyconfig.h
+
+You might see the following error message when executing the make.bat file on windows, if this is the case then I suggest that you make a small modification to work around this problem.
+
+c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\cmath:1157:11: error: '::hypot' has not been declared
+
+Edit the file C:\Python27\include\pyconfig.h to comment out line #286 as below; this allows the compilation and linking to complete.
+
+```c
+#if (__GNUC__==2) && (__GNUC_MINOR__<=91)
+#warning "Please use an up-to-date version of gcc! (>2.91 recommended)"
+#endif
+
+#define COMPILER "[gcc]"
+/*#define hypot _hypot*/
+#define PY_LONG_LONG long long
+```
+
 ## Why create another CDS Pricing library?
 
 The idea behind this library is ease of use, the underlying [ISDA C functions](http://www.cdsmodel.com/cdsmodel/) whilst usable are pretty difficult to integrate and often folks revert to either [3rd party](https://www.google.co.uk/search?q=fincad+cds+pricier&oq=fincad+cds+pricier&aqs=chrome..69i57j0.3457j0j7&sourceid=chrome&ie=UTF-8) or [open source CDS pricing libraries](http://quantlib.org/index.shtml). Whilst this is fine for most uses; when you need precision pricing quickly and easily that conforms exactly to the ISDA CDS model then this wrapper allows you to very quickly build and start writing code Python and price and compute risk on real CDS positions.
@@ -210,3 +272,5 @@ The example below shows how the IMM date roll logic is embedded accurately into 
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
             
 ```
+
+
