@@ -3,6 +3,7 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
 
  + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
+ + Roll sensitivities over range of dates.
  + PVBP sensitivities to support credit risk hedging analysis.
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
