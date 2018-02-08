@@ -10,7 +10,7 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 
 ## Getting Started on Windows
 
-The repo includes a make.bat file that is intended for Windows support. You will first need to ensure that you have at least first two in this list installed.
+This repo includes a make.bat file intended to build the project on most Windows platforms. The make.bat file requires that you first download and install the first two items in the list below. You might already have Python27 installed, the make.bat file assumes this is installed in the normal C:\Python27\ location as well as a POSIX compliant compiler, MinGW. Microsoft Visual C++ compile cl.exe was tested but comes with a large number of language differences and windows specific issues. MinGW offers a cleaner migration path from Linux to the Windows platform.
 
 + [Python Installer](https://www.python.org/downloads/release/python-2713/)
 + [MinGW Installer](https://vorboss.dl.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe)
