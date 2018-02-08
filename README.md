@@ -18,6 +18,8 @@ The repo includes a make.bat file that is intended for Windows support. You will
 
 ### Steps to Test 
 
+Use the following steps to clone, make and then finally test the project.
+
 ```
 git clone https://github.com/bakera1/CreditDefaultSwapPricer.git
 cd CreditDefaultSwapPricer
@@ -59,7 +61,7 @@ C:\github\CreditDefaultSwapPricer\cds>history
 
 You might see the following error message when executing the make.bat file on windows, if this is the case then I suggest that you make a small modification to work around this problem.
 
-c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\cmath:1157:11: error: '::hypot' has not been declared
+[c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\cmath:1157:11: error: '::hypot' has not been declared](https://stackoverflow.com/questions/42276984/hypot-has-not-been-declared)
 
 Edit the file C:\Python27\include\pyconfig.h to comment out line #286 as below; this allows the compilation and linking to complete.
 
