@@ -4,7 +4,7 @@ gcc -fPIC -g -c -DUNIX -DLINUX -DVERSION="1.8.2" example.c main.c busday.c cds.c
 g++ -fPIC -c cfinanci.cpp isda.cpp -O3 -ftree-vectorizer-verbose=1 -I"C:\Python27\Include" -L "C:\Python27\libs" -l python27
 
 rem install swig to enable this step.
-rem C:\Program Files (x86)\swigwin-3.0.12\swig -c++ -python isda.i
+rem "C:\Program Files (x86)\swigwin-3.0.12\swig" -c++ -python isda.i
 
 g++ -c -fPIC isda_wrap.cxx  -I"C:\Python27\Include" -L "C:\Python27\libs" -l python27
 

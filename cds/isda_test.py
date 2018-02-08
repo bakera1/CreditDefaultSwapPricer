@@ -53,10 +53,11 @@ is_buy_protection = 0
 verbose = 0
 
 tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
-day_count = 22
+day_count = 10
 one_day = datetime.timedelta(1)
 
 spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y']
+scenario_tenors = [-50, -10, 20, 50, 100, 200, 300]
 
 for day in range(day_count):
 
@@ -74,7 +75,7 @@ for day in range(day_count):
     value_date = sdate.strftime('%d/%m/%Y')
     for coupon in coupon_list:
 
-        base, pvbp, roll = cds_all_in_one(trade_date,
+        f = cds_all_in_one(trade_date,
                            effective_date,
                            maturity_date,
                            value_date,
@@ -89,19 +90,24 @@ for day in range(day_count):
                            credit_spread_tenors,
                            spread_roll_tenors,
                            imm_dates,
+                           scenario_tenors,
                            verbose)
+		
         # expand tuple
-        pv_dirty, cs01, dv01, duration_in_milliseconds = base
-        pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = pvbp
-        roll1d, roll1w, roll1m, roll2m, roll3m, roll4m, roll6m, roll1y, roll2y, roll3y, roll5y = roll
+        pv_dirty, cs01, dv01, duration_in_milliseconds = f[0]
+        pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
+		
 
         five_year_equivalent_notional = -cs01/pvbp5y
-        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\t1day roll ({6:.6})\ttime ({7:.6})".format(value_date,
+        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})".format(value_date,
                                                                                           pv_dirty,
                                                                                           cs01*1e6,
                                                                                           dv01,
                                                                                           pvbp5y,
-                                                                                          five_year_equivalent_notional,
-                                                                                          roll1d*1e6,
-                                                                                          duration_in_milliseconds)
+                                                                                          five_year_equivalent_notional,                                                                                        
+                                                                                          duration_in_milliseconds)		
+	
+	for scenario, i in enumerate(f[2:]):
+	  print scenario_tenors[scenario], i
+			
     sdate = sdate + one_day

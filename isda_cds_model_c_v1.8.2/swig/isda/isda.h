@@ -21,6 +21,7 @@ std::vector< std::vector<double> > cds_all_in_one (
  std::vector<std::string> spread_tenors,		/* (I) spread tenors "6M", "1Y" */
  std::vector<std::string> spread_roll_tenors, 	/* (I) spread roll tenors */
  std::vector<std::string> imm_dates,			/* (I) imm dates */
+ std::vector<double> scenario_tenors,			/* (I) spread tenors -100, -90, -80, -70 ... */
  int verbose
 );
 

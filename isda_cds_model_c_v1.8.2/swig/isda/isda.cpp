@@ -51,6 +51,7 @@ vector< vector<double> > cds_all_in_one (
  vector<string> spread_tenors,		/* (I) spread tenors "6M", "1Y" */
  vector<string> spread_roll_tenors, /* (I) spread roll tenors */
  vector<string> imm_dates,			/* (I) imm dates */
+ vector<double> scenario_tenors,	/* (I) spread tenors -100, -90, -80, -70 ... */
  int verbose						/* (I) output message text */
 )
 {
@@ -98,7 +99,7 @@ vector< vector<double> > cds_all_in_one (
   // inner return vector
   vector <double> allinone_base;
   vector <double> allinone_pvbp;
-  vector <double> allinone_roll;
+  vector <vector<double>> allinone_roll;
 
   // assumes sell protection default
   double credit_risk_direction_scale_factor = -1;
@@ -350,20 +351,48 @@ vector< vector<double> > cds_all_in_one (
   spread_roll_tenors.size(),
   verbose);
 
-  for(int r = 0; r < spread_roll_tenors.size(); r++){
+  for(int s=0; s < scenario_tenors.size(); s++){  
+  	  
+	  vector <double> scenario_tenors_pvdirty;
+	  
+	  // build a scenario spread curve	  
+	  for(int r = 0; r < spread_rates.size(); r++){		
+	    // spread_cs01 = spead + spread * -0.1
+		spreads_cs01[r] = spread_rates[r] + spread_rates[r]  * scenario_tenors[s]/100;		
+	  }
 
-    roll_pvdirty = calculate_cds_price(pointer_roll_dates_jpm[r]
-	  , maturity_date_jpm
-	  , zerocurve
-	  , spreadcurve
-	  , accrual_start_date_jpm
-	  , recovery_rate
-	  , coupon_rate_in_basis_points
-	  , verbose);
+	  // similarly need a double *	  
+	  pointer_spreads_cs01 = spreads_cs01;
+	  
+	  // build spread curve
+	  spreadcurve = build_credit_spread_par_curve(
+				value_date_jpm
+				, zerocurve
+				, accrual_start_date_jpm
+				, pointer_spreads_cs01
+				, pointer_tenors
+				, coupon_rate_in_basis_points
+				, imm_dates.size()
+				, verbose);	 
+  
+	  for(int r = 0; r < spread_roll_tenors.size(); r++){
 
-	roll_pvdirty = fabs(roll_pvdirty);
-	allinone_roll.push_back((roll_pvdirty - dirtypv) * notional);
+		roll_pvdirty = calculate_cds_price(pointer_roll_dates_jpm[r]
+		  , maturity_date_jpm
+		  , zerocurve
+		  , spreadcurve
+		  , accrual_start_date_jpm
+		  , recovery_rate
+		  , coupon_rate_in_basis_points
+		  , verbose);
 
+		roll_pvdirty = fabs(roll_pvdirty);
+		scenario_tenors_pvdirty.push_back((roll_pvdirty - dirtypv) * notional);
+
+	  }
+	  
+	  // push back entire matrix
+	  allinone_roll.push_back(scenario_tenors_pvdirty);
   }
 
   int stop_s = clock();
@@ -372,7 +401,10 @@ vector< vector<double> > cds_all_in_one (
   // push back all vectors
   allinone.push_back(allinone_base);
   allinone.push_back(allinone_pvbp);
-  allinone.push_back(allinone_roll);
+  
+  for(int r = 0; r < allinone_roll.size(); r++){		
+	allinone.push_back(allinone_roll[r]);
+  }
 
   // handle free of the curve objects via call to JpmcdsFreeSafe macro
   FREE(spreadcurve);
