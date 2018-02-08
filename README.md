@@ -18,17 +18,21 @@ The repo includes a make.bat file that is intended for Windows support. You will
 
 ### Steps to Test 
 
-+ git clone https://github.com/bakera1/CreditDefaultSwapPricer.git
-+ cd CreditDefaultSwapPricer
-+ make.bat
+```
+git clone https://github.com/bakera1/CreditDefaultSwapPricer.git
+cd CreditDefaultSwapPricer
+make.bat
+```
 
 The build step should result in the _isda.pyd and isda.py file being copied into the cds directory. You can then test the binary with the following steps
 
-+ python isda_test.py
+```
+python isda_test.py
+```
 
 The following example output should then be shown on the console from the Python script.
 
-```python
+```
 C:\github\CreditDefaultSwapPricer\cds>python isda_test.py
 23/01/2018      pv_dirty (-1.07226)     cs01 (-8298.48) dv01 (-9.87001e-05)     pvbp5y 0.00049088    5yeqnot (16.9053)  1day roll (-1806.69)    time (32.0)
 24/01/2018      pv_dirty (-1.0707)      cs01 (-8286.24) dv01 (-9.78226e-05)     pvbp5y 0.000490599   5yeqnot (16.8901)  1day roll (-1773.74)    time (51.0)
@@ -49,8 +53,7 @@ C:\github\CreditDefaultSwapPricer\cds>python isda_test.py
 
 C:\github\CreditDefaultSwapPricer\cds>history
 
-``
-
+```
 
 ### Possible bug in Python pyconfig.h
 
@@ -60,7 +63,7 @@ c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\cmath:1157:11: error: '::hypot' has n
 
 Edit the file C:\Python27\include\pyconfig.h to comment out line #286 as below; this allows the compilation and linking to complete.
 
-```c
+```
 #if (__GNUC__==2) && (__GNUC_MINOR__<=91)
 #warning "Please use an up-to-date version of gcc! (>2.91 recommended)"
 #endif
