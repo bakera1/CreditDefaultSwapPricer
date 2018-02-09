@@ -99,7 +99,7 @@ vector< vector<double> > cds_all_in_one (
   // inner return vector
   vector <double> allinone_base;
   vector <double> allinone_pvbp;
-  vector <vector<double>> allinone_roll;
+  vector < vector<double> > allinone_roll;
 
   // assumes sell protection default
   double credit_risk_direction_scale_factor = -1;
