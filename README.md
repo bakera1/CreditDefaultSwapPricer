@@ -13,7 +13,7 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 This repo includes a make.bat file intended to build the project on most Windows platforms. The make.bat file requires that you first download and install the first two items in the list below. You might already have Python27 installed, the make.bat file assumes this is installed in the normal C:\Python27\ location as well as a POSIX compliant compiler, MinGW. Microsoft Visual C++ compile cl.exe was tested but comes with a large number of language differences and windows specific issues. MinGW offers a cleaner migration path from Linux to the Windows platform.
 
 + [Python Installer](https://www.python.org/downloads/release/python-2713/)
-+ [MinGW Installer](https://vorboss.dl.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe)
++ [MinGW Installer](https://sourceforge.net/projects/mingw/files/Installer/mingw-get-setup.exe/download?use_mirror=kent&r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fmingw%2Ffiles%2FInstaller%2F&use_mirror=kent)
 + [Swig Installer](https://sourceforge.net/projects/swig/?source=typ_redirect)
 
 ### Steps to Test 
@@ -129,6 +129,7 @@ credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
 
 # specify n roll tenor
 spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y']
+scenario_shifts = [-50, -10, 20, 50, 100, 200, 300]
 
 # value asofdate
 sdate = datetime.datetime(2018, 1, 23)
@@ -171,6 +172,7 @@ base, pvbp, roll, bucket = cds_all_in_one(trade_date,
                            credit_spread_tenors,
                            spread_roll_tenors,
                            imm_dates,
+						   scenario_shifts,
                            holiday,
                            verbose)
 
