@@ -455,6 +455,7 @@ EXPORT double calculate_cds_price(
  TDate 	tradeDate,				/* (I) trade start date  */
  double recoveryRate,			/* (I) recover rate in basis points */
  double couponRate,				/* (I) couple rate */
+ int isDirty,					/* (I) clean = 1, dirty = 0 */
  int verbose					/* (I) used to toggle info output */
 )
 {
@@ -582,7 +583,7 @@ EXPORT double calculate_cds_price(
 			 discountCurve,
 			 spreadCurve,
 			 recoveryRate,
-			 0,
+			 isDirty,
 			 &price) != SUCCESS){
 
 			 goto done;

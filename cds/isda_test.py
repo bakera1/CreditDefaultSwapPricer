@@ -53,11 +53,11 @@ is_buy_protection = 0
 verbose = 0
 
 tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
-day_count = 10
+day_count = 1 
 one_day = datetime.timedelta(1)
 
-spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y']
-scenario_tenors = [-50, -10, 20, 50, 100, 200, 300]
+spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '5Y']
+scenario_tenors = [-70, -50, -10, 10, 20, 50, 100, 150, 200, 300]
 
 for day in range(day_count):
 
@@ -94,18 +94,21 @@ for day in range(day_count):
                            verbose)
 		
         # expand tuple
-        pv_dirty, cs01, dv01, duration_in_milliseconds = f[0]
+        pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
-		
+
+	print pv_dirty, pv_clean, ai
+
 
         five_year_equivalent_notional = -cs01/pvbp5y
-        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})".format(value_date,
+        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})\t pvclean ({7:.6}) ai ({8})".format(value_date,
                                                                                           pv_dirty,
                                                                                           cs01*1e6,
                                                                                           dv01,
                                                                                           pvbp5y,
                                                                                           five_year_equivalent_notional,                                                                                        
-                                                                                          duration_in_milliseconds)		
+                                                                                          duration_in_milliseconds,
+											  pv_clean, ai)		
 	
 	for scenario, i in enumerate(f[2:]):
 	  print scenario_tenors[scenario], i

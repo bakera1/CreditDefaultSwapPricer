@@ -25,6 +25,7 @@ extern "C" double calculate_cds_price(
  TDate 	tradeDate,
  double recoveryRate,
  double couponRate,
+ int isDirty,
  int verbose
 );
 

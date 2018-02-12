@@ -90,6 +90,8 @@ vector< vector<double> > cds_all_in_one (
   double coupon_rate_in_basis_points = coupon_rate/10000.0;
   double upfrontcharge;
   double dirtypv;
+  double cleanpv;
+  double ai;
   double dirtypv_cs01;
   double dirtypv_dv01;
 
@@ -260,6 +262,8 @@ vector< vector<double> > cds_all_in_one (
   //TODO: correctly pass trade details here!
   //upfrontcharge = calculate_upfront_charge(zerocurve, coupon_rate, verbose);
 
+  int isdirty = 1;
+
   // calculate price cds
   dirtypv = calculate_cds_price(value_date_jpm
   , maturity_date_jpm
@@ -268,7 +272,22 @@ vector< vector<double> > cds_all_in_one (
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
+  , isdirty
   , verbose);
+
+  // calculate price cds
+  cleanpv = calculate_cds_price(value_date_jpm
+  , maturity_date_jpm
+  , zerocurve
+  , spreadcurve
+  , accrual_start_date_jpm
+  , recovery_rate
+  , coupon_rate_in_basis_points
+  , 0
+  , verbose);
+
+  // compute accured interest 
+  ai = dirtypv - cleanpv;
 
   dirtypv_cs01 = calculate_cds_price(value_date_jpm
   , maturity_date_jpm
@@ -277,6 +296,7 @@ vector< vector<double> > cds_all_in_one (
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
+  , isdirty
   , verbose);
 
   dirtypv_dv01 = calculate_cds_price(value_date_jpm
@@ -286,6 +306,7 @@ vector< vector<double> > cds_all_in_one (
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
+  , isdirty
   , verbose);
 
   if (is_buy_protection){
@@ -297,10 +318,11 @@ vector< vector<double> > cds_all_in_one (
   dirtypv_cs01 = fabs(dirtypv_cs01);
   dirtypv_dv01 = fabs(dirtypv_dv01);
 
-  if (verbose){
+  if (verbose == 1){
     std::cout << "credit_risk_direction_scale_factor " << credit_risk_direction_scale_factor << std::endl;
     std::cout << "dirtypv * notional " << dirtypv * notional  << std::endl;
     std::cout << "dirtypv " << dirtypv << std::endl;
+    std::cout << "cleanpv " << cleanpv << std::endl;
     std::cout << "pvdirty (scaled) " << dirtypv * notional * credit_risk_direction_scale_factor << std::endl;
   }
 
@@ -310,6 +332,8 @@ vector< vector<double> > cds_all_in_one (
 
   // push back result
   allinone_base.push_back(dirtypv * notional * credit_risk_direction_scale_factor);
+  allinone_base.push_back(cleanpv * notional * credit_risk_direction_scale_factor);
+  allinone_base.push_back(ai);
   allinone_base.push_back((dirtypv_cs01 - dirtypv) * notional);
   allinone_base.push_back((dirtypv_dv01 - dirtypv) * notional);
 
@@ -326,6 +350,7 @@ vector< vector<double> > cds_all_in_one (
 		  , value_date_jpm
 		  , recovery_rate
 		  , 0.01
+  		  , isdirty
 		  , verbose)
 		  -
 		  calculate_cds_price(value_date_jpm
@@ -335,6 +360,7 @@ vector< vector<double> > cds_all_in_one (
 		  , value_date_jpm
 		  , recovery_rate
 		  , 0.01 + single_basis_point
+		  , isdirty
 		  , verbose)
 	  );
   }
@@ -384,6 +410,7 @@ vector< vector<double> > cds_all_in_one (
 		  , accrual_start_date_jpm
 		  , recovery_rate
 		  , coupon_rate_in_basis_points
+		  , isdirty
 		  , verbose);
 
 		roll_pvdirty = fabs(roll_pvdirty);
