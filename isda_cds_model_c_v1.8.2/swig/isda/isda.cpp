@@ -104,7 +104,7 @@ vector< vector<double> > cds_all_in_one (
   vector < vector<double> > allinone_roll;
 
   // assumes sell protection default
-  double credit_risk_direction_scale_factor = -1;
+  double credit_risk_direction_scale_factor = 1;
 
   // jpm roll dates
   TDate *pointer_roll_dates_jpm;
@@ -190,7 +190,7 @@ vector< vector<double> > cds_all_in_one (
   spreadcurve = build_credit_spread_par_curve(
   			value_date_jpm
   			, zerocurve
-  			, accrual_start_date_jpm
+  			, effective_date_jpm
   			, pointer_spreads
   			, pointer_tenors
   			, coupon_rate_in_basis_points
@@ -215,7 +215,7 @@ vector< vector<double> > cds_all_in_one (
   spreadcurve_cs01 = build_credit_spread_par_curve(
   			value_date_jpm
   			, zerocurve
-  			, accrual_start_date_jpm
+  			, effective_date_jpm
   			, pointer_spreads_cs01
   			, pointer_tenors
   			, coupon_rate_in_basis_points
@@ -239,7 +239,7 @@ vector< vector<double> > cds_all_in_one (
   spreadcurve_dv01 = build_credit_spread_par_curve(
   			value_date_jpm
   			, zerocurve_dv01
-  			, trade_date_jpm
+  			, effective_date_jpm
   			, pointer_spreads
   			, pointer_tenors
   			, coupon_rate_in_basis_points
@@ -262,67 +262,72 @@ vector< vector<double> > cds_all_in_one (
   //TODO: correctly pass trade details here!
   //upfrontcharge = calculate_upfront_charge(zerocurve, coupon_rate, verbose);
 
-  int isdirty = 1;
+  int is_dirty_price = 0;
+  int is_clean_price = 1;
 
   // calculate price cds
-  dirtypv = calculate_cds_price(value_date_jpm
+  dirtypv = -calculate_cds_price(value_date_jpm
   , maturity_date_jpm
   , zerocurve
   , spreadcurve
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
-  , isdirty
+  , is_dirty_price
   , verbose);
 
   // calculate price cds
-  cleanpv = calculate_cds_price(value_date_jpm
+  cleanpv = -calculate_cds_price(value_date_jpm
   , maturity_date_jpm
   , zerocurve
   , spreadcurve
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
-  , 0
+  , is_clean_price
   , verbose);
 
   // compute accured interest 
   ai = dirtypv - cleanpv;
 
-  dirtypv_cs01 = calculate_cds_price(value_date_jpm
+  dirtypv_cs01 = -calculate_cds_price(value_date_jpm
   , maturity_date_jpm
   , zerocurve
   , spreadcurve_cs01
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
-  , isdirty
+  , is_dirty_price
   , verbose);
 
-  dirtypv_dv01 = calculate_cds_price(value_date_jpm
+  dirtypv_dv01 = -calculate_cds_price(value_date_jpm
   , maturity_date_jpm
   , zerocurve_dv01
   , spreadcurve_dv01
   , accrual_start_date_jpm
   , recovery_rate
   , coupon_rate_in_basis_points
-  , isdirty
+  , is_dirty_price
   , verbose);
 
   if (is_buy_protection){
-  	credit_risk_direction_scale_factor = 1;
+  	credit_risk_direction_scale_factor = -1;
   }
 
   // manage sign separately based on trade direction
-  dirtypv = fabs(dirtypv);
-  dirtypv_cs01 = fabs(dirtypv_cs01);
-  dirtypv_dv01 = fabs(dirtypv_dv01);
+  //dirtypv = fabs(dirtypv);  
+  //dirtypv_cs01 = fabs(dirtypv_cs01);
+  //dirtypv_dv01 = fabs(dirtypv_dv01);
 
   if (verbose == 1){
     std::cout << "credit_risk_direction_scale_factor " << credit_risk_direction_scale_factor << std::endl;
     std::cout << "dirtypv * notional " << dirtypv * notional  << std::endl;
     std::cout << "dirtypv " << dirtypv << std::endl;
     std::cout << "cleanpv " << cleanpv << std::endl;
+	std::cout << "ai " << ai << std::endl;
+	
+	printf("dirtypv %.14f\tcleanpv %.14f\tai %.14f\tdirtypv_cs01 %.14f\n", dirtypv, cleanpv, ai, dirtypv_cs01);
+	
     std::cout << "pvdirty (scaled) " << dirtypv * notional * credit_risk_direction_scale_factor << std::endl;
   }
 
@@ -343,14 +348,14 @@ vector< vector<double> > cds_all_in_one (
 
   for(int r = 0; r < imm_dates.size(); r++){
      allinone_pvbp.push_back(
-		 calculate_cds_price(value_date_jpm
+		  (calculate_cds_price(value_date_jpm
 		  , tenors[r]
 		  , zerocurve
 		  , spreadcurve
 		  , value_date_jpm
 		  , recovery_rate
 		  , 0.01
-  		  , isdirty
+  		  , is_dirty_price
 		  , verbose)
 		  -
 		  calculate_cds_price(value_date_jpm
@@ -360,8 +365,8 @@ vector< vector<double> > cds_all_in_one (
 		  , value_date_jpm
 		  , recovery_rate
 		  , 0.01 + single_basis_point
-		  , isdirty
-		  , verbose)
+		  , is_dirty_price
+		  , verbose)) * credit_risk_direction_scale_factor
 	  );
   }
 
@@ -394,7 +399,7 @@ vector< vector<double> > cds_all_in_one (
 	  spreadcurve = build_credit_spread_par_curve(
 				value_date_jpm
 				, zerocurve
-				, accrual_start_date_jpm
+				, effective_date_jpm
 				, pointer_spreads_cs01
 				, pointer_tenors
 				, coupon_rate_in_basis_points
@@ -403,18 +408,18 @@ vector< vector<double> > cds_all_in_one (
   
 	  for(int r = 0; r < spread_roll_tenors.size(); r++){
 
-		roll_pvdirty = calculate_cds_price(pointer_roll_dates_jpm[r]
+		roll_pvdirty = -calculate_cds_price(pointer_roll_dates_jpm[r]
 		  , maturity_date_jpm
 		  , zerocurve
 		  , spreadcurve
 		  , accrual_start_date_jpm
 		  , recovery_rate
 		  , coupon_rate_in_basis_points
-		  , isdirty
+		  , is_dirty_price
 		  , verbose);
 
-		roll_pvdirty = fabs(roll_pvdirty);
-		scenario_tenors_pvdirty.push_back((roll_pvdirty - dirtypv) * notional);
+		//roll_pvdirty = fabs(roll_pvdirty);
+		scenario_tenors_pvdirty.push_back((roll_pvdirty - dirtypv) * notional * credit_risk_direction_scale_factor);
 
 	  }
 	  

@@ -24,40 +24,37 @@ from isda import cds_all_in_one
 from imm import imm_date_vector
 
 # EUR interest rate curve
-swap_rates = [-0.00369, -0.00341, -0.00328, -0.00274, -0.00223, -0.00186, -0.00128, 0.00046, 0.00217, 0.003, 0.00504,
-              0.00626, 0.00739, 0.00844, 0.00941, 0.01105, 0.01281, 0.01436, 0.01506]
+swap_rates = [-0.00369, -0.00341, -0.00329, -0.00278, -0.00222, -0.00191, -0.00134, 0.0007, 0.00276, 0.00461, 0.00621,
+              0.00762, 0.00884, 0.00994, 0.01091, 0.01248, 0.0141, 0.01541, 0.0158]
 
 swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y', '9Y',
                '10Y', '15Y', '20Y', '30Y']
 
 # spread curve
-credit_spreads = [0.00141154155739384] * 8
-credit_spreads = [0.00141154155739384, 0.00241154155739384, 0.00341154155739384,
-                  0.00441154155739384, 0.00541154155739384, 0.00541154155739384,
-                  0.00541154155739384, 0.00541154155739384]
+credit_spreads = [0.0021768492292503962] * 8
 credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
 
 # value asofdate
-sdate = datetime.datetime(2018, 1, 23)
+sdate = datetime.datetime(2018, 2, 8)
 value_date = sdate.strftime('%d/%m/%Y')
 
 # economics of trade
 recovery_rate = 0.4
 coupon_list = [100]
-trade_date = '14/12/2014'
-effective_date = '20/09/2014'
-maturity_date = '20/12/2019'
+trade_date = '12/12/2014'
+effective_date = '13/12/2014'
 accrual_start_date = '20/09/2014'
-notional = 70.0 # 70MM EUR
-is_buy_protection = 0
-verbose = 0
+maturity_date = '20/12/2019'
+notional = 1.0
+is_buy_protection = 0 # only ever buy or sell protection!
+verbose = 1
 
 tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
-day_count = 1 
+day_count = 1
 one_day = datetime.timedelta(1)
 
-spread_roll_tenors = ['1D', '1W', '1M', '2M', '3M', '4M', '6M', '1Y', '2Y', '5Y']
-scenario_tenors = [-70, -50, -10, 10, 20, 50, 100, 150, 200, 300]
+spread_roll_tenors = ['1D', '1W', '1M', '6M', '1Y', '5Y']
+scenario_shifts = [-50, -10, 0, 10, 20, 50, 150, 100]
 
 for day in range(day_count):
 
@@ -90,27 +87,24 @@ for day in range(day_count):
                            credit_spread_tenors,
                            spread_roll_tenors,
                            imm_dates,
-                           scenario_tenors,
+                           scenario_shifts,
                            verbose)
 		
         # expand tuple
         pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
-
-	print pv_dirty, pv_clean, ai
-
+		
 
         five_year_equivalent_notional = -cs01/pvbp5y
-        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})\t pvclean ({7:.6}) ai ({8})".format(value_date,
+        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})\tai ({7:.6})".format(value_date,
                                                                                           pv_dirty,
                                                                                           cs01*1e6,
                                                                                           dv01,
                                                                                           pvbp5y,
                                                                                           five_year_equivalent_notional,                                                                                        
-                                                                                          duration_in_milliseconds,
-											  pv_clean, ai)		
+                                                                                          duration_in_milliseconds, ai)		
 	
 	for scenario, i in enumerate(f[2:]):
-	  print scenario_tenors[scenario], i
+	  print scenario_shifts[scenario], i
 			
     sdate = sdate + one_day

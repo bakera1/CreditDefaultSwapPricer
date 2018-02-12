@@ -70,15 +70,17 @@ EXPORT TCurve* build_credit_spread_par_curve(
 		goto done;
 	}
 
-	if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_MODIFIED, "None", &startDate) != SUCCESS)
-	{
-		goto done;
-	}
+	//if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_MODIFIED, "None", &startDate) != SUCCESS)
+	//{
+	//	goto done;
+	//}
 	if(verbose){
-	  printf("startDate = %d\n", (int)startDate);
+	  printf("today = %d\n", (int)baseDate);
+	  printf("tradeDate = %d\n", (int)tradeDate);
+	  printf("startDate = %d\n", (int)tradeDate);
 	}
 
-	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl, JPMCDS_BAD_DAY_MODIFIED, "None", &stepInDate) != SUCCESS)
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &stepInDate) != SUCCESS)
 	{
 		goto done;
 	}
@@ -86,7 +88,7 @@ EXPORT TCurve* build_credit_spread_par_curve(
 		printf("StepInDate = %d\n", (int)stepInDate);
 	}
 
-	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "NONE", &cashSettleDate) != SUCCESS)
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_NONE, "NONE", &cashSettleDate) != SUCCESS)
 	{
 		goto done;
 	}
@@ -455,7 +457,7 @@ EXPORT double calculate_cds_price(
  TDate 	tradeDate,				/* (I) trade start date  */
  double recoveryRate,			/* (I) recover rate in basis points */
  double couponRate,				/* (I) couple rate */
- int isDirty,					/* (I) clean = 1, dirty = 0 */
+ int isPriceClean,				/* (I) clean = 1, dirty = 0 */
  int verbose					/* (I) used to toggle info output */
 )
 {
@@ -474,10 +476,6 @@ EXPORT double calculate_cds_price(
     TStubMethod    stubMethod;
     double         price;
 
-	if(verbose){
-    	printf("BaseDate = %d\n", (int)baseDate);
-    }
-
     if (JpmcdsErrMsgEnableRecord(20, 128) != SUCCESS) /* ie. 20 lines, each of max length 128 */
         goto done;
 
@@ -491,41 +489,42 @@ EXPORT double calculate_cds_price(
 		goto done;
 	}
 
-	if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_MODIFIED, "None", &startDate) != SUCCESS)
+	if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &startDate) != SUCCESS)
 	{
 		goto done;
 	}
-	if(verbose){
-		printf("startDate = %d\n", (int)startDate);
-	}
+	//if(verbose){
+	//	printf("startDate = %d\n", (int)startDate);
+	//}
 
-	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl, JPMCDS_BAD_DAY_MODIFIED, "None", &stepInDate) != SUCCESS)
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &stepInDate) != SUCCESS)
 	{
 		goto done;
-	}
+	}	
+
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_NONE, "NONE", &settleDate) != SUCCESS)
+	{
+		goto done;
+	}	
+	
 	if(verbose){
+	    printf("\n\ntoday = %d\n", (int)baseDate);
+	    printf("ValueDate = %d\n", (int)settleDate);
 		printf("StepInDate = %d\n", (int)stepInDate);
+		printf("StartDate = %d\n", (int)tradeDate);
+		printf("EndDate = %d\n", (int)maturityDate);
+		printf("Coupon = %f\n", couponRate);
+		printf("isPriceClean = %d\n", isPriceClean);
+		printf("RecoveryRate = %f\n", recoveryRate);
 	}
-
-	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "NONE", &settleDate) != SUCCESS)
-	{
-		goto done;
-	}
-	if(verbose){
-		printf("SettleDate = %d\n", (int)settleDate);
-	}
-
-	if (verbose){
-		printf("MaturityDate = %d\n", (int)maturityDate);
-	}
-
+	
     if (JpmcdsStringToDayCountConv("Act/360", &paymentDcc) != SUCCESS)
         goto done;
 
     if (JpmcdsStringToDateInterval("Q", routine, &couponInterval) != SUCCESS)
         goto done;
 
-    if (JpmcdsStringToStubMethod("F/S", &stubMethod)  != SUCCESS)
+    if (JpmcdsStringToStubMethod("F", &stubMethod)  != SUCCESS)
         goto done;
 
     //printf("calling JpmcdsCdsContingentLegPV...\n");
@@ -583,12 +582,16 @@ EXPORT double calculate_cds_price(
 			 discountCurve,
 			 spreadCurve,
 			 recoveryRate,
-			 isDirty,
+			 isPriceClean,
 			 &price) != SUCCESS){
 
 			 goto done;
 
 			 }
+			 
+	if(verbose){
+		printf("calling JpmcdsCdsPrice = %.15f\n\n", price);
+	}
 
 	status = 0;
 
