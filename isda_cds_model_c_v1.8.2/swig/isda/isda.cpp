@@ -108,7 +108,7 @@ vector< vector<double> > cds_pricing_all_in_one (
 
   // jpm roll dates
   TDate *pointer_roll_dates_jpm;
-  double roll_pvdirty;
+  double roll_pvclean;
 
   /////////////////////////////
   // parse char* to jpm dates
@@ -385,7 +385,7 @@ vector< vector<double> > cds_pricing_all_in_one (
 				, effective_date_jpm
 				, pointer_spreads_cs01
 				, pointer_tenors
-				, coupon_rate_in_basis_points
+				, recovery_rate
 				, imm_dates.size()
 				, verbose);
 
@@ -393,18 +393,18 @@ vector< vector<double> > cds_pricing_all_in_one (
 
 		//roll_pvdirty = -calculate_cds_price(pointer_roll_dates_jpm[r]
 		//  , maturity_date_jpm
-		roll_pvdirty = -calculate_cds_price(value_date_jpm
+		roll_pvclean = -calculate_cds_price(value_date_jpm
 		  , pointer_roll_dates_jpm[r]
 		  , zerocurve
 		  , spreadcurve
 		  , accrual_start_date_jpm
 		  , recovery_rate
 		  , coupon_rate_in_basis_points
-		  , is_dirty_price
+		  , is_clean_price
 		  , verbose);
 
 		//roll_pvdirty = fabs(roll_pvdirty);
-		scenario_tenors_pvdirty.push_back((roll_pvdirty - dirtypv) * notional * credit_risk_direction_scale_factor);
+		scenario_tenors_pvdirty.push_back((roll_pvclean - cleanpv) * notional * credit_risk_direction_scale_factor);
 
 	  }
 
@@ -514,7 +514,7 @@ vector< vector<double> > cds_all_in_one (
 
   // jpm roll dates
   TDate *pointer_roll_dates_jpm;
-  double roll_pvdirty;
+  double roll_pvclean;
 
   /* TODO: check swap_rates.size() == imm_dates.size() with assert */
   /* TODO: check swap_rates.size() == imm_dates.size() with assert */
@@ -599,7 +599,7 @@ vector< vector<double> > cds_all_in_one (
   			, effective_date_jpm
   			, pointer_spreads
   			, pointer_tenors
-  			, coupon_rate_in_basis_points
+  			, recovery_rate
   			, imm_dates.size()
   			, verbose);
 
@@ -624,7 +624,7 @@ vector< vector<double> > cds_all_in_one (
   			, effective_date_jpm
   			, pointer_spreads_cs01
   			, pointer_tenors
-  			, coupon_rate_in_basis_points
+  			, recovey_rate
   			, imm_dates.size()
   			, verbose);
 
@@ -648,7 +648,7 @@ vector< vector<double> > cds_all_in_one (
   			, effective_date_jpm
   			, pointer_spreads
   			, pointer_tenors
-  			, coupon_rate_in_basis_points
+  			, recovery_rate
   			, imm_dates.size()
   			, verbose);
 
@@ -813,7 +813,7 @@ vector< vector<double> > cds_all_in_one (
 				, effective_date_jpm
 				, pointer_spreads_cs01
 				, pointer_tenors
-				, coupon_rate_in_basis_points
+				, recovery_rate
 				, imm_dates.size()
 				, verbose);	 
   
@@ -821,18 +821,18 @@ vector< vector<double> > cds_all_in_one (
 
 		//roll_pvdirty = -calculate_cds_price(pointer_roll_dates_jpm[r]
 		//  , maturity_date_jpm
-		roll_pvdirty = -calculate_cds_price(value_date_jpm
+		roll_pvclean = -calculate_cds_price(value_date_jpm
 		  , pointer_roll_dates_jpm[r]
 		  , zerocurve
 		  , spreadcurve
 		  , accrual_start_date_jpm
 		  , recovery_rate
 		  , coupon_rate_in_basis_points
-		  , is_dirty_price
+		  , is_clean_price
 		  , verbose);
 
 		//roll_pvdirty = fabs(roll_pvdirty);
-		scenario_tenors_pvdirty.push_back((roll_pvdirty - dirtypv) * notional * credit_risk_direction_scale_factor);
+		scenario_tenors_pvdirty.push_back((roll_pvclean - cleanpv) * notional * credit_risk_direction_scale_factor);
 
 	  }
 	  
