@@ -29,6 +29,14 @@ extern "C" double calculate_cds_price(
  int verbose
 );
 
+extern "C" TCurve* build_zero_interest_rate_curve2(
+ TDate baseDate,
+ double *rates,
+ char **expiries,
+ long int *maturities,
+ int verbose
+);
+
 extern "C" TCurve* build_zero_interest_rate_curve(
  TDate baseDate,
  double *rates,

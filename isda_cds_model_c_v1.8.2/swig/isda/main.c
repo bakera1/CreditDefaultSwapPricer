@@ -43,17 +43,14 @@ EXPORT TCurve* build_credit_spread_par_curve(
     int            i=0;
     TDateInterval  ivlCashSettle;
     TDateInterval  couponInterval;
-    long           mmDCC;
+    long int       mmDCC=0;
     TDate          startDate;
     TDate          stepInDate;
     TDate          cashSettleDate;
     TStubMethod    stubMethod;
-    //int includes[8] = {1,1,1,1,1,1,1,1};
+    int includes[8] = {1,1,1,1,1,1,1,1};
     int            status = 1;
-
-    if(verbose){
-      printf("BaseDate = %d\n", (int)baseDate);
-    }
+    int 			nbDate = 8;
 
 	JpmcdsErrMsgOn();
 
@@ -70,13 +67,13 @@ EXPORT TCurve* build_credit_spread_par_curve(
 		goto done;
 	}
 
-	//if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_MODIFIED, "None", &startDate) != SUCCESS)
-	//{
-	//	goto done;
-	//}
+	if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &startDate) != SUCCESS)
+	{
+		goto done;
+	}
+
 	if(verbose){
 	  printf("today = %d\n", (int)baseDate);
-	  printf("tradeDate = %d\n", (int)tradeDate);
 	  printf("startDate = %d\n", (int)tradeDate);
 	}
 
@@ -85,15 +82,15 @@ EXPORT TCurve* build_credit_spread_par_curve(
 		goto done;
 	}
 	if(verbose){
-		printf("StepInDate = %d\n", (int)stepInDate);
+		printf("stepInDate = %d\n", (int)stepInDate);
 	}
 
-	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_NONE, "NONE", &cashSettleDate) != SUCCESS)
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "None", &cashSettleDate) != SUCCESS)
 	{
 		goto done;
 	}
 	if(verbose){
-		printf("SettleDate = %d\n", (int)cashSettleDate);
+		printf("cashSettleDate = %d\n", (int)cashSettleDate);
 	}
 
     if (JpmcdsStringToDayCountConv("Act/360", &mmDCC) != SUCCESS)
@@ -138,10 +135,10 @@ EXPORT TCurve* build_credit_spread_par_curve(
 		 tradeDate,
 		 stepInDate,
 		 cashSettleDate,
-		 n,
+		 nbDate,
 		 dates,
 		 rates,
-		 NULL,
+		 includes,
 		 recoveryRate,
 		 payAccruedOnDefault,
 		 &couponInterval,
@@ -184,6 +181,137 @@ done:
 ** Build IR zero curve.
 ***************************************************************************
 */
+
+EXPORT TCurve* build_zero_interest_rate_curve2(
+ TDate baseDate,			/* (I) integer base start date JpmCdsDate */
+ double *rates,			/* (I) double array with 14 elements */
+ char **expiries,		/* (I) array of char* of tenor strings "1M", "2M", "3M", "6M", "9M", "1Y", "2Y", "3Y", "4Y", "5Y", "6Y", "7Y", "8Y", "9Y" */
+ long int *maturities,
+ int verbose
+)
+{
+    static char  *routine = "BuildExampleZeroCurve";
+    TCurve       *zc = NULL;
+    char         *types = "MMMMMMSSSSSSSSS";
+    //char         expiries[14] = {"1M", "2M", "3M", "6M", "9M", "1Y", "2Y", "3Y", "4Y", "5Y", "6Y", "7Y", "8Y", "9Y"};
+    TDate        *dates = NULL;
+    //double        rates[14] = {1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9};
+    TDate         baseDateShifted;
+    long          swapFloatingDayCountConvention;
+    TDateInterval ivlSwapFixedPaymentFrequency;
+    TDateInterval ivlSwapFloatingPaymentFrequency;
+    TDateInterval ivl2;
+    long          swapFixedDayCountConvention;
+    double        swapFixedFrequency;
+    double        swapFloatingFrequency;
+    char          badDayConv = 'M';
+    char         *holidays = "None";
+    int           i, n;
+
+	if(verbose){
+    	printf("build_zero_interest_rate_curve2::BaseDate = %d\n", (int)baseDate);
+    }
+
+    if (JpmcdsStringToDayCountConv("A/360", &swapFloatingDayCountConvention) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDayCountConv("30/360", &swapFixedDayCountConvention) != SUCCESS)
+        goto done;
+
+	if (JpmcdsStringToDateInterval("1Y", routine, &ivlSwapFixedPaymentFrequency) != SUCCESS)
+        goto done;
+
+	if (JpmcdsStringToDateInterval("6M", routine, &ivlSwapFloatingPaymentFrequency) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateIntervalToFreq(&ivlSwapFixedPaymentFrequency, &swapFixedFrequency) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateIntervalToFreq(&ivlSwapFloatingPaymentFrequency, &swapFloatingFrequency) != SUCCESS)
+        goto done;
+
+	// move forward 2 days, today (base), tomorrow and spot!
+    if (JpmcdsStringToDateInterval("2D", routine, &ivl2) != SUCCESS)
+	{
+		goto done;
+	}
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl2, JPMCDS_BAD_DAY_MODIFIED, "None", &baseDateShifted) != SUCCESS)
+	{
+		goto done;
+	}
+
+	if(verbose){
+    	printf("build_zero_interest_rate_curve2::BaseDateShifted = %d\n", (int)baseDateShifted);
+    }
+
+    n = strlen(types);
+
+    if(verbose){
+		printf("build_zero_interest_rate_curve2::n = %d\n", n);
+	}
+    dates = NEW_ARRAY(TDate, n);
+    for (i = 0; i < n; i++)
+    {
+
+    	// DEPOSIT RATES
+    	if (i<=6){
+			if (JpmcdsBusinessDay(maturities[i], JPMCDS_BAD_DAY_NONE, "None", dates+i) != SUCCESS)
+				{
+					JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+					goto done;
+				}
+    	}
+    	else
+    	{
+    		// SWAP RATES
+			if (JpmcdsBusinessDay(maturities[i], JPMCDS_BAD_DAY_MODIFIED, "None", dates+i) != SUCCESS)
+			{
+				JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+				goto done;
+			}
+		}
+		if(verbose){
+    		printf("build_zero_interest_rate_curve2::dates = %d\n", (long int)dates[i]);
+    	}
+    }
+
+	/*
+EXPORT TCurve* JpmcdsBuildIRZeroCurve(
+    TDate      valueDate,        (I) Value date
+    char      *instrNames,       (I) Array of 'M' or 'S'
+    TDate     *dates,            (I) Array of swaps dates
+    double    *rates,            (I) Array of swap rates
+    long       nInstr,           (I) Number of benchmark instruments
+    long       mmDCC,            (I) DCC of MM instruments
+    long       fixedSwapFreq,    (I) Fixed leg freqency
+    long       floatSwapFreq,    (I) Floating leg freqency
+    long       fixedSwapDCC,     (I) DCC of fixed leg
+    long       floatSwapDCC,     (I) DCC of floating leg
+    long       badDayConv,       (I) Bad day convention
+    char      *holidayFile)      (I) Holiday file
+{*/
+
+	if(verbose){
+    	printf("calling JpmcdsBuildIRZeroCurve...\n");
+    }
+    zc = JpmcdsBuildIRZeroCurve(
+            baseDateShifted,
+            types,
+            dates,
+            rates,
+            n,
+            swapFloatingDayCountConvention,
+            (long) swapFixedFrequency,
+            (long) swapFloatingFrequency,
+            swapFixedDayCountConvention,
+            swapFloatingDayCountConvention,
+            badDayConv,
+            holidays);
+done:
+    FREE(dates);
+    return zc;
+}
+
 EXPORT TCurve* build_zero_interest_rate_curve(
  TDate baseDate,			/* (I) integer base start date JpmCdsDate */
  double *rates,			/* (I) double array with 14 elements */
@@ -235,11 +363,20 @@ EXPORT TCurve* build_zero_interest_rate_curve(
             goto done;
         }
 
-        if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_NONE, "None", dates+i) != SUCCESS)
-        {
-            JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
-            goto done;
+        if ( i <= 4 ){
+        	if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_MODIFIED, "None", dates+i) != SUCCESS)
+			{
+				JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+				goto done;
+			}
         }
+        else{
+			if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_NONE, "None", dates+i) != SUCCESS)
+			{
+				JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+				goto done;
+			}
+		}
     }
 
 	/*
@@ -454,7 +591,7 @@ EXPORT double calculate_cds_price(
  TDate maturityDate,			/* (I) cds scheduled termination date  */
  TCurve *discountCurve, 		/* (I) interest rate curve */
  TCurve *spreadCurve, 			/* (I) spread rate curve */
- TDate 	tradeDate,				/* (I) trade start date  */
+ TDate effectiveDate,			/* (I) accrual from start date  */
  double recoveryRate,			/* (I) recover rate in basis points */
  double couponRate,				/* (I) couple rate */
  int isPriceClean,				/* (I) clean = 1, dirty = 0 */
@@ -463,13 +600,13 @@ EXPORT double calculate_cds_price(
 {
     static char    *routine = "calculate_cds_price";
     int            status = 1;
-    int            payAccruedOnDefault = 0;
+    int            payAccruedOnDefault = 1;
     char           **lines = NULL;
     TDateInterval  ivl;
     TDateInterval  ivlCashSettle;
     TDateInterval  couponInterval;
     int            i=0;
-    long           paymentDcc;
+    long int       paymentDcc=0;
     TDate          startDate;
     TDate          stepInDate;
     TDate          settleDate;
@@ -489,10 +626,10 @@ EXPORT double calculate_cds_price(
 		goto done;
 	}
 
-	if (JpmcdsDateFwdThenAdjust(tradeDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &startDate) != SUCCESS)
-	{
-		goto done;
-	}
+	//if (JpmcdsDateFwdThenAdjust(effectiveDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &startDate) != SUCCESS)
+	//{
+	//	goto done;
+	//}
 	//if(verbose){
 	//	printf("startDate = %d\n", (int)startDate);
 	//}
@@ -502,20 +639,20 @@ EXPORT double calculate_cds_price(
 		goto done;
 	}	
 
-	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_NONE, "NONE", &settleDate) != SUCCESS)
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "None", &settleDate) != SUCCESS)
 	{
 		goto done;
-	}	
-	
+	}
+
 	if(verbose){
 	    printf("\n\ntoday = %d\n", (int)baseDate);
-	    printf("ValueDate = %d\n", (int)settleDate);
-		printf("StepInDate = %d\n", (int)stepInDate);
-		printf("StartDate = %d\n", (int)tradeDate);
-		printf("EndDate = %d\n", (int)maturityDate);
-		printf("Coupon = %f\n", couponRate);
+	    printf("valueDate = %d\n", (int)settleDate);
+		printf("stepInDate = %d\n", (int)stepInDate);
+		printf("startDate = %d\n", (int)effectiveDate);
+		printf("endDate = %d\n", (int)maturityDate);
+		printf("coupon = %f\n", couponRate);
 		printf("isPriceClean = %d\n", isPriceClean);
-		printf("RecoveryRate = %f\n", recoveryRate);
+		printf("recoveryRate = %f\n", recoveryRate);
 	}
 	
     if (JpmcdsStringToDayCountConv("Act/360", &paymentDcc) != SUCCESS)
@@ -570,11 +707,11 @@ EXPORT double calculate_cds_price(
 			(baseDate,
 			 settleDate,
 			 stepInDate,
-			 tradeDate,
+			 effectiveDate,
 			 maturityDate,
 			 couponRate,
 			 payAccruedOnDefault,
-			 &ivl,
+			 &couponInterval,
 			 &stubMethod,
 			 paymentDcc,
 			 'F',
@@ -590,7 +727,7 @@ EXPORT double calculate_cds_price(
 			 }
 			 
 	if(verbose){
-		printf("calling JpmcdsCdsPrice = %.15f\n\n", price);
+		printf("calling JpmcdsCdsPrice = %.15f\n", price);
 	}
 
 	status = 0;

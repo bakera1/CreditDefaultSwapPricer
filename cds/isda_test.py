@@ -47,13 +47,13 @@ accrual_start_date = '20/09/2014'
 maturity_date = '20/12/2019'
 notional = 1.0
 is_buy_protection = 0 # only ever buy or sell protection!
-verbose = 1
+verbose = 0 
 
 tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
 day_count = 1
 one_day = datetime.timedelta(1)
 
-spread_roll_tenors = ['1D', '1W', '1M', '6M', '1Y', '5Y']
+spread_roll_tenors = ['1D', '-1D', '-1W', '-1M', '-6M', '-1Y', '-5Y']
 scenario_shifts = [-50, -10, 0, 10, 20, 50, 150, 100]
 
 for day in range(day_count):
