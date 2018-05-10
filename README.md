@@ -8,6 +8,22 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+
+## UnitTest framework
+
+A new TestCdsPricer class has been added to the project which aims to lock in the behaviour of the CDS model relative to the approved MarkIT partners calculator. Since the rules of how to wire together the internal ISDA model api calls can introduce potential error; being able to confirm that the exact behaviour converges with the approved model is essential. 
+
+The test cases are setup to asset values that have been hand validated to 11 decimal places with the MarkIT and BBG calculators. The signs have also been validated against market convension.
+
+```
+self.assertAlmostEquals(-1.23099324435, pv_dirty)
+self.assertAlmostEquals(-1.19210435546, pv_clean)
+self.assertAlmostEquals(0.0388888888889, ai)
+self.assertAlmostEquals(14014.5916905, cs01 * 1.0e6)
+self.assertAlmostEquals(131.61798715, dv01 * 1.0e6)
+
+```
+
 ## Getting Started on Windows
 
 This repo includes a make.bat file intended to build the project on most Windows platforms. The make.bat file requires that you first download and install the first two items in the list below. You might already have Python27 installed, the make.bat file assumes this is installed in the normal C:\Python27\ location as well as a POSIX compliant compiler, MinGW. Microsoft Visual C++ compile cl.exe was tested but comes with a large number of language differences and windows specific issues. MinGW offers a cleaner migration path from Linux to the Windows platform.
