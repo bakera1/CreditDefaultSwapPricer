@@ -18040,7 +18040,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_cds_pricing_all_in_one(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_cds_all_in_one(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::string arg1 ;
   std::string arg2 ;
@@ -18090,206 +18090,7 @@ SWIGINTERN PyObject *_wrap_cds_pricing_all_in_one(PyObject *SWIGUNUSEDPARM(self)
   PyObject * obj17 = 0 ;
   std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOOO:cds_pricing_all_in_one",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16,&obj17)) SWIG_fail;
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj0, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "1"" of type '" "std::string""'"); 
-    }
-    arg1 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "3"" of type '" "std::string""'"); 
-    }
-    arg3 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj3, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "4"" of type '" "std::string""'"); 
-    }
-    arg4 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj4, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "5"" of type '" "std::string""'"); 
-    }
-    arg5 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  ecode6 = SWIG_AsVal_double(obj5, &val6);
-  if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "cds_pricing_all_in_one" "', argument " "6"" of type '" "double""'");
-  } 
-  arg6 = static_cast< double >(val6);
-  ecode7 = SWIG_AsVal_double(obj6, &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "cds_pricing_all_in_one" "', argument " "7"" of type '" "double""'");
-  } 
-  arg7 = static_cast< double >(val7);
-  ecode8 = SWIG_AsVal_double(obj7, &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "cds_pricing_all_in_one" "', argument " "8"" of type '" "double""'");
-  } 
-  arg8 = static_cast< double >(val8);
-  ecode9 = SWIG_AsVal_int(obj8, &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "cds_pricing_all_in_one" "', argument " "9"" of type '" "int""'");
-  } 
-  arg9 = static_cast< int >(val9);
-  {
-    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
-    int res = swig::asptr(obj9, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "10"" of type '" "std::vector< double,std::allocator< double > >""'"); 
-    }
-    arg10 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
-    int res = swig::asptr(obj10, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "11"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
-    }
-    arg11 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
-    int res = swig::asptr(obj11, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "12"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
-    }
-    arg12 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
-    int res = swig::asptr(obj12, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "13"" of type '" "std::vector< double,std::allocator< double > >""'"); 
-    }
-    arg13 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
-    int res = swig::asptr(obj13, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "14"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
-    }
-    arg14 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
-    int res = swig::asptr(obj14, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "15"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
-    }
-    arg15 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
-    int res = swig::asptr(obj15, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "16"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
-    }
-    arg16 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
-    int res = swig::asptr(obj16, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_pricing_all_in_one" "', argument " "17"" of type '" "std::vector< double,std::allocator< double > >""'"); 
-    }
-    arg17 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  ecode18 = SWIG_AsVal_int(obj17, &val18);
-  if (!SWIG_IsOK(ecode18)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode18), "in method '" "cds_pricing_all_in_one" "', argument " "18"" of type '" "int""'");
-  } 
-  arg18 = static_cast< int >(val18);
-  result = cds_pricing_all_in_one(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18);
-  resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_cds_all_in_one(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  std::string arg1 ;
-  std::string arg2 ;
-  std::string arg3 ;
-  std::string arg4 ;
-  std::string arg5 ;
-  double arg6 ;
-  double arg7 ;
-  double arg8 ;
-  int arg9 ;
-  std::vector< double,std::allocator< double > > arg10 ;
-  std::vector< std::string,std::allocator< std::string > > arg11 ;
-  std::vector< double,std::allocator< double > > arg12 ;
-  std::vector< std::string,std::allocator< std::string > > arg13 ;
-  std::vector< std::string,std::allocator< std::string > > arg14 ;
-  std::vector< std::string,std::allocator< std::string > > arg15 ;
-  std::vector< double,std::allocator< double > > arg16 ;
-  int arg17 ;
-  double val6 ;
-  int ecode6 = 0 ;
-  double val7 ;
-  int ecode7 = 0 ;
-  double val8 ;
-  int ecode8 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
-  int val17 ;
-  int ecode17 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  PyObject * obj8 = 0 ;
-  PyObject * obj9 = 0 ;
-  PyObject * obj10 = 0 ;
-  PyObject * obj11 = 0 ;
-  PyObject * obj12 = 0 ;
-  PyObject * obj13 = 0 ;
-  PyObject * obj14 = 0 ;
-  PyObject * obj15 = 0 ;
-  PyObject * obj16 = 0 ;
-  std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOO:cds_all_in_one",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOOO:cds_all_in_one",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16,&obj17)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(obj0, &ptr);
@@ -18374,19 +18175,19 @@ SWIGINTERN PyObject *_wrap_cds_all_in_one(PyObject *SWIGUNUSEDPARM(self), PyObje
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   {
-    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
     int res = swig::asptr(obj11, &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "12"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "12"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
     }
     arg12 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   {
-    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(obj12, &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "13"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "13"" of type '" "std::vector< double,std::allocator< double > >""'"); 
     }
     arg13 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
@@ -18410,20 +18211,219 @@ SWIGINTERN PyObject *_wrap_cds_all_in_one(PyObject *SWIGUNUSEDPARM(self), PyObje
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    int res = swig::asptr(obj15, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "16"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
+    }
+    arg16 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
+    int res = swig::asptr(obj16, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "17"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+    }
+    arg17 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  ecode18 = SWIG_AsVal_int(obj17, &val18);
+  if (!SWIG_IsOK(ecode18)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode18), "in method '" "cds_all_in_one" "', argument " "18"" of type '" "int""'");
+  } 
+  arg18 = static_cast< int >(val18);
+  result = cds_all_in_one(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18);
+  resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_cds_all_in_one_exclude_ir_tenor_dates(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string arg1 ;
+  std::string arg2 ;
+  std::string arg3 ;
+  std::string arg4 ;
+  std::string arg5 ;
+  double arg6 ;
+  double arg7 ;
+  double arg8 ;
+  int arg9 ;
+  std::vector< double,std::allocator< double > > arg10 ;
+  std::vector< std::string,std::allocator< std::string > > arg11 ;
+  std::vector< double,std::allocator< double > > arg12 ;
+  std::vector< std::string,std::allocator< std::string > > arg13 ;
+  std::vector< std::string,std::allocator< std::string > > arg14 ;
+  std::vector< std::string,std::allocator< std::string > > arg15 ;
+  std::vector< double,std::allocator< double > > arg16 ;
+  int arg17 ;
+  double val6 ;
+  int ecode6 = 0 ;
+  double val7 ;
+  int ecode7 = 0 ;
+  double val8 ;
+  int ecode8 = 0 ;
+  int val9 ;
+  int ecode9 = 0 ;
+  int val17 ;
+  int ecode17 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  PyObject * obj11 = 0 ;
+  PyObject * obj12 = 0 ;
+  PyObject * obj13 = 0 ;
+  PyObject * obj14 = 0 ;
+  PyObject * obj15 = 0 ;
+  PyObject * obj16 = 0 ;
+  std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOO:cds_all_in_one_exclude_ir_tenor_dates",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "1"" of type '" "std::string""'"); 
+    }
+    arg1 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "2"" of type '" "std::string""'"); 
+    }
+    arg2 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "3"" of type '" "std::string""'"); 
+    }
+    arg3 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj3, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "4"" of type '" "std::string""'"); 
+    }
+    arg4 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj4, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "5"" of type '" "std::string""'"); 
+    }
+    arg5 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  ecode6 = SWIG_AsVal_double(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "6"" of type '" "double""'");
+  } 
+  arg6 = static_cast< double >(val6);
+  ecode7 = SWIG_AsVal_double(obj6, &val7);
+  if (!SWIG_IsOK(ecode7)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "7"" of type '" "double""'");
+  } 
+  arg7 = static_cast< double >(val7);
+  ecode8 = SWIG_AsVal_double(obj7, &val8);
+  if (!SWIG_IsOK(ecode8)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "8"" of type '" "double""'");
+  } 
+  arg8 = static_cast< double >(val8);
+  ecode9 = SWIG_AsVal_int(obj8, &val9);
+  if (!SWIG_IsOK(ecode9)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "9"" of type '" "int""'");
+  } 
+  arg9 = static_cast< int >(val9);
+  {
+    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
+    int res = swig::asptr(obj9, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "10"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+    }
+    arg10 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    int res = swig::asptr(obj10, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "11"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
+    }
+    arg11 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
+    int res = swig::asptr(obj11, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "12"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+    }
+    arg12 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    int res = swig::asptr(obj12, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "13"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
+    }
+    arg13 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    int res = swig::asptr(obj13, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "14"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
+    }
+    arg14 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    int res = swig::asptr(obj14, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "15"" of type '" "std::vector< std::string,std::allocator< std::string > >""'"); 
+    }
+    arg15 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(obj15, &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one" "', argument " "16"" of type '" "std::vector< double,std::allocator< double > >""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "16"" of type '" "std::vector< double,std::allocator< double > >""'"); 
     }
     arg16 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   ecode17 = SWIG_AsVal_int(obj16, &val17);
   if (!SWIG_IsOK(ecode17)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode17), "in method '" "cds_all_in_one" "', argument " "17"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode17), "in method '" "cds_all_in_one_exclude_ir_tenor_dates" "', argument " "17"" of type '" "int""'");
   } 
   arg17 = static_cast< int >(val17);
-  result = cds_all_in_one(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17);
+  result = cds_all_in_one_exclude_ir_tenor_dates(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17);
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj;
 fail:
@@ -18858,8 +18858,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_VecVecString", _wrap_delete_VecVecString, METH_VARARGS, NULL},
 	 { (char *)"VecVecString_swigregister", VecVecString_swigregister, METH_VARARGS, NULL},
 	 { (char *)"average", _wrap_average, METH_VARARGS, NULL},
-	 { (char *)"cds_pricing_all_in_one", _wrap_cds_pricing_all_in_one, METH_VARARGS, NULL},
 	 { (char *)"cds_all_in_one", _wrap_cds_all_in_one, METH_VARARGS, NULL},
+	 { (char *)"cds_all_in_one_exclude_ir_tenor_dates", _wrap_cds_all_in_one_exclude_ir_tenor_dates, METH_VARARGS, NULL},
 	 { (char *)"Callback_run", _wrap_Callback_run, METH_VARARGS, NULL},
 	 { (char *)"delete_Callback", _wrap_delete_Callback, METH_VARARGS, NULL},
 	 { (char *)"new_Callback", _wrap_new_Callback, METH_VARARGS, NULL},

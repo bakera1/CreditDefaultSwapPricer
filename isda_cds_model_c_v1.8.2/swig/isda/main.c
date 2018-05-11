@@ -212,7 +212,7 @@ EXPORT TCurve* build_zero_interest_rate_curve2(
     	printf("build_zero_interest_rate_curve2::BaseDate = %d\n", (int)baseDate);
     }
 
-    if (JpmcdsStringToDayCountConv("A/360", &swapFloatingDayCountConvention) != SUCCESS)
+    if (JpmcdsStringToDayCountConv("Act/360", &swapFloatingDayCountConvention) != SUCCESS)
         goto done;
 
     if (JpmcdsStringToDayCountConv("30/360", &swapFixedDayCountConvention) != SUCCESS)
@@ -319,17 +319,18 @@ EXPORT TCurve* build_zero_interest_rate_curve(
  int verbose
 )
 {
-    static char  *routine = "BuildExampleZeroCurve";
+    static char  *routine = "build_zero_interest_rate_curve";
     TCurve       *zc = NULL;
-    char         *types = "MMMMMSSSSSSSSS";
-    //char         expiries[14] = {"1M", "2M", "3M", "6M", "9M", "1Y", "2Y", "3Y", "4Y", "5Y", "6Y", "7Y", "8Y", "9Y"};
+    char         *types = "MMMMMMSSSSSSSSS";
     TDate        *dates = NULL;
-    //double        rates[14] = {1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9};
-    //TDate         baseDate;
-    long          mmDCC;
-    TDateInterval ivl;
-    long          dcc;
-    double        freq;
+    TDate         baseDateShifted;
+    long          swapFloatingDayCountConvention;
+    TDateInterval ivlSwapFixedPaymentFrequency;
+    TDateInterval ivlSwapFloatingPaymentFrequency;
+    TDateInterval ivl2;
+    long          swapFixedDayCountConvention;
+    double        swapFixedFrequency;
+    double        swapFloatingFrequency;
     char          badDayConv = 'M';
     char         *holidays = "None";
     int           i, n;
@@ -337,17 +338,36 @@ EXPORT TCurve* build_zero_interest_rate_curve(
 	if(verbose){
     	printf("BaseDate = %d\n", (int)baseDate);
     }
+    	// move forward 2 days, today (base), tomorrow and spot!
+    if (JpmcdsStringToDateInterval("2D", routine, &ivl2) != SUCCESS)
+	{
+		goto done;
+	}
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl2, JPMCDS_BAD_DAY_MODIFIED, "None", &baseDateShifted) != SUCCESS)
+	{
+		goto done;
+	}
 
-    if (JpmcdsStringToDayCountConv("Act/360", &mmDCC) != SUCCESS)
+	if(verbose){
+    	printf("build_zero_interest_rate_curve2::BaseDateShifted = %d\n", (int)baseDateShifted);
+    }
+
+	if (JpmcdsStringToDayCountConv("Act/360", &swapFloatingDayCountConvention) != SUCCESS)
         goto done;
 
-    if (JpmcdsStringToDayCountConv("30/360", &dcc) != SUCCESS)
+    if (JpmcdsStringToDayCountConv("30/360", &swapFixedDayCountConvention) != SUCCESS)
         goto done;
 
-    if (JpmcdsStringToDateInterval("6M", routine, &ivl) != SUCCESS)
+	if (JpmcdsStringToDateInterval("1Y", routine, &ivlSwapFixedPaymentFrequency) != SUCCESS)
         goto done;
 
-    if (JpmcdsDateIntervalToFreq(&ivl, &freq) != SUCCESS)
+	if (JpmcdsStringToDateInterval("6M", routine, &ivlSwapFloatingPaymentFrequency) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateIntervalToFreq(&ivlSwapFixedPaymentFrequency, &swapFixedFrequency) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateIntervalToFreq(&ivlSwapFloatingPaymentFrequency, &swapFloatingFrequency) != SUCCESS)
         goto done;
 
     n = strlen(types);
@@ -363,15 +383,15 @@ EXPORT TCurve* build_zero_interest_rate_curve(
             goto done;
         }
 
-        if ( i <= 4 ){
-        	if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_MODIFIED, "None", dates+i) != SUCCESS)
+        if ( i <= 6 ){
+        	if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_NONE, "None", dates+i) != SUCCESS)
 			{
 				JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
 				goto done;
 			}
         }
         else{
-			if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_NONE, "None", dates+i) != SUCCESS)
+			if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_MODIFIED, "None", dates+i) != SUCCESS)
 			{
 				JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
 				goto done;
@@ -398,17 +418,18 @@ EXPORT TCurve* JpmcdsBuildIRZeroCurve(
 	if(verbose){
     	printf("calling JpmcdsBuildIRZeroCurve...\n");
     }
+
     zc = JpmcdsBuildIRZeroCurve(
-            baseDate,
+            baseDateShifted,
             types,
             dates,
             rates,
             n,
-            mmDCC,
-            (long) freq,
-            (long) freq,
-            dcc,
-            dcc,
+            swapFloatingDayCountConvention,
+            (long) swapFixedFrequency,
+            (long) swapFloatingFrequency,
+            swapFixedDayCountConvention,
+            swapFloatingDayCountConvention,
             badDayConv,
             holidays);
 done:

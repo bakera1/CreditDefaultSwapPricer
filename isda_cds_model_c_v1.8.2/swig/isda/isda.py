@@ -837,13 +837,13 @@ def average(i_matrix):
     return _isda.average(i_matrix)
 average = _isda.average
 
-def cds_pricing_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
-    return _isda.cds_pricing_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
-cds_pricing_all_in_one = _isda.cds_pricing_all_in_one
-
-def cds_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
-    return _isda.cds_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
+def cds_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
+    return _isda.cds_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
 cds_all_in_one = _isda.cds_all_in_one
+
+def cds_all_in_one_exclude_ir_tenor_dates(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
+    return _isda.cds_all_in_one_exclude_ir_tenor_dates(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
+cds_all_in_one_exclude_ir_tenor_dates = _isda.cds_all_in_one_exclude_ir_tenor_dates
 class Callback(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Callback, name, value)

@@ -5,7 +5,7 @@
 
 std::vector<double> average (std::vector< std::vector<double> > i_matrix);
 
-std::vector< std::vector<double> > cds_pricing_all_in_one (
+std::vector< std::vector<double> > cds_all_in_one (
  std::string trade_date,						/* (I) trade date of cds as DD/MM/YYYY */
  std::string effective_date,					/* (I) effective date of cds as DD/MM/YYYY */
  std::string maturity_date,						/* (I) maturity date of cds as DD/MM/YYYY */
@@ -27,7 +27,7 @@ std::vector< std::vector<double> > cds_pricing_all_in_one (
 );
 
 
-std::vector< std::vector<double> > cds_all_in_one (
+std::vector< std::vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
  std::string trade_date,						/* (I) trade date of cds as DD/MM/YYYY */
  std::string effective_date,					/* (I) effective date of cds as DD/MM/YYYY */
  std::string maturity_date,						/* (I) maturity date of cds as DD/MM/YYYY */

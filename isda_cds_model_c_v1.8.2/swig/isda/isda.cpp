@@ -34,7 +34,7 @@ TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
 ***************************************************************************
 */
 
-vector< vector<double> > cds_pricing_all_in_one (
+vector< vector<double> > cds_all_in_one (
  string trade_date,					/* (I) trade date of cds as DD/MM/YYYY */
  string effective_date,				/* (I) effective date of cds as DD/MM/YYYY */
  string maturity_date,				/* (I) maturity date of cds as DD/MM/YYYY */
@@ -441,7 +441,7 @@ vector< vector<double> > cds_pricing_all_in_one (
 ***************************************************************************
 */
 
-vector< vector<double> > cds_all_in_one (
+vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
  string trade_date,					/* (I) trade date of cds as DD/MM/YYYY */
  string effective_date,				/* (I) effective date of cds as DD/MM/YYYY */
  string maturity_date,				/* (I) maturity date of cds as DD/MM/YYYY */
@@ -624,7 +624,7 @@ vector< vector<double> > cds_all_in_one (
   			, effective_date_jpm
   			, pointer_spreads_cs01
   			, pointer_tenors
-  			, recovey_rate
+  			, recovery_rate
   			, imm_dates.size()
   			, verbose);
 
@@ -819,8 +819,6 @@ vector< vector<double> > cds_all_in_one (
   
 	  for(int r = 0; r < spread_roll_tenors.size(); r++){
 
-		//roll_pvdirty = -calculate_cds_price(pointer_roll_dates_jpm[r]
-		//  , maturity_date_jpm
 		roll_pvclean = -calculate_cds_price(value_date_jpm
 		  , pointer_roll_dates_jpm[r]
 		  , zerocurve
