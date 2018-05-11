@@ -132,7 +132,7 @@ The return response of the cds_all_in_one call has been simplified to return a v
 
 ```python
 
-from isda import cds_all_in_one
+from isda import cds_all_in_one_exclude_ir_tenor_dates
 from imm import imm_date_vector
 
 # EUR interest rate curve
@@ -178,7 +178,7 @@ imm_dates = [f[1] for f in imm_date_helper(start_date=sdate,
                                            tenor_list=tenor_list)]
 
 # call to cds_all_in_one
-base, pvbp, roll, bucket = cds_all_in_one(trade_date,
+base, pvbp, roll, bucket = cds_all_in_one_exclude_ir_tenor_dates(trade_date,
                            effective_date,
                            maturity_date,
                            value_date,
