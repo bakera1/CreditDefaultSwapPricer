@@ -20,7 +20,7 @@
 ############################################################
 
 import datetime
-from isda import cds_all_in_one
+from isda import cds_all_in_one_exclude_ir_tenor_dates
 from imm import imm_date_vector
 
 # EUR interest rate curve
@@ -72,7 +72,7 @@ for day in range(day_count):
     value_date = sdate.strftime('%d/%m/%Y')
     for coupon in coupon_list:
 
-        f = cds_all_in_one(trade_date,
+        f = cds_all_in_one_exclude_ir_tenor_dates(trade_date,
                            effective_date,
                            maturity_date,
                            value_date,
