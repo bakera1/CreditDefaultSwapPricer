@@ -22,7 +22,12 @@ self.assertAlmostEquals(0.0388888888889, ai)
 self.assertAlmostEquals(14014.5916905, cs01 * 1.0e6)
 self.assertAlmostEquals(131.61798715, dv01 * 1.0e6)
 
+
 ```
+
+### Unit test results
+
+The output above details five core tests output from the pricer; these are the net present value with accrued (pv_dirty), the associated clean npv and accrued. The sum of which, clean plus accrued should match the dirty pv or price. Finally two sensitivities are validated, credit spread and interest rate movements.
 
 ## Getting Started on Windows
 
