@@ -391,8 +391,6 @@ vector< vector<double> > cds_all_in_one (
 
 	  for(int r = 0; r < spread_roll_tenors.size(); r++){
 
-		//roll_pvdirty = -calculate_cds_price(pointer_roll_dates_jpm[r]
-		//  , maturity_date_jpm
 		roll_pvclean = -calculate_cds_price(value_date_jpm
 		  , pointer_roll_dates_jpm[r]
 		  , zerocurve
@@ -404,7 +402,7 @@ vector< vector<double> > cds_all_in_one (
 		  , verbose);
 
 		//roll_pvdirty = fabs(roll_pvdirty);
-		scenario_tenors_pvdirty.push_back((roll_pvclean - cleanpv) * notional * credit_risk_direction_scale_factor);
+		scenario_tenors_pvdirty.push_back( roll_pvclean * notional * credit_risk_direction_scale_factor);
 
 	  }
 
@@ -830,7 +828,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
 		  , verbose);
 
 		//roll_pvdirty = fabs(roll_pvdirty);
-		scenario_tenors_pvdirty.push_back((roll_pvclean - cleanpv) * notional * credit_risk_direction_scale_factor);
+		scenario_tenors_pvdirty.push_back(roll_pvclean * notional * credit_risk_direction_scale_factor);
 
 	  }
 	  
