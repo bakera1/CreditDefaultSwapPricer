@@ -8,7 +8,53 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## Par Spread
 
+Additional logic has been added to include a call in the all_in_one_cds method to the JpmCdscdsParSpread() using the swap_spread tenor list as the pillar tenors to compute par spreads. These par spreads are returned in an additional vector. A new unittest test_sell_protection_par_spread has been added to that shows how these can be accessed.
+
+
+```
+	f = cds_all_in_one(self.trade_date,
+                                   self.effective_date,
+                                   self.maturity_date,
+                                   self.value_date,
+                                   self.accrual_start_date,
+                                   self.recovery_rate,
+                                   self.coupon,
+                                   self.notional,
+                                   self.is_buy_protection,
+                                   self.swap_rates,
+                                   self.swap_tenors,
+                                   self.swap_maturity_dates,
+                                   self.credit_spreads,
+                                   self.credit_spread_tenors,
+                                   self.spread_roll_tenors,
+                                   self.imm_dates,
+                                   self.scenario_shifts,
+                                   self.verbose)
+
+        # expand tuple
+        pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
+        pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
+        ps_1m, ps_2m, ps_3M, ps_6M, ps_9M, ps_1Y, ps_2Y, ps_3Y, ps_4Y, ps_5Y, ps_6Y, ps_7Y, ps_8Y, ps_9Y, ps_10Y = f[2]
+        
+        self.assertAlmostEquals(0.00274826727324, ps_1m) 
+        self.assertAlmostEquals(0.00274883148583, ps_2m) 
+        self.assertAlmostEquals(0.00274929868985, ps_3M) 
+        self.assertAlmostEquals(0.00274939866579, ps_6M) 
+        self.assertAlmostEquals(0.00274936653181, ps_9M) 
+        self.assertAlmostEquals(0.00274937754343, ps_1Y)
+        self.assertAlmostEquals(0.00274932944417, ps_2Y) 
+        self.assertAlmostEquals(0.00274932454643, ps_3Y) 
+        self.assertAlmostEquals(0.00274932165857, ps_4Y) 
+        self.assertAlmostEquals(0.0027493199385, ps_5Y)
+        self.assertAlmostEquals(0.00274926894167, ps_6Y) 
+        self.assertAlmostEquals(0.00274932296072, ps_7Y) 
+        self.assertAlmostEquals(0.00274925367015, ps_8Y) 
+        self.assertAlmostEquals(0.00274927195173, ps_9Y) 
+        self.assertAlmostEquals(0.00274933238284, ps_10Y)
+
+```
 ## UnitTest framework
 
 A new TestCdsPricer class has been added to the project which aims to lock in the behaviour of the CDS model relative to the approved MarkIT partners calculator. Since the rules of how to wire together the internal ISDA model api calls can introduce potential error; being able to confirm that the exact behaviour converges with the approved model is essential. 
@@ -21,7 +67,6 @@ self.assertAlmostEquals(-1.19210435546, pv_clean)
 self.assertAlmostEquals(0.0388888888889, ai)
 self.assertAlmostEquals(14014.5916905, cs01 * 1.0e6)
 self.assertAlmostEquals(131.61798715, dv01 * 1.0e6)
-
 
 ```
 
