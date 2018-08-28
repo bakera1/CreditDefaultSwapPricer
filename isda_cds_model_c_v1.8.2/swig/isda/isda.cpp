@@ -85,6 +85,7 @@ vector< vector<double> > cds_all_in_one (
   double *pointer_spreads;
   long int tenors[imm_dates.size()];
   long int *pointer_tenors;
+  double *par_spread_pointer;
 
   char *spread_roll_expiries[spread_roll_tenors.size()];
 
@@ -355,11 +356,6 @@ vector< vector<double> > cds_all_in_one (
     spread_roll_expiries[r] = (char *)spread_roll_tenors[r].c_str();
   }
 
-  //pointer_roll_dates_jpm =  calculate_cds_roll_dates(value_date_jpm,
-  //spread_roll_expiries,
-  //spread_roll_tenors.size(),
-  //verbose);
-
   pointer_roll_dates_jpm =  calculate_cds_roll_dates(maturity_date_jpm,
   	spread_roll_expiries,
   	spread_roll_tenors.size(),
@@ -409,18 +405,37 @@ vector< vector<double> > cds_all_in_one (
 	  // push back entire matrix
 	  allinone_roll.push_back(scenario_tenors_pvdirty);
   }
-
+  
+  // compute the par spread vector
+  par_spread_pointer = calculate_cds_par_spread(value_date_jpm
+		  , maturity_date_jpm
+		  , zerocurve
+		  , spreadcurve
+		  , accrual_start_date_jpm
+		  , recovery_rate
+		  , coupon_rate_in_basis_points
+		  , is_clean_price
+		  , verbose
+		  , expiries
+  	      , swap_tenors.size());
+  
+  vector <double> par_spread_vector;
+  for(int s=0; s < swap_tenors.size(); s++){
+    par_spread_vector.push_back(par_spread_pointer[s]);  
+  }
+  
   int stop_s = clock();
   allinone_base.push_back((stop_s-start_s));
 
   // push back all vectors
   allinone.push_back(allinone_base);
   allinone.push_back(allinone_pvbp);
+  allinone.push_back(par_spread_vector);
 
   for(int r = 0; r < allinone_roll.size(); r++){
 	allinone.push_back(allinone_roll[r]);
   }
-
+  
   // handle free of the curve objects via call to JpmcdsFreeSafe macro
   FREE(spreadcurve);
   FREE(spreadcurve_dv01);

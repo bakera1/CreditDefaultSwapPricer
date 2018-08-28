@@ -14,6 +14,8 @@ class MyTestCase(unittest.TestCase):
         ii) for now the coverage is a simple buy/sell protection flat spread trade
     
     """
+    
+    __name__ = "MyTestCase"
 
     def setUp(self):
 
@@ -53,7 +55,7 @@ class MyTestCase(unittest.TestCase):
 
     def tearDown(self):
         pass
-
+        
     def test_buy_protection(self):
 
         self.sdate = datetime.datetime(2018, 1, 8)
@@ -190,6 +192,91 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEquals(20.2184428985, seven_year_equivalent_notional)
         self.assertAlmostEquals(14.4072625131, ten_year_equivalent_notional)
 
+    def test_sell_protection_par_spread(self):
+
+        self.sdate = datetime.datetime(2018, 1, 8)
+        self.value_date = self.sdate.strftime('%d/%m/%Y')
+        self.verbose = 0
+        self.is_buy_protection = 0
+
+        # build imm_dates TODO: hide this away internally?
+        self.imm_dates = [f[1] for f in imm_date_vector(
+            start_date=self.sdate, tenor_list=self.tenor_list)]
+
+        f = cds_all_in_one(self.trade_date,
+                                   self.effective_date,
+                                   self.maturity_date,
+                                   self.value_date,
+                                   self.accrual_start_date,
+                                   self.recovery_rate,
+                                   self.coupon,
+                                   self.notional,
+                                   self.is_buy_protection,
+                                   self.swap_rates,
+                                   self.swap_tenors,
+                                   self.swap_maturity_dates,
+                                   self.credit_spreads,
+                                   self.credit_spread_tenors,
+                                   self.spread_roll_tenors,
+                                   self.imm_dates,
+                                   self.scenario_shifts,
+                                   self.verbose)
+
+        # expand tuple
+        pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
+        pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
+        ps_1m, ps_2m, ps_3M, ps_6M, ps_9M, ps_1Y, ps_2Y, ps_3Y, ps_4Y, ps_5Y, ps_6Y, ps_7Y, ps_8Y, ps_9Y, ps_10Y = f[2]
+        
+        self.assertAlmostEquals(0.00274826727324, ps_1m) 
+        self.assertAlmostEquals(0.00274883148583, ps_2m) 
+        self.assertAlmostEquals(0.00274929868985, ps_3M) 
+        self.assertAlmostEquals(0.00274939866579, ps_6M) 
+        self.assertAlmostEquals(0.00274936653181, ps_9M) 
+        self.assertAlmostEquals(0.00274937754343, ps_1Y)
+        self.assertAlmostEquals(0.00274932944417, ps_2Y) 
+        self.assertAlmostEquals(0.00274932454643, ps_3Y) 
+        self.assertAlmostEquals(0.00274932165857, ps_4Y) 
+        self.assertAlmostEquals(0.0027493199385, ps_5Y)
+        self.assertAlmostEquals(0.00274926894167, ps_6Y) 
+        self.assertAlmostEquals(0.00274932296072, ps_7Y) 
+        self.assertAlmostEquals(0.00274925367015, ps_8Y) 
+        self.assertAlmostEquals(0.00274927195173, ps_9Y) 
+        self.assertAlmostEquals(0.00274933238284, ps_10Y)
+        
+        # sell protection +ve npv
+        # sell protection +ve npv
+        # sell protection -ve cs01
+        # sell protection -ve dv01
+
+        self.assertAlmostEquals(1.23099324435, pv_dirty)
+        self.assertAlmostEquals(1.19210435546, pv_clean)
+        self.assertAlmostEquals(0.0388888888889, ai)
+        self.assertAlmostEquals(-14014.5916905, cs01*1.0e6)
+        self.assertAlmostEquals(-131.61798715, dv01 * 1.0e6)
+
+        print "cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
+            self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds)
+
+
+        six_month_equivalent_notional = -cs01 / pvbp6m
+        one_year_equivalent_notional = -cs01 / pvbp1y
+        two_year_equivalent_notional = -cs01 / pvbp2y
+        three_year_equivalent_notional = -cs01 / pvbp3y
+        four_year_equivalent_notional = -cs01 / pvbp4y
+        five_year_equivalent_notional = -cs01 / pvbp5y
+        seven_year_equivalent_notional = -cs01 / pvbp7y
+        ten_year_equivalent_notional = -cs01 / pvbp10y
+
+        self.assertAlmostEquals(307.495318062, six_month_equivalent_notional)
+        self.assertAlmostEquals(145.357246478, one_year_equivalent_notional)
+        self.assertAlmostEquals(70.8820514668, two_year_equivalent_notional)
+        self.assertAlmostEquals(46.8826264701, three_year_equivalent_notional)
+        self.assertAlmostEquals(35.1120297467, four_year_equivalent_notional)
+        self.assertAlmostEquals(28.1221873429, five_year_equivalent_notional)
+        self.assertAlmostEquals(20.2184428985, seven_year_equivalent_notional)
+        self.assertAlmostEquals(14.4072625131, ten_year_equivalent_notional)
+
+    @unittest.skip
     def test_roll(self):
         """
         

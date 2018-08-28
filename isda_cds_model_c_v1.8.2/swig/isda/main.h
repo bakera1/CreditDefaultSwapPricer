@@ -10,6 +10,20 @@
 
 #include "cx.h"
 
+extern "C" double* calculate_cds_par_spread(
+ TDate baseDate,				
+ TDate maturityDate,			
+ TCurve *discountCurve, 		
+ TCurve *spreadCurve, 			
+ TDate effectiveDate,			
+ double recoveryRate,			
+ double couponRate,				
+ int isPriceClean,				
+ int verbose,					
+ char **endDateTenors,	        
+ int nbEndDates
+ );
+
 extern "C" TDate* calculate_cds_roll_dates(
  TDate baseDate,
  char **rollExpiries,

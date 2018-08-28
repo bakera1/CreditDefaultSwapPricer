@@ -842,3 +842,192 @@ done:
 	return dates;
 
 }
+
+EXPORT double* calculate_cds_par_spread(
+ TDate baseDate,				/* (I) base start date  */
+ TDate maturityDate,			/* (I) cds scheduled termination date  */
+ TCurve *discountCurve, 		/* (I) interest rate curve */
+ TCurve *spreadCurve, 			/* (I) spread rate curve */
+ TDate effectiveDate,			/* (I) accrual from start date  */
+ double recoveryRate,			/* (I) recover rate in basis points */
+ double couponRate,				/* (I) couple rate */
+ int isPriceClean,				/* (I) clean = 1, dirty = 0 */
+ int verbose,					/* (I) used to toggle info output */
+ char **endDateTenors,	        /* (I) array of char* of tenor strings "1M", "2M", "3M", "6M", "9M", "1Y", "2Y", "3Y", "4Y", "5Y", "6Y", "7Y", "8Y", "9Y" */
+ int nbEndDates                 /* (I) input count of roll expires */
+)
+{
+    static char    *routine = "calculate_cds_par_spread";
+    int            status = 1;
+    int            payAccruedOnDefault = 1;
+    char           **lines = NULL;
+    TDate          *endDates = NULL;
+    TDateInterval  ivl;
+    TDateInterval  ivlCashSettle;
+    TDateInterval  couponInterval;
+    int            i=0;
+    long int       paymentDcc=0;
+    TDate          startDate;
+    TDate          stepInDate;
+    TDate          settleDate;
+    TStubMethod    stubMethod;
+    double         *parSpread = NULL;
+
+    if (JpmcdsErrMsgEnableRecord(20, 128) != SUCCESS) /* ie. 20 lines, each of max length 128 */
+        goto done;
+
+	if (JpmcdsStringToDateInterval("1D", routine, &ivl) != SUCCESS)
+	{
+		goto done;
+	}
+
+	if (JpmcdsStringToDateInterval("3D", routine, &ivlCashSettle) != SUCCESS)
+	{
+		goto done;
+	}
+
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivl, JPMCDS_BAD_DAY_NONE, "None", &stepInDate) != SUCCESS)
+	{
+		goto done;
+	}	
+
+	if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "None", &settleDate) != SUCCESS)
+	{
+		goto done;
+	}
+
+	if(verbose){
+	    printf("\n\ntoday = %d\n", (int)baseDate);
+	    printf("valueDate = %d\n", (int)settleDate);
+		printf("stepInDate = %d\n", (int)stepInDate);
+		printf("startDate = %d\n", (int)effectiveDate);
+		printf("endDate = %d\n", (int)maturityDate);
+		printf("coupon = %f\n", couponRate);
+		printf("isPriceClean = %d\n", isPriceClean);
+		printf("recoveryRate = %f\n", recoveryRate);
+		printf("nbEndDates = %d\n", nbEndDates);
+	}
+	
+    if (JpmcdsStringToDayCountConv("Act/360", &paymentDcc) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDateInterval("Q", routine, &couponInterval) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToStubMethod("F", &stubMethod)  != SUCCESS)
+        goto done;
+
+	if(verbose){
+		printf("calling JpmcdsCdsPrice...\n");
+	}
+	
+	endDates = NEW_ARRAY(TDate, nbEndDates);
+	for (i = 0; i < nbEndDates; i++)
+	{
+		TDateInterval tmp;
+
+		if (JpmcdsStringToDateInterval(endDateTenors[i], routine, &tmp) != SUCCESS)
+		{
+			JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+			goto done;
+		}
+
+		if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_MODIFIED, "None", endDates+i) != SUCCESS)
+		{
+			JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+			goto done;
+		}
+	}
+	
+	parSpread = NEW_ARRAY(double, nbEndDates);
+
+/*
+	EXPORT JpmcdsCdsPrice
+			(TDate             today,
+			 TDate             settleDate,
+			 TDate             stepinDate,
+			 TDate             startDate,
+			 TDate             endDate,
+			 double            couponRate,
+			 TBoolean          payAccOnDefault,
+			 TDateInterval    *dateInterval,
+			 TStubMethod      *stubType,
+			 long              paymentDcc,
+			 long              badDayConv,
+			 char             *calendar,
+			 TCurve           *discCurve,
+			 TCurve           *spreadCurve,
+			 double            recoveryRate,
+			 TBoolean          isPriceClean,
+			 double           *price)
+			 
+	EXPORT int JpmcdsCdsParSpreads(
+        TDate           today,
+        TDate           stepinDate,
+        TDate           startDate,
+        long            nbEndDates,
+        TDate          *endDates,
+        TBoolean        payAccOnDefault,
+        TDateInterval  *couponInterval,
+        TStubMethod    *stubType,
+        long            paymentDcc,
+        long            badDayConv,
+        char           *calendar,
+        TCurve         *discCurve,
+        TCurve         *spreadCurve,
+        double          recoveryRate,
+        double         *parSpread)
+*/
+		if (JpmcdsCdsParSpreads
+			(baseDate,
+			 stepInDate,
+			 effectiveDate,
+			 nbEndDates,
+			 endDates,
+			 payAccruedOnDefault,
+			 &couponInterval,
+			 &stubMethod,
+			 paymentDcc,
+			 'F',
+			 "None",
+			 discountCurve,
+			 spreadCurve,
+			 recoveryRate,
+			 parSpread) != SUCCESS){
+
+			 goto done;
+
+			 }
+			 
+	if(verbose){
+	    for (i = 0; i < nbEndDates; i++)
+	    {
+		    printf("calling JpmcdsCdsParSpreads = %.15f\n", parSpread[i]);
+		}
+	}
+
+	status = 0;
+
+done:
+
+	if (status != 0){
+		printf("\n");
+		printf("Error log contains:\n");
+		printf("------------------:\n");
+
+		lines = JpmcdsErrGetMsgRecord();
+		if (lines == NULL)
+			printf("(no log contents)\n");
+		else
+		{
+			for(i = 0; lines[i] != NULL; i++)
+			{
+				if (strcmp(lines[i],"") != 0)
+					printf("%s\n", lines[i]);
+			}
+		}
+    }
+	return parSpread;
+
+}
+
