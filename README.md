@@ -8,6 +8,10 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## Python3 Migration
+
+The codebase and build scripts rely on Python2.7; we plan to migrate to Python3 and include a setup.py to make the install more consistent and play nicely with pip.
+
 ## Par Spread Vector from flat Credit Spread
 
 Additional code has been added the all_in_one_cds method to invoke the JpmCdscdsParSpread() to compute par spreads. The internal call re-uses the swap_spread tenor list as the par spread tenors and will compute a par spread for each tenor. The vector of par spreads is then returned in an additional vector across the results interface and can easily be accessed in Python as shown below. 
