@@ -13,48 +13,53 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 Additional code has been added the all_in_one_cds method to invoke the JpmCdscdsParSpread() to compute par spreads. The internal call re-uses the swap_spread tenor list as the par spread tenors and will compute a par spread for each tenor. The vector of par spreads is then returned in an additional vector across the results interface and can easily be accessed in Python as shown below. 
 
 ```
-f = cds_all_in_one(self.trade_date,
-						   self.effective_date,
-						   self.maturity_date,
-						   self.value_date,
-						   self.accrual_start_date,
-						   self.recovery_rate,
-						   self.coupon,
-						   self.notional,
-						   self.is_buy_protection,
-						   self.swap_rates,
-						   self.swap_tenors,
-						   self.swap_maturity_dates,
-						   self.credit_spreads,
-						   self.credit_spread_tenors,
-						   self.spread_roll_tenors,
-						   self.imm_dates,
-						   self.scenario_shifts,
-						   self.verbose)
+credit_spreads = [0.00137467867844589]*8
+swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', 
+            '4Y', '5Y', '6Y', '7Y', '8Y', '9Y, 
+            '10Y', '15Y', '20Y', '30Y']
+
+f = cds_all_in_one(trade_date,
+	effective_date,
+	maturity_date,
+	value_date,
+	accrual_start_date,
+	recovery_rate,
+	coupon,
+	notional,
+	is_buy_protection,
+	swap_rates,
+	swap_tenors,
+	swap_maturity_dates,
+	credit_spreads,
+	credit_spread_tenors,
+	spread_roll_tenors,
+	imm_dates,
+	scenario_shifts,
+	verbose)
 
 # expand tuple
 pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
 pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
 ps_1m, ps_2m, ps_3M, ps_6M, ps_9M, ps_1Y, ps_2Y, ps_3Y, ps_4Y, ps_5Y, ps_6Y, ps_7Y, ps_8Y, ps_9Y, ps_10Y = f[2]
 
-self.assertAlmostEquals(0.00274826727324, ps_1m) 
-self.assertAlmostEquals(0.00274883148583, ps_2m) 
-self.assertAlmostEquals(0.00274929868985, ps_3M) 
-self.assertAlmostEquals(0.00274939866579, ps_6M) 
-self.assertAlmostEquals(0.00274936653181, ps_9M) 
-self.assertAlmostEquals(0.00274937754343, ps_1Y)
-self.assertAlmostEquals(0.00274932944417, ps_2Y) 
-self.assertAlmostEquals(0.00274932454643, ps_3Y) 
-self.assertAlmostEquals(0.00274932165857, ps_4Y) 
-self.assertAlmostEquals(0.0027493199385, ps_5Y)
-self.assertAlmostEquals(0.00274926894167, ps_6Y) 
-self.assertAlmostEquals(0.00274932296072, ps_7Y) 
-self.assertAlmostEquals(0.00274925367015, ps_8Y) 
-self.assertAlmostEquals(0.00274927195173, ps_9Y) 
-self.assertAlmostEquals(0.00274933238284, ps_10Y)
+assertAlmostEquals(0.00274826727324, ps_1m) 
+assertAlmostEquals(0.00274883148583, ps_2m) 
+assertAlmostEquals(0.00274929868985, ps_3M) 
+assertAlmostEquals(0.00274939866579, ps_6M) 
+assertAlmostEquals(0.00274936653181, ps_9M) 
+assertAlmostEquals(0.00274937754343, ps_1Y)
+assertAlmostEquals(0.00274932944417, ps_2Y) 
+assertAlmostEquals(0.00274932454643, ps_3Y) 
+assertAlmostEquals(0.00274932165857, ps_4Y) 
+assertAlmostEquals(0.0027493199385, ps_5Y)
+assertAlmostEquals(0.00274926894167, ps_6Y) 
+assertAlmostEquals(0.00274932296072, ps_7Y) 
+assertAlmostEquals(0.00274925367015, ps_8Y) 
+assertAlmostEquals(0.00274927195173, ps_9Y) 
+assertAlmostEquals(0.00274933238284, ps_10Y)
 
 ```
-An additional unittest test_sell_protection_par_spread has been added that shows how these can be accessed in the flat spread case.
+An additional unittest test_sell_protection_par_spread has been added that shows how these can be accessed in the flat spread case. Above illustrates the simple case where we price an index from a flat spread 13.7 bps and compute a similarly flat par spread at each tenor.
 
 ## UnitTest framework
 
