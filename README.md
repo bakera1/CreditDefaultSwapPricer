@@ -10,7 +10,7 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 
 ## Python3 Migration
 
-The codebase and build scripts rely on Python2.7; we plan to migrate to Python3 and include a setup.py to make the install more consistent and play nicely with pip.
+The codebase and build scripts rely on Python2.7; we plan to migrate to Python3 and include a setup.py to make the install more consistent and play nicely with pip. The migration path was presumed to be easier with a switch to a proper setup.py. This also makes the migration to use pip potentially easier and more consistent with the general Python ecosystem.
 
 ## Par Spread Vector from flat Credit Spread
 
