@@ -1,4 +1,5 @@
 # Credit Default Swap Pricer
+
 Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
 
  + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
@@ -7,6 +8,22 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
  + PVBP sensitivities to support credit risk hedging analysis.
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
+
+## 1.0.3 Release Notes
+
+Number of changes have gone into the 1.0.3 release to promote stability and performance. The main changes are listed as below.
+
+1. Additional cds_index_all_in_one which can price a whole Credit index in a single call to the library. This avoid excessive calls to the single name pricer. The new call can accept an array of recovery rates and an array of array of credit spread curves. All other inputs are assumed constant across the index credits. This call can be used to implement a more efficient skew solver.
+
+2. Included a new feature to handle the case when spread curve bootstrapping fails. The recovery rate is stepped down one basis point at a time until a bootstrappable curve is achievable this is often a problem in a high stress scenario when the recovery rate and perturbated spread curves are not consistently known.
+
+3. Resolved number of compile errors related to the comparison of unsigned and signed integers.
+
+4. The isda.i swig interface has changed and required separate compilation using the swig command line utility.
+
+```
+swig -c++ -python isda.i
+```
 
 ## Python3 Migration
 

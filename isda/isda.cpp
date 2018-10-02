@@ -28,6 +28,200 @@ TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
   sscanf(s.c_str(), "%2d/%2d/%4d", &day, &month, &year);
   return JpmcdsDate(year, month, day);
 }
+
+
+vector< vector<double> > cds_index_all_in_one (
+ string trade_date,					/* (I) trade date of cds as DD/MM/YYYY */
+ string effective_date,				/* (I) effective date of cds as DD/MM/YYYY */
+ string maturity_date,				/* (I) maturity date of cds as DD/MM/YYYY */
+ string value_date,					/* (I) date to value the cds DD/MM/YYYY */
+ string accrual_start_date,			/* (I) accrual start date of cds as DD/MM/YYYY */
+ vector<double> recovery_rate,		/* (I) recover rate of the curve in basis points */
+ double coupon_rate,				/* (I) CouponRate (e.g. 0.05 = 5% = 500bp) */
+ double notional,					/* (I) Notional MM */
+ int is_buy_protection,				/* (I) direction of credit risk */
+ vector<double> swap_rates, 		/* (I) swap rates */
+ vector<string> swap_tenors,		/* (I) swap tenors "1M", "2M" */
+ vector<string> swap_maturities,	/* (I) swap maturity dates */
+ vector< vector<double> > spread_rates,		/* (I) spread spreads */
+ vector<string> spread_tenors,		/* (I) spread tenors "6M", "1Y" */
+ vector<string> spread_roll_tenors, /* (I) spread roll tenors */
+ vector<string> imm_dates,			/* (I) imm dates */
+ vector<double> scenario_tenors,	/* (I) spread tenors -100, -90, -80, -70 ... */
+ int verbose						/* (I) output message text */
+)
+{
+  
+  int start_s = clock();
+
+  // used in risk calculations
+  double single_basis_point = 0.0001;
+
+  TDate trade_date_jpm, effective_date_jpm, maturity_date_jpm,
+  accrual_start_date_jpm, value_date_jpm;
+
+ // empty curve pointers
+  TCurve *zerocurve = NULL;
+  TCurve *spreadcurve = NULL;
+
+  // discount
+  double rates[swap_rates.size()];
+  char *expiries[swap_rates.size()];
+  long int maturity[swap_rates.size()];
+
+  // credit spread
+  double spreads[spread_tenors.size()];
+  double *pointer_spreads;
+  long int tenors[imm_dates.size()];
+  long int *pointer_tenors;
+
+  // numeric values
+  double coupon_rate_in_basis_points = coupon_rate/10000.0;
+  double dirtypv;
+  double cleanpv;
+  double ai;
+  
+  double dirtypv_index;
+  double cleanpv_index;
+  double ai_index;
+
+  // outer return vector
+  vector < vector<double> > allinone;
+  // inner return vector
+  vector <double> allinone_base;
+  
+  // index level measures
+  vector <double> allinone_index;
+ 
+  // assumes sell protection default
+  double credit_risk_direction_scale_factor = 1;
+
+  /////////////////////////////
+  // parse char* to jpm dates
+  /////////////////////////////
+
+  trade_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(trade_date);
+  effective_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(effective_date);
+  maturity_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(maturity_date);
+  accrual_start_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(accrual_start_date);
+  value_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(value_date);
+
+  /////////////////////////////
+  // bootstrap interest rate curve
+  /////////////////////////////
+
+  for(int r = 0; r < static_cast<int>(swap_rates.size()); r++){
+    rates[r] = swap_rates[r];
+  }
+
+  for(int r = 0; r < static_cast<int>(swap_tenors.size()); r++){
+    expiries[r] = (char *)swap_tenors[r].c_str();
+  }
+
+  for(int r = 0; r < static_cast<int>(swap_maturities.size()); r++){
+    maturity[r] = parse_string_ddmmyyyy_to_jpmcdsdate(swap_maturities[r].c_str());
+  }
+
+  // bootstrap discount curve
+  zerocurve = build_zero_interest_rate_curve2(value_date_jpm
+		  , rates
+		  , expiries
+		  , maturity
+		  , verbose);
+
+  /////////////////////////////
+  // bootstrap spread curve
+  /////////////////////////////
+
+  // parse imm dates into jpm string format
+  for(int r = 0; r < static_cast<int>(imm_dates.size()); r++){
+    tenors[r] = parse_string_ddmmyyyy_to_jpmcdsdate(imm_dates[r]);
+  }
+
+  int is_dirty_price = 0;
+  int is_clean_price = 1;
+
+  // need a pointer to array of long int
+  pointer_tenors = tenors;
+
+  for(int r = 0; r < static_cast<int>(spread_rates.size()); r++){
+  
+      // build array of spreads
+
+      for(int s = 0; s < static_cast<int>(spread_rates[r].size()); s++){
+        spreads[s] = spread_rates[r][s];
+      }
+      
+      // similarly need a double *
+      pointer_spreads = spreads;
+
+      // build spread curve
+      spreadcurve = build_credit_spread_par_curve(
+      			value_date_jpm
+      			, zerocurve
+      			, effective_date_jpm
+      			, pointer_spreads
+      			, pointer_tenors
+      			, recovery_rate[r]
+      			, imm_dates.size()
+      			, verbose);
+
+      // calculate price cds
+      dirtypv = -calculate_cds_price(value_date_jpm
+      , maturity_date_jpm
+      , zerocurve
+      , spreadcurve
+      , accrual_start_date_jpm
+      , recovery_rate[r]
+      , coupon_rate_in_basis_points
+      , is_dirty_price
+      , verbose);
+
+      // calculate price cds
+      cleanpv = -calculate_cds_price(value_date_jpm
+      , maturity_date_jpm
+      , zerocurve
+      , spreadcurve
+      , accrual_start_date_jpm
+      , recovery_rate[r]
+      , coupon_rate_in_basis_points
+      , is_clean_price
+      , verbose);
+
+      // compute accured interest
+      ai = dirtypv - cleanpv;
+      
+      // push back credit level result
+      allinone_base.push_back(dirtypv * notional * credit_risk_direction_scale_factor);
+      allinone_base.push_back(cleanpv * notional * credit_risk_direction_scale_factor);
+      allinone_base.push_back(ai * notional );
+      
+      // index level
+      dirtypv_index += dirtypv * notional * credit_risk_direction_scale_factor;
+      cleanpv_index += cleanpv * notional * credit_risk_direction_scale_factor;
+      ai_index += ai * notional * credit_risk_direction_scale_factor;
+   
+  }
+  
+  int stop_s = clock();
+  
+  allinone_index.push_back(dirtypv_index);
+  allinone_index.push_back(cleanpv_index);
+  allinone_index.push_back(ai_index);
+  allinone_index.push_back((stop_s-start_s));
+
+  // push back all vectors
+  allinone.push_back(allinone_base);
+  allinone.push_back(allinone_index);
+  
+  // handle free of the curve objects via call to JpmcdsFreeSafe macro
+  FREE(spreadcurve);
+  FREE(zerocurve);
+
+  return allinone;
+}
+
+
 /*
 ***************************************************************************
 ** compute basic pricing for a what if cds position.
@@ -76,7 +270,7 @@ vector< vector<double> > cds_all_in_one (
   double rates_dv01[swap_rates.size()];
   char *expiries[swap_rates.size()];
   long int maturity[swap_rates.size()];
-  long int *pointer_maturity;
+  //long int *pointer_maturity;
 
   // credit spread
   double spreads[spread_rates.size()];
@@ -86,7 +280,6 @@ vector< vector<double> > cds_all_in_one (
   long int tenors[imm_dates.size()];
   long int *pointer_tenors;
   double *par_spread_pointer;
-
   char *spread_roll_expiries[spread_roll_tenors.size()];
 
   // numeric values
@@ -133,23 +326,23 @@ vector< vector<double> > cds_all_in_one (
   // bootstrap interest rate curve
   /////////////////////////////
 
-  for(int r = 0; r < swap_rates.size(); r++){
+  for(int r = 0; r < static_cast<int>(swap_rates.size()); r++){
     rates[r] = swap_rates[r];
     rates_dv01[r] = swap_rates[r] + single_basis_point;
   }
 
-  for(int r = 0; r < swap_tenors.size(); r++){
+  for(int r = 0; r < static_cast<int>(swap_tenors.size()); r++){
     expiries[r] = (char *)swap_tenors[r].c_str();
   }
 
-  for(int r = 0; r < swap_maturities.size(); r++){
+  for(int r = 0; r < static_cast<int>(swap_maturities.size()); r++){
     maturity[r] = parse_string_ddmmyyyy_to_jpmcdsdate(swap_maturities[r].c_str());
     if (verbose){
     	std::cout << r << " swap maturity " << maturity[r] << std::endl;
     }
   }
 
-  pointer_maturity = maturity;
+  //pointer_maturity = maturity;
 
   // bootstrap discount curve
   zerocurve = build_zero_interest_rate_curve2(value_date_jpm
@@ -169,7 +362,7 @@ vector< vector<double> > cds_all_in_one (
   /////////////////////////////
 
   // parse imm dates into jpm string format
-  for(int r = 0; r < imm_dates.size(); r++){
+  for(int r = 0; r < static_cast<int>(imm_dates.size()); r++){
     tenors[r] = parse_string_ddmmyyyy_to_jpmcdsdate(imm_dates[r]);
     if (verbose){
     	std::cout << r << " imm tenor " << tenors[r] << std::endl;
@@ -179,7 +372,7 @@ vector< vector<double> > cds_all_in_one (
   // need a pointer to array of long int
   pointer_tenors = tenors;
 
-  for(int r = 0; r < spread_rates.size(); r++){
+  for(int r = 0; r < static_cast<int>(spread_rates.size()); r++){
     spreads[r] = spread_rates[r];
     spreads_cs01[r] = spread_rates[r] + single_basis_point;
     if (verbose){
@@ -201,7 +394,7 @@ vector< vector<double> > cds_all_in_one (
   			, recovery_rate
   			, imm_dates.size()
   			, verbose);
-
+  			
   if (spreadcurve == NULL){
   	std::cout << spreadcurve << std::endl;
   	std::cout << "bad spreadcurve" << std::endl;
@@ -325,7 +518,7 @@ vector< vector<double> > cds_all_in_one (
 
 // compute PVBP
 
-  for(int r = 0; r < imm_dates.size(); r++){
+  for(int r = 0; r < static_cast<int>(imm_dates.size()); r++){
      allinone_pvbp.push_back(
 		  (calculate_cds_price(value_date_jpm
 		  , tenors[r]
@@ -352,7 +545,7 @@ vector< vector<double> > cds_all_in_one (
   // roll down pv
   // move this into a C library function?
 
-  for(int r = 0; r < spread_roll_tenors.size(); r++){
+  for(int r = 0; r < static_cast<int>(spread_roll_tenors.size()); r++){
     spread_roll_expiries[r] = (char *)spread_roll_tenors[r].c_str();
   }
 
@@ -361,12 +554,12 @@ vector< vector<double> > cds_all_in_one (
   	spread_roll_tenors.size(),
   	verbose);
 
-  for(int s=0; s < scenario_tenors.size(); s++){
+  for(int s=0; s < static_cast<int>(scenario_tenors.size()); s++){
 
 	  vector <double> scenario_tenors_pvdirty;
 
 	  // build a scenario spread curve
-	  for(int r = 0; r < spread_rates.size(); r++){
+	  for(int r = 0; r < static_cast<int>(spread_rates.size()); r++){
 	    // spread_cs01 = spread + spread * -0.1
 		spreads_cs01[r] = spread_rates[r] + spread_rates[r]  * scenario_tenors[s]/100;
 	  }
@@ -385,7 +578,7 @@ vector< vector<double> > cds_all_in_one (
 				, imm_dates.size()
 				, verbose);
 
-	  for(int r = 0; r < spread_roll_tenors.size(); r++){
+	  for(int r = 0; r < static_cast<int>(spread_roll_tenors.size()); r++){
 
 		roll_pvclean = -calculate_cds_price(value_date_jpm
 		  , pointer_roll_dates_jpm[r]
@@ -420,7 +613,7 @@ vector< vector<double> > cds_all_in_one (
   	      , swap_tenors.size());
   
   vector <double> par_spread_vector;
-  for(int s=0; s < swap_tenors.size(); s++){
+  for(int s=0; s < static_cast<int>(swap_tenors.size()); s++){
     par_spread_vector.push_back(par_spread_pointer[s]);  
   }
   
@@ -432,7 +625,7 @@ vector< vector<double> > cds_all_in_one (
   allinone.push_back(allinone_pvbp);
   allinone.push_back(par_spread_vector);
 
-  for(int r = 0; r < allinone_roll.size(); r++){
+  for(int r = 0; r < static_cast<int>(allinone_roll.size()); r++){
 	allinone.push_back(allinone_roll[r]);
   }
   
@@ -443,7 +636,6 @@ vector< vector<double> > cds_all_in_one (
   FREE(zerocurve);
   FREE(zerocurve_dv01);
   FREE(pointer_roll_dates_jpm);
-
 
   return allinone;
 }
@@ -554,12 +746,12 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
   // bootstrap interest rate curve
   /////////////////////////////
 
-  for(int r = 0; r < swap_rates.size(); r++){
+  for(int r = 0; r < static_cast<int>(swap_rates.size()); r++){
     rates[r] = swap_rates[r];
     rates_dv01[r] = swap_rates[r] + single_basis_point;
   }
 
-  for(int r = 0; r < swap_tenors.size(); r++){
+  for(int r = 0; r < static_cast<int>(swap_tenors.size()); r++){
     expiries[r] = (char *)swap_tenors[r].c_str();
   }
 
@@ -579,7 +771,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
   /////////////////////////////
 
   // parse imm dates into jpm string format
-  for(int r = 0; r < imm_dates.size(); r++){
+  for(int r = 0; r < static_cast<int>(imm_dates.size()); r++){
     tenors[r] = parse_string_ddmmyyyy_to_jpmcdsdate(imm_dates[r]);
     if (verbose){
     	std::cout << r << " imm tenor " << tenors[r] << std::endl;
@@ -589,7 +781,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
   // need a pointer to array of long int
   pointer_tenors = tenors;
 
-  for(int r = 0; r < spread_rates.size(); r++){
+  for(int r = 0; r < static_cast<int>(spread_rates.size()); r++){
     spreads[r] = spread_rates[r];
     spreads_cs01[r] = spread_rates[r] + single_basis_point;
     if (verbose){
@@ -664,6 +856,8 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
   			, recovery_rate
   			, imm_dates.size()
   			, verbose);
+  			
+  //std::cout << shifted_recover_rate << std::endl;
 
   if (spreadcurve_dv01 == NULL){
   	std::cout << spreadcurve_dv01 << std::endl;
@@ -765,7 +959,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
 
   // compute PVBP
 
-  for(int r = 0; r < imm_dates.size(); r++){
+  for(int r = 0; r < static_cast<int>(imm_dates.size()); r++){
      allinone_pvbp.push_back(
 		  (calculate_cds_price(value_date_jpm
 		  , tenors[r]
@@ -792,7 +986,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
   // roll down pv
   // move this into a C library function?
 
-  for(int r = 0; r < spread_roll_tenors.size(); r++){
+  for(int r = 0; r < static_cast<int>(spread_roll_tenors.size()); r++){
     spread_roll_expiries[r] = (char *)spread_roll_tenors[r].c_str();
   }
 
@@ -806,12 +1000,12 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
   	spread_roll_tenors.size(),
   	verbose);
 
-  for(int s=0; s < scenario_tenors.size(); s++){  
+  for(int s=0; s < static_cast<int>(scenario_tenors.size()); s++){  
   	  
 	  vector <double> scenario_tenors_pvdirty;
 	  
 	  // build a scenario spread curve	  
-	  for(int r = 0; r < spread_rates.size(); r++){		
+	  for(int r = 0; r < static_cast<int>(spread_rates.size()); r++){		
 	    // spread_cs01 = spead + spread * -0.1
 		spreads_cs01[r] = spread_rates[r] + spread_rates[r]  * scenario_tenors[s]/100;		
 	  }
@@ -830,7 +1024,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
 				, imm_dates.size()
 				, verbose);	 
   
-	  for(int r = 0; r < spread_roll_tenors.size(); r++){
+	  for(int r = 0; r < static_cast<int>(spread_roll_tenors.size()); r++){
 
 		roll_pvclean = -calculate_cds_price(value_date_jpm
 		  , pointer_roll_dates_jpm[r]
@@ -853,12 +1047,12 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates (
 
   int stop_s = clock();
   allinone_base.push_back((stop_s-start_s));
-
+  
   // push back all vectors
   allinone.push_back(allinone_base);
   allinone.push_back(allinone_pvbp);
   
-  for(int r = 0; r < allinone_roll.size(); r++){		
+  for(int r = 0; r < static_cast<int>(allinone_roll.size()); r++){		
 	allinone.push_back(allinone_roll[r]);
   }
 
@@ -877,10 +1071,10 @@ vector<double> average (vector< vector<double> > i_matrix) {
 
   // compute average of each row..
   vector <double> averages; 
-  for (int r = 0; r < i_matrix.size(); r++){
+  for (int r = 0; r < static_cast<int>(i_matrix.size()); r++){
     double rsum = 0.0;
     double ncols= i_matrix[r].size();
-    for (int c = 0; c< i_matrix[r].size(); c++){
+    for (int c = 0; c< static_cast<int>(i_matrix[r].size()); c++){
       rsum += i_matrix[r][c];
     }
     averages.push_back(rsum/ncols);    

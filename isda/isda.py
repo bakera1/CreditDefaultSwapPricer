@@ -47,7 +47,10 @@ def _swig_setattr_nondynamic(self, class_type, name, value, static=1):
     if method:
         return method(self, value)
     if (not static):
-        object.__setattr__(self, name, value)
+        if _newclass:
+            object.__setattr__(self, name, value)
+        else:
+            self.__dict__[name] = value
     else:
         raise AttributeError("You cannot add attributes to %s" % self)
 
@@ -87,20 +90,11 @@ except AttributeError:
     _newclass = 0
 
 
-
-def _swig_setattr_nondynamic_method(set):
-    def set_attr(self, name, value):
-        if (name == "thisown"):
-            return self.this.own(value)
-        if hasattr(self, name) or (name == "this"):
-            set(self, name, value)
-        else:
-            raise AttributeError("You cannot add attributes to %s" % self)
-    return set_attr
-
-
-class SwigPyIterator(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class SwigPyIterator(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, SwigPyIterator, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, SwigPyIterator, name)
 
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
@@ -160,8 +154,11 @@ class SwigPyIterator(object):
 SwigPyIterator_swigregister = _isda.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
 
-class VecDouble(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class VecDouble(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VecDouble, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VecDouble, name)
     __repr__ = _swig_repr
 
     def iterator(self):
@@ -270,8 +267,11 @@ class VecDouble(object):
 VecDouble_swigregister = _isda.VecDouble_swigregister
 VecDouble_swigregister(VecDouble)
 
-class VecVecdouble(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class VecVecdouble(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VecVecdouble, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VecVecdouble, name)
     __repr__ = _swig_repr
 
     def iterator(self):
@@ -380,8 +380,11 @@ class VecVecdouble(object):
 VecVecdouble_swigregister = _isda.VecVecdouble_swigregister
 VecVecdouble_swigregister(VecVecdouble)
 
-class VecInteger(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class VecInteger(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VecInteger, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VecInteger, name)
     __repr__ = _swig_repr
 
     def iterator(self):
@@ -490,8 +493,11 @@ class VecInteger(object):
 VecInteger_swigregister = _isda.VecInteger_swigregister
 VecInteger_swigregister(VecInteger)
 
-class VecVecInteger(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class VecVecInteger(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VecVecInteger, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VecVecInteger, name)
     __repr__ = _swig_repr
 
     def iterator(self):
@@ -600,8 +606,11 @@ class VecVecInteger(object):
 VecVecInteger_swigregister = _isda.VecVecInteger_swigregister
 VecVecInteger_swigregister(VecVecInteger)
 
-class VecString(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class VecString(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VecString, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VecString, name)
     __repr__ = _swig_repr
 
     def iterator(self):
@@ -710,8 +719,11 @@ class VecString(object):
 VecString_swigregister = _isda.VecString_swigregister
 VecString_swigregister(VecString)
 
-class VecVecString(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class VecVecString(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VecVecString, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VecVecString, name)
     __repr__ = _swig_repr
 
     def iterator(self):
@@ -825,6 +837,10 @@ def average(i_matrix):
     return _isda.average(i_matrix)
 average = _isda.average
 
+def cds_index_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
+    return _isda.cds_index_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
+cds_index_all_in_one = _isda.cds_index_all_in_one
+
 def cds_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
     return _isda.cds_all_in_one(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, swap_maturities, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
 cds_all_in_one = _isda.cds_all_in_one
@@ -832,8 +848,11 @@ cds_all_in_one = _isda.cds_all_in_one
 def cds_all_in_one_exclude_ir_tenor_dates(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose):
     return _isda.cds_all_in_one_exclude_ir_tenor_dates(trade_date, effective_date, maturity_date, value_date, accrual_start_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, spread_rates, spread_tenors, spread_roll_tenors, imm_dates, scenario_tenors, verbose)
 cds_all_in_one_exclude_ir_tenor_dates = _isda.cds_all_in_one_exclude_ir_tenor_dates
-class Callback(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+class Callback(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Callback, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Callback, name)
     __repr__ = _swig_repr
 
     def run(self, n):
@@ -870,6 +889,7 @@ my_mod = _isda.my_mod
 def compute_isda_upfront(coupon):
     return _isda.compute_isda_upfront(coupon)
 compute_isda_upfront = _isda.compute_isda_upfront
+# This file is compatible with both classic and new-style classes.
 
 cvar = _isda.cvar
 

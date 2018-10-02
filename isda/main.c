@@ -128,26 +128,35 @@ EXPORT TCurve* build_credit_spread_par_curve(
 	if(verbose){
 		printf("calling JpmcdsBuildCleanSpreadCurve...\n");
 	}
-
-	sc = JpmcdsCleanSpreadCurve
-		(baseDate,
-		 discountCurve,
-		 tradeDate,
-		 stepInDate,
-		 cashSettleDate,
-		 nbDate,
-		 dates,
-		 rates,
-		 includes,
-		 recoveryRate,
-		 payAccruedOnDefault,
-		 &couponInterval,
-		 mmDCC,
-		 &stubMethod,
-		 'F',
-		 "None"
-		);
-
+	
+	do {
+	
+	    sc = JpmcdsCleanSpreadCurve
+		    (baseDate,
+		     discountCurve,
+		     tradeDate,
+		     stepInDate,
+		     cashSettleDate,
+		     nbDate,
+		     dates,
+		     rates,
+		     includes,
+		     recoveryRate,
+		     payAccruedOnDefault,
+		     &couponInterval,
+		     mmDCC,
+		     &stubMethod,
+		     'F',
+		     "None"
+		    );
+		    
+		  recoveryRate -= 0.01;
+		  if(verbose){  
+		    printf("shiftedRecoveryRate = %f\n", recoveryRate);
+		  }
+            
+	}while(sc == NULL);
+	
 	status = 0;
 
 done:
