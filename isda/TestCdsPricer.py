@@ -100,8 +100,8 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEquals(14014.5916905, cs01 * 1.0e6)
         self.assertAlmostEquals(131.61798715, dv01 * 1.0e6)
 
-        print "cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(self.value_date,
-                        pv_dirty, pv_clean, ai,cs01*1e6, dv01*1e6, duration_in_milliseconds)
+        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(self.value_date,
+                        pv_dirty, pv_clean, ai,cs01*1e6, dv01*1e6, duration_in_milliseconds))
 
         six_month_equivalent_notional = -cs01 / pvbp6m
         one_year_equivalent_notional = -cs01 / pvbp1y
@@ -170,8 +170,8 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEquals(-14014.5916905, cs01*1.0e6)
         self.assertAlmostEquals(-131.61798715, dv01 * 1.0e6)
 
-        print "cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
-            self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds)
+        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
+            self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds))
 
 
         six_month_equivalent_notional = -cs01 / pvbp6m
@@ -254,8 +254,8 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEquals(-14014.5916905, cs01*1.0e6)
         self.assertAlmostEquals(-131.61798715, dv01 * 1.0e6)
 
-        print "cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
-            self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds)
+        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
+            self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds))
 
 
         six_month_equivalent_notional = -cs01 / pvbp6m
@@ -314,7 +314,7 @@ class MyTestCase(unittest.TestCase):
                                    self.verbose)
 
         for scenario, tt in enumerate(f[2:]):
-            print self.scenario_shifts[scenario], tt
+            print(self.scenario_shifts[scenario], tt)
 
 if __name__ == '__main__':
 	unittest.main()

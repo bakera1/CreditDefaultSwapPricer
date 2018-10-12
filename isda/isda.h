@@ -1,6 +1,12 @@
 #ifndef _code
 #define _code
 
+#ifdef MATHLIBRARY_EXPORTS  
+#define MATHLIBRARY_API __declspec(dllexport)   
+#else  
+#define MATHLIBRARY_API __declspec(dllimport)   
+#endif  
+
 #include <vector>
 
 std::vector<double> average (std::vector< std::vector<double> > i_matrix);

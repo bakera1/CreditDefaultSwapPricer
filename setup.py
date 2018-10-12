@@ -4,8 +4,8 @@ from distutils.core import setup, Extension
 #https://gist.github.com/auth/github?return_to=https%3A%2F%2Fgist.github.com%2Ftaochenshh%2Fb53ce0f54fea5b2204908100d0e566fa
 
 module1 = Extension('_isda',
-                    include_dirs = ['/usr/include/python2.7'],
-                    library_dirs = ['/usr/lib/python2.7'],
+                    include_dirs = ['C:\\Users\\bakera\\AppData\\Local\\Programs\\Python\\Python37\\include'],
+                    library_dirs = ['C:\\Users\\bakera\\AppData\\Local\\Programs\\Python\\Python37\\libs'],
                     sources = ['isda/example.c', 
                     'isda/main.c',
                     'isda/busday.c',
@@ -62,10 +62,10 @@ setup (name = 'isda',
        author='Alexander Baker',
        author_email='baker.alexander@gmail.com',
        description = 'This is a demo package',
-       ext_package='isda',
-       py_modules=['isda'],
+       #ext_package='isda',
+       #py_modules=['isda'],
        packages=[
             'isda'
             ],
-       keywords="hatch analytics solver",
+       keywords="credit analytics",
        ext_modules = [module1])

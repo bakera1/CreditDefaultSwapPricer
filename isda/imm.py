@@ -198,7 +198,7 @@ class MyTestCase(unittest.TestCase):
                             format=self.__format__)
 
             day_count += 1
-            print start_date.strftime(self.__format__), result
+            print(start_date.strftime(self.__format__), result)
 
             # roll one more cob date forward
             start_date = start_date + self.one_day

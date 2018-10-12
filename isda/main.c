@@ -259,8 +259,17 @@ EXPORT TCurve* build_zero_interest_rate_curve2(
 		printf("build_zero_interest_rate_curve2::n = %d\n", n);
 	}
     dates = NEW_ARRAY(TDate, n);
+
+	if (verbose) {
+		printf("build_zero_interest_rate_curve2::n = %d\n", n);
+	}
+
     for (i = 0; i < n; i++)
     {
+
+		if (verbose) {
+			printf("build_zero_interest_rate_curve2::n = %d\n", n);
+		}
 
     	// DEPOSIT RATES
     	if (i<=6){
@@ -637,7 +646,6 @@ EXPORT double calculate_cds_price(
     TDateInterval  couponInterval;
     int            i=0;
     long int       paymentDcc=0;
-    TDate          startDate;
     TDate          stepInDate;
     TDate          settleDate;
     TStubMethod    stubMethod;
@@ -797,11 +805,8 @@ EXPORT TDate* calculate_cds_roll_dates(
     TCurve       *zc = NULL;
     //char         *types = "MMMMMMMM";
     TDate        *dates = NULL;
-    long          mmDCC;
+    
     char           **lines = NULL;
-    TDateInterval ivl;
-    long          dcc;
-    double        freq;
     char          badDayConv = 'M';
     char         *holidays = "None";
     int           i;
@@ -876,7 +881,6 @@ EXPORT double* calculate_cds_par_spread(
     TDateInterval  couponInterval;
     int            i=0;
     long int       paymentDcc=0;
-    TDate          startDate;
     TDate          stepInDate;
     TDate          settleDate;
     TStubMethod    stubMethod;
