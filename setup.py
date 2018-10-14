@@ -1,3 +1,5 @@
+
+import os
 import setuptools
 from distutils.core import setup, Extension
 
@@ -59,24 +61,30 @@ module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
                     'isda/zr2fwd.c', 
                     'isda/dateadj.c', 'isda/isda.cpp', 'isda/isda_wrap.cxx'])
 
+readme = open('README.md').read()
+
 setup (name = 'isda',
        version = '1.0.0',
        author='Alexander Baker',
        license='MIT',
        author_email='baker.alexander@gmail.com',
        description = 'Package that delivers high performance pricing and risk for credit derivatives',
+       long_description=readme,
        url='https://github.com/bakera1/CreditDefaultSwapPricer/',
        #ext_package='isda',
        #py_modules=['isda'],
        classifiers=[
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+	"Operating System :: POSIX :: Linux",
        ],
        packages=[
             'isda', 'isda.tests'
             ],
-       keywords="credit analytics",
+       keywords="credit derivative pricing risk",
        include_package_data=True,
        ext_modules = [module1])
      
