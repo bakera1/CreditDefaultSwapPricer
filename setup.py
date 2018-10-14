@@ -1,11 +1,13 @@
+import setuptools
 from distutils.core import setup, Extension
 
 #https://gist.github.com/taochenshh/b53ce0f54fea5b2204908100d0e566fa
 #https://gist.github.com/auth/github?return_to=https%3A%2F%2Fgist.github.com%2Ftaochenshh%2Fb53ce0f54fea5b2204908100d0e566fa
 
-module1 = Extension('_isda',
-                    include_dirs = ['C:\\Users\\bakera\\AppData\\Local\\Programs\\Python\\Python37\\include'],
-                    library_dirs = ['C:\\Users\\bakera\\AppData\\Local\\Programs\\Python\\Python37\\libs'],
+module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
+                    include_dirs = ['/usr/include/python2.7'],
+                    library_dirs = ['/use/lib/python2.7'],
+                    define_macros = [('LINUX', None)],
                     sources = ['isda/example.c', 
                     'isda/main.c',
                     'isda/busday.c',
@@ -58,14 +60,23 @@ module1 = Extension('_isda',
                     'isda/dateadj.c', 'isda/isda.cpp', 'isda/isda_wrap.cxx'])
 
 setup (name = 'isda',
-       version = '1.0',
+       version = '1.0.0',
        author='Alexander Baker',
+       license='MIT',
        author_email='baker.alexander@gmail.com',
-       description = 'This is a demo package',
+       description = 'Package that delivers high performance pricing and risk for credit derivatives',
+       url='https://github.com/bakera1/CreditDefaultSwapPricer/',
        #ext_package='isda',
        #py_modules=['isda'],
+       classifiers=[
+        "Programming Language :: Python :: 2",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+       ],
        packages=[
-            'isda'
+            'isda', 'isda.tests'
             ],
        keywords="credit analytics",
+       include_package_data=True,
        ext_modules = [module1])
+     

@@ -124,7 +124,7 @@ vector< vector<double> > cds_all_in_one(
 	// bootstrap interest rate curve
 	/////////////////////////////
 
-	for (int r = 0; r < swap_rates.size(); r++) {
+	for (int r = 0; r < static_cast<int>(swap_rates.size()); r++) {
 		swap_rates_dv01.push_back(swap_rates[r] + single_basis_point);
 	}
 
@@ -159,7 +159,7 @@ vector< vector<double> > cds_all_in_one(
 	}
 
 	// build array of spreads for base & cs01
-	for (int r = 0; r < spread_rates.size(); r++) {
+	for (int r = 0; r < static_cast<int>(spread_rates.size()); r++) {
 		spreads.push_back(spread_rates[r]);
 		spreads_cs01.push_back(spread_rates[r] + single_basis_point);
 		if (verbose) {
@@ -297,7 +297,7 @@ vector< vector<double> > cds_all_in_one(
 
 	// compute PVBP
 
-	for (int r = 0; r < imm_dates.size(); r++) {
+	for (int r = 0; r < static_cast<int>(imm_dates.size()); r++) {
 		allinone_pvbp.push_back(
 			(calculate_cds_price(value_date_jpm
 				, tenors[r]
@@ -330,12 +330,12 @@ vector< vector<double> > cds_all_in_one(
 		static_cast<int>(spread_roll_tenors.size()),
 		verbose);
 
-	for (int s = 0; s < scenario_tenors.size(); s++) {
+	for (int s = 0; s < static_cast<int>(scenario_tenors.size()); s++) {
 
 		vector <double> scenario_tenors_pvdirty;
 
 		// build a scenario spread curve
-		for (int r = 0; r < spread_rates.size(); r++) {
+		for (int r = 0; r < static_cast<int>(spread_rates.size()); r++) {
 			// spread_cs01 = spread + spread * -0.1
 			spreads_cs01.push_back(spread_rates[r] + spread_rates[r] * scenario_tenors[s] / 100);
 		}
@@ -351,7 +351,7 @@ vector< vector<double> > cds_all_in_one(
 			, static_cast<int>(imm_dates.size())
 			, verbose);
 
-		for (int r = 0; r < spread_roll_tenors.size(); r++) {
+		for (int r = 0; r < static_cast<int>(spread_roll_tenors.size()); r++) {
 
 			roll_pvclean = -calculate_cds_price(value_date_jpm
 				, pointer_roll_dates_jpm[r]
@@ -386,7 +386,7 @@ vector< vector<double> > cds_all_in_one(
 		, static_cast<int>(swap_tenors.size()));
 
 	vector <double> par_spread_vector;
-	for (int s = 0; s < swap_tenors.size(); s++) {
+	for (int s = 0; s < static_cast<int>(swap_tenors.size()); s++) {
 		par_spread_vector.push_back(par_spread_pointer[s]);
 	}
 
@@ -398,7 +398,7 @@ vector< vector<double> > cds_all_in_one(
 	allinone.push_back(allinone_pvbp);
 	allinone.push_back(par_spread_vector);
 
-	for (int r = 0; r < allinone_roll.size(); r++) {
+	for (int r = 0; r < static_cast<int>(allinone_roll.size()); r++) {
 		allinone.push_back(allinone_roll[r]);
 	}
 
@@ -507,7 +507,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 	// bootstrap interest rate curve
 	/////////////////////////////
 
-	for (int r = 0; r < swap_rates.size(); r++) {
+	for (int r = 0; r < static_cast<int>(swap_rates.size()); r++) {
 		swap_rates_dv01.push_back(swap_rates[r] + single_basis_point);
 	}
 
@@ -542,7 +542,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 	}
 
 	// build array of spreads for base & cs01
-	for (int r = 0; r < spread_rates.size(); r++) {
+	for (int r = 0; r < static_cast<int>(spread_rates.size()); r++) {
 		spreads.push_back(spread_rates[r]);
 		spreads_cs01.push_back(spread_rates[r] + single_basis_point);
 		if (verbose) {
@@ -680,7 +680,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 
 	// compute PVBP
 
-	for (int r = 0; r < imm_dates.size(); r++) {
+	for (int r = 0; r < static_cast<int>(imm_dates.size()); r++) {
 		allinone_pvbp.push_back(
 			(calculate_cds_price(value_date_jpm
 				, tenors[r]
@@ -713,12 +713,12 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 		static_cast<int>(spread_roll_tenors.size()),
 		verbose);
 
-	for (int s = 0; s < scenario_tenors.size(); s++) {
+	for (int s = 0; s < static_cast<int>(scenario_tenors.size()); s++) {
 
 		vector <double> scenario_tenors_pvdirty;
 
 		// build a scenario spread curve
-		for (int r = 0; r < spread_rates.size(); r++) {
+		for (int r = 0; r < static_cast<int>(spread_rates.size()); r++) {
 			// spread_cs01 = spread + spread * -0.1
 			spreads_cs01.push_back(spread_rates[r] + spread_rates[r] * scenario_tenors[s] / 100);
 		}
@@ -734,7 +734,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 			, static_cast<int>(imm_dates.size())
 			, verbose);
 
-		for (int r = 0; r < spread_roll_tenors.size(); r++) {
+		for (int r = 0; r < static_cast<int>(spread_roll_tenors.size()); r++) {
 
 			roll_pvclean = -calculate_cds_price(value_date_jpm
 				, pointer_roll_dates_jpm[r]
@@ -769,7 +769,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 		, static_cast<int>(swap_tenors.size()));
 
 	vector <double> par_spread_vector;
-	for (int s = 0; s < swap_tenors.size(); s++) {
+	for (int s = 0; s < static_cast<int>(swap_tenors.size()); s++) {
 		par_spread_vector.push_back(par_spread_pointer[s]);
 	}
 
@@ -781,7 +781,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 	allinone.push_back(allinone_pvbp);
 	allinone.push_back(par_spread_vector);
 
-	for (int r = 0; r < allinone_roll.size(); r++) {
+	for (int r = 0; r < static_cast<int>(allinone_roll.size()); r++) {
 		allinone.push_back(allinone_roll[r]);
 	}
 
@@ -820,8 +820,6 @@ vector< vector<double> > cds_index_all_in_one(
 
 	int start_s = clock();
 
-	// used in risk calculations
-	double single_basis_point = 0.0001;
 
 	TDate trade_date_jpm, effective_date_jpm, maturity_date_jpm,
 		accrual_start_date_jpm, value_date_jpm;

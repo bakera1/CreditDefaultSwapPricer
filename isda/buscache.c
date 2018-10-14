@@ -19,9 +19,9 @@
 #include "strutil.h"
 #include <limits.h>
 
-/*#ifdef LINUX
+#ifdef LINUX
 #define stricmp strcasecmp
-#endif*/
+#endif
 
 #if defined(_WIN32) || defined(_WIN64) 
 #define strcasecmp _mbsicmp
@@ -294,7 +294,7 @@ static THoliday *holidayFind(char *name)
     {
         while (hol)
         {
-            if (strncasecmp(name, hol->name) == 0)
+            if (stricmp(name, hol->name) == 0)
                 return hol;
             
             hol = hol->next;
