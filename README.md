@@ -12,7 +12,7 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 
 ## How do I get started with the Python3 version? 
 
-The 1.0.3 branch plays very nicely with Pytho3. We have also made a pip project available with a pre-compiled binary wheel package 
+The 1.0.3 branch plays very nicely with Python3 and has been upgraded to compile cleanly with MSVC using the Visual Studio 2017 vintage. We have also made a pip project available with a pre-compiled binary wheel package 
 for windows. This windows binary wheel has been pushed to pypi and is availabl for download. 
 
 From a windows desktop using python3 you can use the following commands to test the installation. 
