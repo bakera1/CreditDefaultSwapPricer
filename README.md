@@ -1,13 +1,156 @@
 # Credit Default Swap Pricer
+
 Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
 
  + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
  + Roll sensitivities over range of dates.
  + PVBP sensitivities to support credit risk hedging analysis.
+ + Index CDS Pricing from consituent level.
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## How do I get started with the Python3 version? 
+
+The 1.0.3 branch plays very nicely with Python3 and has been upgraded to compile cleanly with MSVC using the Visual Studio 2017 vintage. We have also made a pip package available on pypi.org with a pre-compiled binary wheel
+that targets windows. This windows binary wheel has been published to both pypi and testpypi and is now available for public download. 
+
+From a windows desktop using python3 you can use the following commands to test the installation. The test below asserts the average price of an index CDS priced from 125 separate underlying names.
+The average wall time locally running on my Intel(T) i5 2.4GHz is around 415 milliseconds. This is not particularly fast and includes no caching and two separate calls for PV Dirty and PV Clean.
+
+### How can I testing the isda Wheel package on Windows?
+
+```
+$python -m venv test1
+$cd test1
+$Scripts\activate.bat
+$cd test1
+$ pip install isda
+$ copy Lib\site-packages\isda\tests\TestCdsPricerIndex.py
+$python TestCdsPricerIndex.py
+
+You should output to the screen that looks like below.
+
+(test1) C:\sandbox\test5>python TestCdsPricerIndex.py
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 423.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 409.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 428.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 414.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 416.0 (ms)
+factoral 120
+average execution (415.4,)
+.
+Ran 1 test in 8.319s
+
+OK
+
+(test1) C:\sandbox\test1>
+```
+
+### Is the wheel sensitive to Python version? 
+
+Currently we have published only 3.7 Python wheel for windows, however we plan to extend this to cover 3.5 & 3.6. 
+
+### Does the package work nicely with artifactory?
+
+
+
+### How can I get a quick introduction to the module? 
+
+The module has a single isda namespace, which consists of two separate namespaces; the core isda.isda for pricing and risk and the isda.imm for a library that can generate imm date vectors.
+The cds_all_in_one call is used to support pricing and risk from a single vector of credit spreads on a Single Name or Index CDS and cds_index_all_in_one has been added to support fast index
+lookthrough pricing. This second method does not yet deliver a risk resultset.
+
+```python
+from isda.isda import cds_all_in_one, cds_index_all_in_one
+from isda.imm import imm_date_vector
+```
+
+## 1.0.3 Release Notes
+
+Number of changes have gone into the 1.0.3 release to promote stability and performance. The main changes are listed as below.
+
+0. put back all logic for remaining methods & solve calling cl.exe from the setup.py dist which should work 
+as expected. Then re-test on windows & linux with Python 3.6.
+
+1. Additional cds_index_all_in_one which can price a whole Credit index in a single call to the library. This avoid excessive calls to the single name pricer. The new call can accept an array of recovery rates and an array of array of credit spread curves. All other inputs are assumed constant across the index credits. This call can be used to implement a more efficient skew solver.
+
+2. change in behaviour of return f[0] versus f[1] tuple; constituents versus the index.
+
+```
+C:\github\CreditDefaultSwapPricer\x64>python TestCdsPricerRR.py
+.cob_date: 08/01/2018 pv_dirty: -2792.67 pv_clean: -2797.53 ai: 4.86 wall_time: 421.0 (ms)
+```
+
+3. Included a new feature to handle the case when spread curve bootstrapping fails. The recovery rate is stepped down one basis point at a time until a bootstrappable curve is achievable this is often a problem in a high stress scenario when the recovery rate and perturbated spread curves are not consistently known.
+
+4. Resolved number of compile errors related to the comparison of unsigned and signed integers.
+
+5. The isda.i swig interface has changed and required separate compilation using the swig command line utility.
+
+```
+swig -c++ -python isda.i
+```
+
+6. integration with MSVC Visual Studio 2017 vintage cl.exe compiler. This meant a complete re-write of several parts of the underlying c++ code and new switches to activate c++11 on Linux. Several new build switches have been introduced as a result to support the deployment on windows and linux.
+## Python3 Migration
+
+The codebase and build scripts rely on Python2.7; we plan to migrate to Python3 and include a setup.py to make the install more consistent and play nicely with pip. The migration path was presumed to be easier with a switch to a proper setup.py. This also makes the migration to use pip potentially easier and more consistent with the general Python ecosystem.
+
+## Par Spread Vector from flat Credit Spread
+
+Additional code has been added the all_in_one_cds method to invoke the JpmCdscdsParSpread() to compute par spreads. The internal call re-uses the swap_spread tenor list as the par spread tenors and will compute a par spread for each tenor. The vector of par spreads is then returned in an additional vector across the results interface and can easily be accessed in Python as shown below. 
+
+```
+credit_spreads = [0.00137467867844589]*8
+swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', 
+            '4Y', '5Y', '6Y', '7Y', '8Y', '9Y, 
+            '10Y', '15Y', '20Y', '30Y']
+
+f = cds_all_in_one(trade_date,
+	effective_date,
+	maturity_date,
+	value_date,
+	accrual_start_date,
+	recovery_rate,
+	coupon,
+	notional,
+	is_buy_protection,
+	swap_rates,
+	swap_tenors,
+	swap_maturity_dates,
+	credit_spreads,
+	credit_spread_tenors,
+	spread_roll_tenors,
+	imm_dates,
+	scenario_shifts,
+	verbose)
+
+# expand tuple
+pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
+pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
+ps_1m, ps_2m, ps_3M, ps_6M, ps_9M, ps_1Y, ps_2Y, ps_3Y, ps_4Y, ps_5Y, ps_6Y, ps_7Y, ps_8Y, ps_9Y, ps_10Y = f[2]
+
+assertAlmostEquals(0.00274826727324, ps_1m) 
+assertAlmostEquals(0.00274883148583, ps_2m) 
+assertAlmostEquals(0.00274929868985, ps_3M) 
+assertAlmostEquals(0.00274939866579, ps_6M) 
+assertAlmostEquals(0.00274936653181, ps_9M) 
+assertAlmostEquals(0.00274937754343, ps_1Y)
+assertAlmostEquals(0.00274932944417, ps_2Y) 
+assertAlmostEquals(0.00274932454643, ps_3Y) 
+assertAlmostEquals(0.00274932165857, ps_4Y) 
+assertAlmostEquals(0.0027493199385, ps_5Y)
+assertAlmostEquals(0.00274926894167, ps_6Y) 
+assertAlmostEquals(0.00274932296072, ps_7Y) 
+assertAlmostEquals(0.00274925367015, ps_8Y) 
+assertAlmostEquals(0.00274927195173, ps_9Y) 
+assertAlmostEquals(0.00274933238284, ps_10Y)
+
+```
+An additional unittest test_sell_protection_par_spread has been added that shows how these can be accessed in the flat spread case. Above illustrates the simple case where we price an index from a flat spread 13.7 bps and compute a similarly flat par spread at each tenor.
 
 ## UnitTest framework
 
@@ -21,7 +164,6 @@ self.assertAlmostEquals(-1.19210435546, pv_clean)
 self.assertAlmostEquals(0.0388888888889, ai)
 self.assertAlmostEquals(14014.5916905, cs01 * 1.0e6)
 self.assertAlmostEquals(131.61798715, dv01 * 1.0e6)
-
 
 ```
 
@@ -113,7 +255,8 @@ The idea behind this library is ease of use, the underlying [ISDA C functions](h
 The module can be downloaded along with a suitable version of the [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/) using the make.sh script to invoke the [SWIG](http://www.swig.org/) and gcc builds needed to generate and compile the wrapper and underlying code modules. The g++ invoke is also managed by this file which in turn builds the C++ wrapper ahead of linking the entire module into a library called isda. This libray can then be easily imported into the Python C runtime as shown below.
 
 ```python
-from isda import cds_all_in_one
+from isda.isda import cds_all_in_one, cds_index_all_in_one
+from isda.imm import imm_date_vector
 ```
 
 ### CDS All In One
