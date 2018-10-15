@@ -5,8 +5,8 @@ from datetime import date
 
 sys.path.append('/usr/local/lib/python2.7/dist-packages/isda')
 
-from _isda import cds_all_in_one
-from imm import imm_date_vector
+from isda.isda import cds_all_in_one
+from isda.imm import imm_date_vector
 
 
 class MyTestCase(unittest.TestCase):

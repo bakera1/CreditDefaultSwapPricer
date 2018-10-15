@@ -1,8 +1,9 @@
 import unittest
 import datetime
 from datetime import date
-from isda import cds_all_in_one_exclude_ir_tenor_dates
-from imm import imm_date_vector
+
+from isda.isda import cds_all_in_one_exclude_ir_tenor_dates
+from isda.imm import imm_date_vector
 
 
 class MyTestCase(unittest.TestCase):

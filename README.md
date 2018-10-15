@@ -13,7 +13,17 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 
 Number of changes have gone into the 1.0.3 release to promote stability and performance. The main changes are listed as below.
 
+0. put back all logic for remaining methods & solve calling cl.exe from the setup.py dist which should work 
+as expected. Then re-test on windows & linux with Python 3.6.
+
 1. Additional cds_index_all_in_one which can price a whole Credit index in a single call to the library. This avoid excessive calls to the single name pricer. The new call can accept an array of recovery rates and an array of array of credit spread curves. All other inputs are assumed constant across the index credits. This call can be used to implement a more efficient skew solver.
+
+1.1 change in behaviour of return f[0] versus f[1] tuple; constituents versus the index.
+
+```
+C:\github\CreditDefaultSwapPricer\x64>python TestCdsPricerRR.py
+.cob_date: 08/01/2018 pv_dirty: -2792.67 pv_clean: -2797.53 ai: 4.86 wall_time: 421.0 (ms)
+```
 
 2. Included a new feature to handle the case when spread curve bootstrapping fails. The recovery rate is stepped down one basis point at a time until a bootstrappable curve is achievable this is often a problem in a high stress scenario when the recovery rate and perturbated spread curves are not consistently known.
 
