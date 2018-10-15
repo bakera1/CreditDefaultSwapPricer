@@ -1,1 +1,1 @@
-twine upload --repository pypi dist/* --verbose
+twine upload --repository pypi --skip-existing dist/* --verbose
