@@ -49,6 +49,14 @@ OK
 (test1) C:\sandbox\test1>
 ```
 
+### Is the wheel sensitive to Python version? 
+
+Currently we have published only 3.7 Python wheel for windows, however we plan to extend this to cover 3.5 & 3.6. 
+
+### Does the package work nicely with artifactory?
+
+
+
 ### How can I get a quick introduction to the module? 
 
 The module has a single isda namespace, which consists of two separate namespaces; the core isda.isda for pricing and risk and the isda.imm for a library that can generate imm date vectors.
