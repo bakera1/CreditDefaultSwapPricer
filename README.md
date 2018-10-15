@@ -61,6 +61,17 @@ OK
 (test1) C:\sandbox\test1>
 ```
 
+### How can I get a quick introduction to the module? 
+
+The module has a single isda namespace, which consists of two separate namespaces; the core isda.isda for pricing and risk and the isda.imm for a library that can generate imm date vectors.
+The cds_all_in_one call is used to support pricing and risk from a single vector of credit spreads on a Single Name or Index CDS and cds_index_all_in_one has been added to support fast index
+lookthrough pricing. This second method does not yet deliver a risk resultset.
+
+```python
+from isda.isda import cds_all_in_one, cds_index_all_in_one
+from isda.imm import imm_date_vector
+```
+
 ## 1.0.3 Release Notes
 
 Number of changes have gone into the 1.0.3 release to promote stability and performance. The main changes are listed as below.
@@ -70,25 +81,24 @@ as expected. Then re-test on windows & linux with Python 3.6.
 
 1. Additional cds_index_all_in_one which can price a whole Credit index in a single call to the library. This avoid excessive calls to the single name pricer. The new call can accept an array of recovery rates and an array of array of credit spread curves. All other inputs are assumed constant across the index credits. This call can be used to implement a more efficient skew solver.
 
-1.1 change in behaviour of return f[0] versus f[1] tuple; constituents versus the index.
+2. change in behaviour of return f[0] versus f[1] tuple; constituents versus the index.
 
 ```
 C:\github\CreditDefaultSwapPricer\x64>python TestCdsPricerRR.py
 .cob_date: 08/01/2018 pv_dirty: -2792.67 pv_clean: -2797.53 ai: 4.86 wall_time: 421.0 (ms)
 ```
 
-2. Included a new feature to handle the case when spread curve bootstrapping fails. The recovery rate is stepped down one basis point at a time until a bootstrappable curve is achievable this is often a problem in a high stress scenario when the recovery rate and perturbated spread curves are not consistently known.
+3. Included a new feature to handle the case when spread curve bootstrapping fails. The recovery rate is stepped down one basis point at a time until a bootstrappable curve is achievable this is often a problem in a high stress scenario when the recovery rate and perturbated spread curves are not consistently known.
 
-3. Resolved number of compile errors related to the comparison of unsigned and signed integers.
+4. Resolved number of compile errors related to the comparison of unsigned and signed integers.
 
-4. The isda.i swig interface has changed and required separate compilation using the swig command line utility.
+5. The isda.i swig interface has changed and required separate compilation using the swig command line utility.
 
 ```
 swig -c++ -python isda.i
 ```
 
-5. integration with 
-
+6. integration with MSVC Visual Studio 2017 vintage cl.exe compiler. This meant a complete re-write of several parts of the underlying c++ code and new switches to activate c++11 on Linux. Several new build switches have been introduced as a result to support the deployment on windows and linux.
 ## Python3 Migration
 
 The codebase and build scripts rely on Python2.7; we plan to migrate to Python3 and include a setup.py to make the install more consistent and play nicely with pip. The migration path was presumed to be easier with a switch to a proper setup.py. This also makes the migration to use pip potentially easier and more consistent with the general Python ecosystem.
@@ -249,7 +259,8 @@ The idea behind this library is ease of use, the underlying [ISDA C functions](h
 The module can be downloaded along with a suitable version of the [ISDA CDS Pricing library](http://www.cdsmodel.com/cdsmodel/) using the make.sh script to invoke the [SWIG](http://www.swig.org/) and gcc builds needed to generate and compile the wrapper and underlying code modules. The g++ invoke is also managed by this file which in turn builds the C++ wrapper ahead of linking the entire module into a library called isda. This libray can then be easily imported into the Python C runtime as shown below.
 
 ```python
-from isda import cds_all_in_one
+from isda.isda import cds_all_in_one, cds_index_all_in_one
+from isda.imm import imm_date_vector
 ```
 
 ### CDS All In One
