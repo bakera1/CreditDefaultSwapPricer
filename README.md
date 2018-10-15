@@ -15,7 +15,8 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 The 1.0.3 branch plays very nicely with Python3 and has been upgraded to compile cleanly with MSVC using the Visual Studio 2017 vintage. We have also made a pip project available with a pre-compiled binary wheel package 
 for windows. This windows binary wheel has been pushed to pypi and is availabl for download. 
 
-From a windows desktop using python3 you can use the following commands to test the installation. 
+From a windows desktop using python3 you can use the following commands to test the installation. The test below asserts the average price of an index CDS priced from 125 separate underlying names.
+The average wall time locally running on my Intel(T) i5 2.4GHz is around 415 milliseconds. This is not particularly fast and includes no caching and two separate calls for PV Dirty and PV Clean.
 
 ### How can I testing the isda Wheel package on Windows?
 
@@ -34,19 +35,6 @@ You should output to the screen that looks like below.
 cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
 cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
 cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 423.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 420.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 415.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 414.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 429.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 409.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 400.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 405.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 419.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 400.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 406.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 413.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
-cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
 cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 409.0 (ms)
 cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 428.0 (ms)
 cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 414.0 (ms)
