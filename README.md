@@ -6,8 +6,60 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http:/
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
  + Roll sensitivities over range of dates.
  + PVBP sensitivities to support credit risk hedging analysis.
+ + Index CDS Pricing from consituent level.
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
+
+## How do I get started with the Python3 version? 
+
+The 1.0.3 branch plays very nicely with Pytho3. We have also made a pip project available with a pre-compiled binary wheel package 
+for windows. This windows binary wheel has been pushed to pypi and is availabl for download. 
+
+From a windows desktop using python3 you can use the following commands to test the installation. 
+
+### How can I testing the isda Wheel package on Windows?
+
+```
+$python -m venv test1
+$cd test1
+$Scripts\activate.bat
+$cd test1
+$ pip install isda
+$ copy Lib\site-packages\isda\tests\TestCdsPricerIndex.py
+$python TestCdsPricerIndex.py
+
+You should output to the screen that looks like below.
+
+(test1) C:\sandbox\test5>python TestCdsPricerIndex.py
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 423.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 420.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 415.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 414.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 429.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 409.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 400.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 405.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 419.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 400.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 406.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 413.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 422.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 409.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 428.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 414.0 (ms)
+cob_date: 08/01/2018 pv_dirty: -2792.666875 pv_clean: -2797.527986 ai: 4.861111 wall_time: 416.0 (ms)
+factoral 120
+average execution (415.4,)
+.
+Ran 1 test in 8.319s
+
+OK
+
+(test1) C:\sandbox\test1>
+```
 
 ## 1.0.3 Release Notes
 
@@ -34,6 +86,8 @@ C:\github\CreditDefaultSwapPricer\x64>python TestCdsPricerRR.py
 ```
 swig -c++ -python isda.i
 ```
+
+5. integration with 
 
 ## Python3 Migration
 
