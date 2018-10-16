@@ -26,11 +26,8 @@ import unittest
 import datetime
 from datetime import date
 
-sys.path.append('/usr/local/lib/python2.7/dist-packages/isda')
-
-from _isda import cds_all_in_one
-from _isda import cds_all_in_one_exclude_ir_tenor_dates
-from imm import imm_date_vector
+from isda.isda import cds_all_in_one, cds_all_in_one_exclude_ir_tenor_dates
+from isda.imm import imm_date_vector
 
 # EUR interest rate curve
 swap_rates = [-0.00369, -0.00341, -0.00329, -0.00278, -0.00222, -0.00191, -0.00134, 0.0007, 0.00276, 0.00461, 0.00621,
