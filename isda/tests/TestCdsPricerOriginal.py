@@ -110,7 +110,7 @@ for day in range(day_count):
                                                                                           five_year_equivalent_notional,                                                                                        
                                                                                           duration_in_milliseconds, ai))		
 	
-	for scenario, i in enumerate(f[2:]):
-	  print(scenario_shifts[scenario], i)
+    for scenario, i in enumerate(f[2:]):
+        print(scenario_shifts[scenario], i)
 			
     sdate = sdate + one_day
