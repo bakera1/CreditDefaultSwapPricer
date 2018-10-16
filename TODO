@@ -1,0 +1,5 @@
+
+1) install python3.6 with deps and build a manylinux_x86_64.whl
+2) upload the wheel to pypi.org
+
+auditwheel -v repair isda-1.0.0-cp35-cp35m-linux_x86_64.whl
