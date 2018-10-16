@@ -28,8 +28,8 @@ from datetime import date
 
 sys.path.append('/usr/local/lib/python2.7/dist-packages/isda')
 
-from _isda import cds_all_in_one
-from _isda import cds_all_in_one_exclude_ir_tenor_dates
+from isda.isda import cds_all_in_one
+from isda.isda import cds_all_in_one_exclude_ir_tenor_dates
 from imm import imm_date_vector
 
 # EUR interest rate curve
@@ -70,8 +70,6 @@ for day in range(day_count):
     # build imm_dates
     imm_dates = [f[1] for f in imm_date_vector(start_date=sdate,
                                                tenor_list=tenor_list)]
-    if verbose:
-        print imm_dates
 
     # skip any weekend dates
     if sdate.weekday() in [5, 6]:
@@ -105,15 +103,15 @@ for day in range(day_count):
 		
 
         five_year_equivalent_notional = -cs01/pvbp5y
-        print "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})\tai ({7:.6})".format(value_date,
+        print( "{0:.10}\tpv_dirty ({1:.6})\tcs01 ({2:.6})\tdv01 ({3:.6})\tpvbp5y {4:.6}\t5yeqnot ({5:.6})\ttime ({6:.6})\tai ({7:.6})".format(value_date,
                                                                                           pv_dirty,
                                                                                           cs01*1e6,
                                                                                           dv01,
                                                                                           pvbp5y,
                                                                                           five_year_equivalent_notional,                                                                                        
-                                                                                          duration_in_milliseconds, ai)		
+                                                                                          duration_in_milliseconds, ai))
 	
 	for scenario, i in enumerate(f[2:]):
-	  print scenario_shifts[scenario], i
+	  print(scenario_shifts[scenario], i)
 			
     sdate = sdate + one_day

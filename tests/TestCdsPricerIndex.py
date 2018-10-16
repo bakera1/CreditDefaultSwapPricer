@@ -3,8 +3,8 @@ import unittest
 import datetime
 from datetime import date
 
-from isda import cds_index_all_in_one, cds_all_in_one, average
-from imm import imm_date_vector
+from isda.isda import cds_index_all_in_one, cds_all_in_one, average
+from isda.imm import imm_date_vector
 
 class MyTestCase(unittest.TestCase):
     """
