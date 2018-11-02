@@ -961,6 +961,7 @@ vector< vector<double> > cds_index_all_in_one(
 		ai_index += ai * notional * credit_risk_direction_scale_factor;
 	  
 		FREE(spreadcurve);
+		spreads.clear();
 	  
 	}
   
