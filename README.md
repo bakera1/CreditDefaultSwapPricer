@@ -1,12 +1,12 @@
 # Credit Default Swap Pricer
 
-Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
+Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
 
  + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
  + Roll sensitivities over range of dates.
  + PVBP sensitivities to support credit risk hedging analysis.
- + Index CDS Pricing from consituent level.
+ + Index CDS Pricing from constituent level.
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
