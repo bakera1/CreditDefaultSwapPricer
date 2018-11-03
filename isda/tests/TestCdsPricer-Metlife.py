@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
             , 0.02858500000000, 0.02868000000000]
 
         self.swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y', '9Y', '10Y']
-
+	
         # spread curve download from markit
         self.credit_spreads = [0.00081, 0.0009, 0.00181, 0.00293, 0.00439, 0.00613, 0.00923, 0.01119]
         self.credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
@@ -40,7 +40,7 @@ class MyTestCase(unittest.TestCase):
         self.maturity_date = '20/12/2022'
         self.notional = 2.0
         self.is_buy_protection = 0  # only ever buy or sell protection!
-        self.verbose = 0
+        self.verbose = 1
 
         # TODO: try and remove need for this!
         self.tenor_list = [0.5, 1, 2, 3, 4, 5, 7, 10]
@@ -85,9 +85,9 @@ class MyTestCase(unittest.TestCase):
         pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
 
-        print "cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
+        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
             self.value_date,
-            pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds)
+            pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds))
 
         # self.assertAlmostEquals(-1.23099324435, pv_dirty)
         # self.assertAlmostEquals(-1.19210435546, pv_clean)
