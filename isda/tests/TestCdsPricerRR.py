@@ -96,7 +96,7 @@ class MyTestCase(unittest.TestCase):
                                    self.verbose)            
         
         pv_dirty, pv_clean, ai, duration_in_milliseconds = f[1]
-        
+
     @unittest.skip
     def test_buy_protection(self):
 
@@ -278,6 +278,7 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEquals(-14014.5916905, cs01*1.0e6)
         self.assertAlmostEquals(-131.61798715, dv01 * 1.0e6)
 
+
         six_month_equivalent_notional = -cs01 / pvbp6m
         one_year_equivalent_notional = -cs01 / pvbp1y
         two_year_equivalent_notional = -cs01 / pvbp2y
@@ -332,6 +333,5 @@ class MyTestCase(unittest.TestCase):
                                    self.imm_dates,
                                    self.scenario_shifts,
                                    self.verbose)
-
 if __name__ == '__main__':
 	unittest.main()

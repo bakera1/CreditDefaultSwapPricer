@@ -7,8 +7,8 @@ from distutils.core import setup, Extension
 #https://gist.github.com/auth/github?return_to=https%3A%2F%2Fgist.github.com%2Ftaochenshh%2Fb53ce0f54fea5b2204908100d0e566fa
 
 module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
-                    include_dirs = ['/usr/include/python2.7'],
-                    library_dirs = ['/use/lib/python2.7'],
+                    include_dirs = ['/usr/include/python3.6'],
+                    library_dirs = ['/usr/lib/python3.6'],
                     define_macros = [('LINUX', None)],
                     sources = ['isda/example.c', 
                     'isda/main.c',
