@@ -85,15 +85,11 @@ class MyTestCase(unittest.TestCase):
         pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
 
-        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
-            self.value_date,
-            pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds))
-
-        # self.assertAlmostEquals(-1.23099324435, pv_dirty)
-        # self.assertAlmostEquals(-1.19210435546, pv_clean)
-        # self.assertAlmostEquals(0.0388888888889, ai)
-        # self.assertAlmostEquals(14014.5916905, cs01 * 1.0e6)
-        # self.assertAlmostEquals(131.61798715, dv01 * 1.0e6)
+        self.assertAlmostEqual(0.04222146729753646, pv_dirty)
+        self.assertAlmostEqual(0.040832578408647575, pv_clean)
+        self.assertAlmostEqual(0.001388888888888884, ai)
+        self.assertAlmostEqual(-894.9987755496533, cs01 * 1.0e6)
+        self.assertAlmostEqual(-9.59351861563179, dv01 * 1.0e6)
 
         six_month_equivalent_notional = -cs01 / pvbp6m
         one_year_equivalent_notional = -cs01 / pvbp1y
