@@ -15,7 +15,6 @@ class MyTestCase(unittest.TestCase):
         i) test coverage needs to be extended to handle cases over weekends & holidays
         ii) for now the coverage is a simple buy/sell protection flat spread trade
 
-
     """
 
     def setUp(self):
