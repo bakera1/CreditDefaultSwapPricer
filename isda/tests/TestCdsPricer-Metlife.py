@@ -12,6 +12,7 @@ class MyTestCase(unittest.TestCase):
         separate ISDA source; these figures are accurate to 11 decimal places and battle tested
         enough to be useful for more than just indicative risk.
 
+		
         i) test coverage needs to be extended to handle cases over weekends & holidays
         ii) for now the coverage is a simple buy/sell protection flat spread trade
 
