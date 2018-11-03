@@ -957,6 +957,7 @@ vector< vector<double> > cds_index_all_in_one(
 		dirtypv_index += dirtypv * notional * credit_risk_direction_scale_factor;
 		cleanpv_index += cleanpv * notional * credit_risk_direction_scale_factor;
 		ai_index += ai * notional * credit_risk_direction_scale_factor;
+		spreads.clear();
 	  
 		FREE(spreadcurve);
 	  
