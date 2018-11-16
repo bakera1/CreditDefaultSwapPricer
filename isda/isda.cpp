@@ -29,6 +29,13 @@ TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
   return JpmcdsDate(year, month, day);
 }
 
+TDate parse_string_ddmmyyyy_to_jpmcdsdate_minus_one(const std::string& s)
+{
+  int day, month, year;
+  sscanf(s.c_str(), "%2d/%2d/%4d", &day, &month, &year);
+  return JpmcdsDate(year, month, day-1);
+}
+
 vector< vector<double> > cds_all_in_one(
 	string trade_date,						/* (I) trade date of cds as DD/MM/YYYY */
 	string effective_date,					/* (I) effective date of cds as DD/MM/YYYY */
@@ -56,7 +63,7 @@ vector< vector<double> > cds_all_in_one(
 	double single_basis_point = 0.0001;
 
 	TDate trade_date_jpm, effective_date_jpm, maturity_date_jpm,
-	accrual_start_date_jpm, value_date_jpm;
+	accrual_start_date_jpm, value_date_jpm, minus_1d_maturity_date_jpm, minus_1d_value_date_jpm;
 
 	// empty curve pointers
 	TCurve *zerocurve = NULL;
@@ -85,7 +92,7 @@ vector< vector<double> > cds_all_in_one(
 	double ai;
 	double dirtypv_cs01;
 	double dirtypv_dv01;
-	//double roll_pvclean;
+	double roll_1d_cleanpv;
 
 	// outer return vector
 	vector < vector<double> > allinone;
@@ -111,6 +118,8 @@ vector< vector<double> > cds_all_in_one(
 	maturity_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(maturity_date);
 	accrual_start_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(accrual_start_date);
 	value_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(value_date);
+	minus_1d_value_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate_minus_one(value_date);
+	minus_1d_maturity_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate_minus_one(maturity_date);
 
 	if (verbose == 1) {
 		std::cout << "value_date_jpm " << value_date_jpm << std::endl;
@@ -118,6 +127,7 @@ vector< vector<double> > cds_all_in_one(
 		std::cout << "effective_date_jpm " << effective_date_jpm << std::endl;
 		std::cout << "accrual_start_date_jpm " << accrual_start_date_jpm << std::endl;
 		std::cout << "maturity_date_jpm " << maturity_date_jpm << std::endl;
+		std::cout << "minus_1d_maturity_date_jpm " << minus_1d_maturity_date_jpm << std::endl;
 	}
 
 	/////////////////////////////
@@ -260,6 +270,17 @@ vector< vector<double> > cds_all_in_one(
 		, coupon_rate_in_basis_points
 		, is_clean_price
 		, verbose);
+		
+	// calculate price cds
+	roll_1d_cleanpv = -calculate_cds_price(value_date_jpm
+		, minus_1d_maturity_date_jpm
+		, zerocurve
+		, spreadcurve
+		, accrual_start_date_jpm
+		, recovery_rate
+		, coupon_rate_in_basis_points
+		, is_clean_price
+		, verbose);
 
 	// compute accured interest
 	ai = dirtypv - cleanpv;
@@ -367,6 +388,8 @@ vector< vector<double> > cds_all_in_one(
 			scenario_tenors_pvdirty.push_back(roll_pvclean * notional * credit_risk_direction_scale_factor);
 
 		}
+		
+		spreads_cs01.clear();
 
 		// push back entire matrix
 		allinone_roll.push_back(scenario_tenors_pvdirty);
@@ -392,6 +415,7 @@ vector< vector<double> > cds_all_in_one(
 
 	int stop_s = clock();
 	allinone_base.push_back((stop_s - start_s));
+	allinone_base.push_back(roll_1d_cleanpv  * notional * credit_risk_direction_scale_factor);
 	
 	// push back all vectors
 	allinone.push_back(allinone_base);
