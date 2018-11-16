@@ -825,7 +825,7 @@ EXPORT TDate* calculate_cds_roll_dates(
 			goto done;
 		}
 
-		if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_MODIFIED, "None", dates+i) != SUCCESS)
+		if (JpmcdsDateFwdThenAdjust(baseDate, &tmp, JPMCDS_BAD_DAY_PREVIOUS, "None", dates+i) != SUCCESS)
 		{
 			JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
 			goto done;
