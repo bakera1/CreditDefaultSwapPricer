@@ -96,11 +96,7 @@ class MyTestCase(unittest.TestCase):
                                    self.verbose)            
         
         pv_dirty, pv_clean, ai, duration_in_milliseconds = f[1]
-        
-        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} wall_time: {4}".format(self.value_date,
-                        pv_dirty, pv_clean, ai, duration_in_milliseconds/1000.))
 
-        
     @unittest.skip
     def test_buy_protection(self):
 
@@ -207,8 +203,6 @@ class MyTestCase(unittest.TestCase):
         pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
         
-        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6} rr {7}".format(self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds, self.recovery_rate))
-
         # sell protection +ve npv
         # sell protection +ve npv
         # sell protection -ve cs01
@@ -284,8 +278,6 @@ class MyTestCase(unittest.TestCase):
         self.assertAlmostEquals(-14014.5916905, cs01*1.0e6)
         self.assertAlmostEquals(-131.61798715, dv01 * 1.0e6)
 
-        print("cob_date: {0} pv_dirty: {1} pv_clean: {2} ai: {3} cs01: {4} dv01: {5} wall_time: {6}".format(
-            self.value_date,pv_dirty, pv_clean, ai, cs01 * 1e6, dv01 * 1e6, duration_in_milliseconds))
 
         six_month_equivalent_notional = -cs01 / pvbp6m
         one_year_equivalent_notional = -cs01 / pvbp1y
@@ -341,9 +333,5 @@ class MyTestCase(unittest.TestCase):
                                    self.imm_dates,
                                    self.scenario_shifts,
                                    self.verbose)
-
-        for scenario, tt in enumerate(f[2:]):
-            print(self.scenario_shifts[scenario], tt)
-
 if __name__ == '__main__':
 	unittest.main()

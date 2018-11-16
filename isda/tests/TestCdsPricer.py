@@ -227,23 +227,24 @@ class MyTestCase(unittest.TestCase):
         # expand tuple
         pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
+        
         ps_1m, ps_2m, ps_3M, ps_6M, ps_9M, ps_1Y, ps_2Y, ps_3Y, ps_4Y, ps_5Y, ps_6Y, ps_7Y, ps_8Y, ps_9Y, ps_10Y = f[2]
         
-        self.assertAlmostEquals(0.00274826727324, ps_1m) 
-        self.assertAlmostEquals(0.00274883148583, ps_2m) 
-        self.assertAlmostEquals(0.00274929868985, ps_3M) 
-        self.assertAlmostEquals(0.00274939866579, ps_6M) 
-        self.assertAlmostEquals(0.00274936653181, ps_9M) 
-        self.assertAlmostEquals(0.00274937754343, ps_1Y)
-        self.assertAlmostEquals(0.00274932944417, ps_2Y) 
-        self.assertAlmostEquals(0.00274932454643, ps_3Y) 
-        self.assertAlmostEquals(0.00274932165857, ps_4Y) 
-        self.assertAlmostEquals(0.0027493199385, ps_5Y)
-        self.assertAlmostEquals(0.00274926894167, ps_6Y) 
-        self.assertAlmostEquals(0.00274932296072, ps_7Y) 
-        self.assertAlmostEquals(0.00274925367015, ps_8Y) 
-        self.assertAlmostEquals(0.00274927195173, ps_9Y) 
-        self.assertAlmostEquals(0.00274933238284, ps_10Y)
+        self.assertAlmostEquals(0.0014746471579869017, ps_1m, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_2m, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_3M, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_6M, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_9M, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_1Y, 4)
+        self.assertAlmostEquals(0.0014746471579869017, ps_2Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_3Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_4Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_5Y, 4)
+        self.assertAlmostEquals(0.0014746471579869017, ps_6Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_7Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_8Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_9Y, 4) 
+        self.assertAlmostEquals(0.0014746471579869017, ps_10Y, 4)
         
         # sell protection +ve npv
         # sell protection +ve npv

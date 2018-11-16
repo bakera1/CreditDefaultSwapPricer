@@ -32,7 +32,7 @@ class MyTestCase(unittest.TestCase):
             , '10/01/2028']
 
         # spread curve download from markit
-        self.credit_spreads = [0.00137467867844589] * 8
+        self.credit_spreads = [ 0.00081, 0.0009, 0.00181, 0.00293, 0.00439, 0.00613, 0.00923, 0.01119]
         self.credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
 
         # economics of trade
@@ -42,7 +42,7 @@ class MyTestCase(unittest.TestCase):
         self.effective_date = '13/12/2014'
         self.accrual_start_date = '20/9/2014'
         self.maturity_date = '20/12/2019'
-        self.notional = 70.0
+        self.notional = 2.0
         self.is_buy_protection = 1  # only ever buy or sell protection!
         self.verbose = 0
 

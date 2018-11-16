@@ -444,7 +444,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 	string maturity_date,					/* (I) maturity date of cds as DD/MM/YYYY */
 	string value_date,						/* (I) date to value the cds DD/MM/YYYY */
 	string accrual_start_date,				/* (I) maturity date of cds as DD/MM/YYYY */
-	double	recovery_rate,					/* (I) recover rate of the curve in basis points */
+	double recovery_rate,					/* (I) recover rate of the curve in basis points */
 	double coupon_rate,						/* (I) CouponRate (e.g. 0.05 = 5% = 500bp) */
 	double notional,						/* (I) Notional MM */
 	int is_buy_protection,					/* (I) direction of credit risk */
@@ -473,7 +473,7 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 	TCurve *spreadcurve_dv01 = NULL;
 
 	// discount
-	vector<long int> maturity;
+	//vector<long int> maturity;
 	vector<char*> cstrings_expiries{};
 	vector<double> spreads;
 	vector<long int> tenors;
@@ -539,21 +539,19 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 		cstrings_expiries.push_back(&string.front());
 	}
 
-	for (int r = 0; r < static_cast<int>(swap_tenors.size()); r++) {
-		maturity.push_back(parse_string_ddmmyyyy_to_jpmcdsdate(swap_tenors[r].c_str()));
-	}
+	//for (int r = 0; r < static_cast<int>(swap_tenors.size()); r++) {
+	//	maturity.push_back(parse_string_ddmmyyyy_to_jpmcdsdate(swap_tenors[r].c_str()));
+	//}
 
 	// bootstrap discount curve
-	zerocurve = build_zero_interest_rate_curve2(value_date_jpm
+	zerocurve = build_zero_interest_rate_curve(value_date_jpm
 		, swap_rates.data()
 		, cstrings_expiries.data()
-		, maturity.data()
 		, verbose);
 
-	zerocurve_dv01 = build_zero_interest_rate_curve2(value_date_jpm
+	zerocurve_dv01 = build_zero_interest_rate_curve(value_date_jpm
 		, swap_rates_dv01.data()
 		, cstrings_expiries.data()
-		, maturity.data()
 		, verbose);
 
 	/////////////////////////////
@@ -983,6 +981,7 @@ vector< vector<double> > cds_index_all_in_one(
 		dirtypv_index += dirtypv * notional * credit_risk_direction_scale_factor;
 		cleanpv_index += cleanpv * notional * credit_risk_direction_scale_factor;
 		ai_index += ai * notional * credit_risk_direction_scale_factor;
+		spreads.clear();
 	  
 		FREE(spreadcurve);
 		spreads.clear();

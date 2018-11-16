@@ -1,15 +1,70 @@
 # Credit Default Swap Pricer
 
-Credit Default Swap Pricer project brings together the [ISDA CDS pricier](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
+Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://www.cdsmodel.com/cdsmodel/) and some new IMM date modules that are needed to make quick use of the underlying C library functions. This wrapper is aimed at analysts whom want to get up and running very quickly to price and compute risk on CDS using either Python or C++ calling code. The measures computed support a range of potential analysis including:
 
  + PVDirty, PVClean & Accrued Interest to support NAV calculations & back tests.
  + CS01 & DV01 sensitivities for risk exposure & limit monitoring analysis.
  + Roll sensitivities over range of dates.
  + PVBP sensitivities to support credit risk hedging analysis.
- + Index CDS Pricing from consituent level.
+ + Index CDS Pricing from constituent level.
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## Intrinsic CDX or iTraxx pricing.
+
+High performance pricing of CDX or iTraxx index trades can be achieved using the latest cds_index_all_in_one call. This new method supports passing a vector or recovery rates and 
+underlying index constituent spread curves to compute the intrinsic price of an index CDS trade. This also support computing the skew and skew adjustment for an index trade. 
+
+The example shows how credit_spread_list and recovery_rate_list can be passed into the pricing call. You can easily get started using these examples using the simple pip wheel binary packages.
+
+```
+$pip install isda
+```
+
+Example code to compute intrinsic price of CDS or iTraxx index.
+
+```
+
+def test_sell_protection_index(self):
+        """ method to specifically price an index cds """
+    
+        self.sdate = datetime.datetime(2018, 1, 8)
+        self.value_date = self.sdate.strftime('%d/%m/%Y')
+        self.verbose = 0
+        self.is_buy_protection = 0
+        
+        # simulate an index with 125 names;; 
+        self.credit_spread_list = [self.credit_spreads]*125
+        self.recovery_rate_list = [self.recovery_rate]*125
+
+        # build imm_dates TODO: hide this away internally?
+        self.imm_dates = [f[1] for f in imm_date_vector(
+            start_date=self.sdate, tenor_list=self.tenor_list)]
+
+        wall_time_list = list()
+        for i in range(0,20):
+            f = cds_index_all_in_one(self.trade_date,
+                                   self.effective_date,
+                                   self.maturity_date,
+                                   self.value_date,
+                                   self.accrual_start_date,
+                                   self.recovery_rate_list,
+                                   self.coupon,
+                                   self.notional,
+                                   self.is_buy_protection,
+                                   self.swap_rates,
+                                   self.swap_tenors,
+                                   self.swap_maturity_dates,
+                                   self.credit_spread_list,
+                                   self.credit_spread_tenors,
+                                   self.spread_roll_tenors,
+                                   self.imm_dates,
+                                   self.scenario_shifts,
+                                   self.verbose) 
+          
+            pv_dirty, pv_clean, ai, duration_in_milliseconds = f[1]
+```
+			
 ## How do I get started with the Python3 version? 
 
 The 1.0.3 branch plays very nicely with Python3 and has been upgraded to compile cleanly with MSVC using the Visual Studio 2017 vintage. We have also made a pip package available on pypi.org with a pre-compiled binary wheel
@@ -25,8 +80,8 @@ $python -m venv test1
 $cd test1
 $Scripts\activate.bat
 $cd test1
-$ pip install isda
-$ copy Lib\site-packages\isda\tests\TestCdsPricerIndex.py
+$pip install isda
+$copy Lib\site-packages\isda\tests\TestCdsPricerIndex.py
 $python TestCdsPricerIndex.py
 
 You should output to the screen that looks like below.
