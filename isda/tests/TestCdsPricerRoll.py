@@ -52,7 +52,6 @@ class MyTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @unittest.skip
     def test_two_factor_shift(self):
         """
         
@@ -86,7 +85,7 @@ class MyTestCase(unittest.TestCase):
         self.is_buy_protection = 0
 
         # used to generate and shock roll dataset
-        self.spread_roll_tenors = ['1D', '-1D', '-1W', '-1M', '-6M', '-1Y', '-5Y']
+        self.spread_roll_tenors = ['1Y','1D', '-1D', '-1W', '-1M', '-6M', '-1Y']
         self.scenario_shifts = [-10, 0, 10]
 
         # build imm_dates TODO: hide this away internally somewhere?
@@ -111,23 +110,25 @@ class MyTestCase(unittest.TestCase):
                            self.scenario_shifts,
                            self.verbose)
 
-        # results to compare against
-        self.spread_roll_tenors_results = {-10: [0.024377398537551408, 0.017571131660956488, 0.007359432714929524
-            , -0.0317885280270698, -0.2922965009356705, -0.602319069762766, -1.1921043554642177]
-                                         , 0: [0.0050220109323667605, -0.0016744535183860904, -0.01172141527276311
-                , -0.0502382139885996, -0.3065609282865831, -0.6116351775358528, -1.1921043554642177]
-                                         , 10:[-0.014324638086876014, -0.020911398152265066, -0.030793768790011236
-                , -0.06867995379960933, -0.3208205888005652, -0.6209492443307575, -1.1921043554642177]}
+        pv_clean = f[0][1]
 
+        # results to compare against
+        self.spread_roll_tenors_results = {-10: [0.04387513244181401, 0.03306420268550876, 0.03302212083102655,
+                                                 0.032769619019361866, 0.031801536455466885,
+                                                 0.025356314262256027, 0.01767911535374796]
+                                         , 0: [0.042111643439626215, 0.03234206758048001, 0.03230149347632522,
+                                               0.03205803736866009, 0.031124617333038864,
+                                               0.024909464222462, 0.017504780143193628]
+                                         , 10:[0.040349886127636986, 0.03162025310504571, 0.03158118526362845,
+                                               0.031346766012800564, 0.030447975828985945,
+                                               0.024462724355530034, 0.01733046875873452]}
         # confirm that we have managed to generate the accurate number of scenario details
         #
-        self.assertTrue(len(f[2:]), 3)
         # confirm we have the same dataset
-        for i, a in enumerate(f[2:]):
-            for test_value, result_value in zip(a, self.spread_roll_tenors_results[self.scenario_shifts[i]]):
-                self.assertAlmostEquals(test_value, result_value)
+        for i, test_value_list in enumerate(f[3:]):
+            for test_value, result_value in zip(test_value_list, self.spread_roll_tenors_results[self.scenario_shifts[i]]):
+                self.assertAlmostEqual(test_value, result_value, 4)
 
-    @unittest.skip
     def test_single_factor_shift(self):
         """
 
@@ -149,7 +150,9 @@ class MyTestCase(unittest.TestCase):
         self.is_buy_protection = 0
 
         # used to generate and shock roll dataset
-        self.spread_roll_tenors = ['1D', '-1D', '-1W', '-1M', '-6M', '-1Y', '-5Y']
+        # both positive and negative; -1D moves the maturity date one day closer to stepIn
+        # whilst 1D pushes the scheduled termination date further out increasing the TTM.
+        self.spread_roll_tenors = ['1D', '-1D', '-1W', '-1M', '-6M', '-1Y']
         self.scenario_shifts = [0]
 
         # build imm_dates TODO: hide this away internally somewhere?
@@ -174,13 +177,17 @@ class MyTestCase(unittest.TestCase):
                            self.scenario_shifts,
                            self.verbose)
 
+        pv_clean = f[0][1]
+
         # self.spread_roll_tenors zero shift
-        self.spread_roll_tenors_results = [0.0050220109323667605, -0.0016744535183860904, -0.01172141527276311, -0.0502382139885996
-            ,-0.3065609282865831, -0.6116351775358528, -1.1921043554642177]
+        self.spread_pv_clean_result = 0.03234206758048001
+        # self.spread_roll_tenors zero shift
+        self.spread_roll_tenors_results = [0.03234206758048001, 0.03230149347632522,
+                                           0.03205803736866009, 0.031124617333038864, 0.024909464222462,
+                                           0.017504780143193628]
 
-        for test_value, result_value in zip(f[2:][0], self.spread_roll_tenors_results):
-            self.assertAlmostEquals(test_value, result_value)
-
+        for test_value, result_value in zip(list(f[3]), self.spread_roll_tenors_results):
+            self.assertAlmostEqual(pv_clean-test_value, self.spread_pv_clean_result-result_value, 4)
 
     def test_1day_roll_buy_protection_cds_shift(self):
         """
@@ -221,11 +228,15 @@ class MyTestCase(unittest.TestCase):
                            self.scenario_shifts,
                            self.verbose)
 
-        # self.spread_roll_tenors zero shift
-        self.spread_roll_tenors_results = [-0.00167445351801]
+        pv_clean = f[0][1]
 
-        for test_value, result_value in zip(f[2:][0], self.spread_roll_tenors_results):
-            self.assertAlmostEquals(f[0][1]-test_value, result_value)
+        # self.spread_roll_tenors zero shift
+        self.spread_pv_clean_result = -0.03234206758048001
+        self.spread_roll_tenors_results = [-0.03230149347632522, -0.03205803736866009,
+                                           -0.031124617333038864, -0.017504780143193628]
+
+        for test_value, result_value in zip(list(f[3]), self.spread_roll_tenors_results):
+            self.assertAlmostEqual(pv_clean-test_value, self.spread_pv_clean_result-result_value, 4)
 
 
 if __name__ == '__main__':
