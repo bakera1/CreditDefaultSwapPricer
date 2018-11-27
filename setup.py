@@ -1,10 +1,5 @@
 
-import os
-import setuptools
 from distutils.core import setup, Extension
-
-#https://gist.github.com/taochenshh/b53ce0f54fea5b2204908100d0e566fa
-#https://gist.github.com/auth/github?return_to=https%3A%2F%2Fgist.github.com%2Ftaochenshh%2Fb53ce0f54fea5b2204908100d0e566fa
 
 module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
                     include_dirs = ['/usr/include/python3.6'],
@@ -63,12 +58,12 @@ module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
 
 readme = open('README.md').read()
 
-setup (name = 'isda',
-       version = '1.0.7',
+setup(name='isda',
+       version='1.0.7',
        author='Alexander Baker',
        license='MIT',
        author_email='baker.alexander@gmail.com',
-       description = 'Package that delivers high performance pricing and risk for credit derivatives',
+       description='Package that delivers high performance pricing and risk for credit derivatives',
        long_description=readme,
        url='https://github.com/bakera1/CreditDefaultSwapPricer/',
        #ext_package='isda',
@@ -79,16 +74,15 @@ setup (name = 'isda',
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-		"Programming Language :: Python :: 3.5",
-		"Programming Language :: Python :: 3.6",
-		"Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
-	"Operating System :: POSIX :: Linux",
+        "Operating System :: POSIX :: Linux",
        ],
        packages=[
             'isda', 'isda.tests'
             ],
        keywords="credit derivative pricing risk",
        include_package_data=True,
-       ext_modules = [module1])
-     
+       ext_modules=[module1])
