@@ -1,12 +1,10 @@
 import sys
 import unittest
 import datetime
-from datetime import date
-
-sys.path.append('/usr/local/lib/python2.7/dist-packages/isda')
 
 from isda.isda import cds_all_in_one, cds_index_all_in_one
 from isda.imm import imm_date_vector
+
 
 class MyTestCase(unittest.TestCase):
     """
@@ -76,25 +74,25 @@ class MyTestCase(unittest.TestCase):
         self.imm_dates = [f[1] for f in imm_date_vector(
             start_date=self.sdate, tenor_list=self.tenor_list)]
 
-       	f = cds_index_all_in_one(self.trade_date,
-                                   self.effective_date,
-                                   self.maturity_date,
-                                   self.value_date,
-                                   self.accrual_start_date,
-                                   self.recovery_rate_list,
-                                   self.coupon,
-                                   self.notional,
-                                   self.is_buy_protection,
-                                   self.swap_rates,
-                                   self.swap_tenors,
-                                   self.swap_maturity_dates,
-                                   self.credit_spread_list,
-                                   self.credit_spread_tenors,
-                                   self.spread_roll_tenors,
-                                   self.imm_dates,
-                                   self.scenario_shifts,
-                                   self.verbose)            
-        
+        f = cds_index_all_in_one(self.trade_date,
+                                 self.effective_date,
+                                 self.maturity_date,
+                                 self.value_date,
+                                 self.accrual_start_date,
+                                 self.recovery_rate_list,
+                                 self.coupon,
+                                 self.notional,
+                                 self.is_buy_protection,
+                                 self.swap_rates,
+                                 self.swap_tenors,
+                                 self.swap_maturity_dates,
+                                 self.credit_spread_list,
+                                 self.credit_spread_tenors,
+                                 self.spread_roll_tenors,
+                                 self.imm_dates,
+                                 self.scenario_shifts,
+                                 self.verbose)
+
         pv_dirty, pv_clean, ai, duration_in_milliseconds = f[1]
 
     @unittest.skip

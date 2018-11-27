@@ -1,9 +1,7 @@
-import sys
 import unittest
 import datetime
-from datetime import date
 
-from isda.isda import cds_index_all_in_one, cds_all_in_one, average
+from isda.isda import cds_index_all_in_one, average
 from isda.imm import imm_date_vector
 
 class MyTestCase(unittest.TestCase):
@@ -53,12 +51,11 @@ class MyTestCase(unittest.TestCase):
         self.spread_roll_tenors = ['1D', '-1D', '-1W', '-1M', '-6M', '-1Y', '-5Y']
         self.scenario_shifts = [-50, -10, 0, 10, 20, 50, 150, 100]
 
-
     def tearDown(self):
         pass
 
     def test_sell_protection_index(self):
-        """ method to specifically price an index cds """
+        """ method to specifically test performance to price an index cds with 125 names """
     
         self.sdate = datetime.datetime(2018, 1, 8)
         self.value_date = self.sdate.strftime('%d/%m/%Y')
@@ -99,6 +96,8 @@ class MyTestCase(unittest.TestCase):
             print("cob_date: {0} pv_dirty: {1:.6f} pv_clean: {2:.6f} ai: {3:.6f} wall_time: {4} (ms)".format(self.value_date,
                         pv_dirty, pv_clean, ai, duration_in_milliseconds))
         a = [wall_time_list]
-        print("average execution {0}".format(average(a)))         
+        print("average execution {0}".format(average(a)))
+
+
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()

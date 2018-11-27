@@ -743,6 +743,8 @@ vector< vector<double> > cds_all_in_one_exclude_ir_tenor_dates(
 
 		vector <double> scenario_tenors_pvdirty;
 
+        spreads_cs01.clear();
+
 		// build a scenario spread curve
 		for (int r = 0; r < static_cast<int>(spread_rates.size()); r++) {
 			// spread_cs01 = spread + spread * -0.1
@@ -1024,7 +1026,7 @@ vector<double> average (vector< vector<double> > i_matrix) {
     }
     averages.push_back(rsum/ncols);    
   }
-  std::cout << "factoral " << factoral(5) << std::endl;
+  //std::cout << "factoral " << factoral(5) << std::endl;
   return averages;
 };
 

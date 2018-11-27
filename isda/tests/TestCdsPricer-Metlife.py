@@ -1,6 +1,5 @@
 import unittest
 import datetime
-from datetime import date
 
 from isda.isda import cds_all_in_one_exclude_ir_tenor_dates
 from isda.imm import imm_date_vector
@@ -26,7 +25,7 @@ class MyTestCase(unittest.TestCase):
             , 0.02858500000000, 0.02868000000000]
 
         self.swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y', '9Y', '10Y']
-	
+
         # spread curve download from markit
         self.credit_spreads = [0.00081, 0.0009, 0.00181, 0.00293, 0.00439, 0.00613, 0.00923, 0.01119]
         self.credit_spread_tenors = ['6M', '1Y', '2Y', '3Y', '4Y', '5Y', '7Y', '10Y']
@@ -55,10 +54,11 @@ class MyTestCase(unittest.TestCase):
         pass
 
     def test_buy_protection(self):
+        """ method to test buy protection single name CDS """
+
         self.sdate = datetime.datetime(2018, 4, 13)
         self.value_date = self.sdate.strftime('%d/%m/%Y')
 
-        # build imm_dates TODO: hide this away internally?
         self.imm_dates = [f[1] for f in imm_date_vector(
             start_date=self.sdate, tenor_list=self.tenor_list)]
 

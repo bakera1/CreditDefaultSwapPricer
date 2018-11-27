@@ -1,9 +1,5 @@
-import sys
 import unittest
 import datetime
-from datetime import date
-
-sys.path.append('/usr/local/lib/python2.7/dist-packages/isda')
 
 from isda.isda import cds_all_in_one
 from isda.imm import imm_date_vector
@@ -53,6 +49,7 @@ class MyTestCase(unittest.TestCase):
         pass
 
     def test_two_factor_shift(self):
+        """ method to test roll and roll shocks generate a surface of pv change """
         """
         
             roll and roll shocks generate a surface of pv change;
@@ -130,6 +127,7 @@ class MyTestCase(unittest.TestCase):
                 self.assertAlmostEqual(test_value, result_value, 4)
 
     def test_single_factor_shift(self):
+        """ method to test roll and roll shocks """
         """
 
             base case roll test; 
@@ -190,6 +188,7 @@ class MyTestCase(unittest.TestCase):
             self.assertAlmostEqual(pv_clean-test_value, self.spread_pv_clean_result-result_value, 4)
 
     def test_1day_roll_buy_protection_cds_shift(self):
+        """ method to test roll simple 1 day clean roll pv """
         """
     
             base case roll test;     
