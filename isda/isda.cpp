@@ -100,7 +100,8 @@ vector< vector<double> > cds_all_in_one(
 	// inner return vector
 	vector <double> allinone_base;
 	vector <double> allinone_pvbp;
-	vector < vector<double> > allinone_roll;
+	vector < vector<double> > allinone_roll_clean;
+	vector < vector<double> > allinone_roll_dirty;
 
 	// assumes sell protection default
 	double credit_risk_direction_scale_factor = 1;
@@ -109,6 +110,7 @@ vector< vector<double> > cds_all_in_one(
 	// jpm roll dates
 	TDate *pointer_roll_dates_jpm;
 	double roll_pvclean;
+	double roll_pvdirty;
 
 	/////////////////////////////
 	// parse char* to jpm dates
@@ -355,6 +357,7 @@ vector< vector<double> > cds_all_in_one(
 	for (int s = 0; s < static_cast<int>(scenario_tenors.size()); s++) {
 
 		vector <double> scenario_tenors_pvdirty;
+		vector <double> scenario_tenors_pvclean;
 
 		spreads_cs01.clear();
 		// build a scenario spread curve
@@ -389,14 +392,24 @@ vector< vector<double> > cds_all_in_one(
 				, coupon_rate_in_basis_points
 				, is_clean_price
 				, verbose);
+				
+			roll_pvdirty = -calculate_cds_price(value_date_jpm
+				, pointer_roll_dates_jpm[r]
+				, zerocurve
+				, spreadcurve
+				, accrual_start_date_jpm
+				, recovery_rate
+				, coupon_rate_in_basis_points
+				, is_dirty_price
+				, verbose);
 
-			//roll_pvdirty = fabs(roll_pvdirty);
-			scenario_tenors_pvdirty.push_back(roll_pvclean * notional * credit_risk_direction_scale_factor);
+			scenario_tenors_pvclean.push_back(roll_pvclean * notional * credit_risk_direction_scale_factor);			scenario_tenors_pvdirty.push_back(roll_pvdirty * notional * credit_risk_direction_scale_factor);			
 
 		}
 
 		// push back entire matrix
-		allinone_roll.push_back(scenario_tenors_pvdirty);
+		allinone_roll_clean.push_back(scenario_tenors_pvclean);
+		allinone_roll_dirty.push_back(scenario_tenors_pvdirty);
 	}
 
 	// compute the par spread vector
@@ -419,15 +432,18 @@ vector< vector<double> > cds_all_in_one(
 
 	int stop_s = clock();
 	allinone_base.push_back((stop_s - start_s));
-	//allinone_base.push_back(roll_1d_cleanpv  * notional * credit_risk_direction_scale_factor);
 	
 	// push back all vectors
 	allinone.push_back(allinone_base);
 	allinone.push_back(allinone_pvbp);
 	allinone.push_back(par_spread_vector);
 
-	for (int r = 0; r < static_cast<int>(allinone_roll.size()); r++) {
-		allinone.push_back(allinone_roll[r]);
+	for (int r = 0; r < static_cast<int>(allinone_roll_clean.size()); r++) {
+		allinone.push_back(allinone_roll_clean[r]);
+	}
+	
+	for (int r = 0; r < static_cast<int>(allinone_roll_dirty.size()); r++) {
+		allinone.push_back(allinone_roll_dirty[r]);
 	}
 
 	// handle free of the curve objects via call to JpmcdsFreeSafe macro

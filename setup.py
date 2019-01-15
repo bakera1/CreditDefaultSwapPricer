@@ -1,5 +1,6 @@
 
-from distutils.core import setup, Extension
+#from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
                     include_dirs = ['/usr/include/python3.6'],
