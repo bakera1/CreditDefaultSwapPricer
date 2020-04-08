@@ -14,7 +14,7 @@ Potential future measures might include Equivalent Notional, Par Spread and Risk
 
 ISDA compliant swap rates can be downloaded from the URL below each day.
 
-+ https://www.markit.com/news/InterestRates_USD_20200408.zip
++ https://www.markit.com/news/InterestRates_USD_20200407.zip
 
 ## Intrinsic CDX or iTraxx pricing.
 
