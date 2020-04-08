@@ -10,6 +10,12 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## MarkIT Swap Rate URL ##
+
+ISDA compliant swap rates can be downloaded from the URL below each day.
+
++ [https://www.markit.com/news/InterestRates_USD_20200408.zip][MarkIT URL]
+
 ## Intrinsic CDX or iTraxx pricing.
 
 High performance pricing of CDX or iTraxx index trades can be achieved using the latest cds_index_all_in_one call. This new method supports passing a vector or recovery rates and 
