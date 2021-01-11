@@ -11,6 +11,18 @@
 
 std::vector<double> average (std::vector< std::vector<double> > i_matrix);
 
+std::vector< std::vector<double> > cds_coupon_schedule(
+    std::string accrual_start_date, /* (I) maturity date of cds as DD/MM/YYYY */
+    std::string maturity_date, /* (I) maturity date of cds as DD/MM/YYYY */
+    std::string coupon_interval, /* (I) coupon interval Q, 1M, 2M */
+    std::string day_count_convention, /* (I) day_count_convention Act/360 */
+    std::string stub_method, /* (I) stub_method F/S/20 */
+    std::string holiday_filename, /* (I) YYMMDD holiday.dat filename */
+    double coupon_rate, /* (I) maturity date of cds as DD/MM/YYYY */
+    double notional, /* (I) maturity date of cds as DD/MM/YYYY */
+    int verbose
+);
+
 std::vector< std::vector<double> > cds_index_all_in_one (
  std::string trade_date,						    /* (I) trade date of cds as DD/MM/YYYY */
  std::string effective_date,					    /* (I) effective date of cds as DD/MM/YYYY */

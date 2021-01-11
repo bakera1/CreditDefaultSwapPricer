@@ -12,9 +12,23 @@
 #include "tcurve.h"
 #include "bastypes.h"
 #include <math.h>
+#include <exception>
 #include "macros.h"
+#include "schedule.h"
+#include "cds.h"
+#include <iomanip>
+
 
 using namespace std;
+
+class MarshalException : public exception
+{
+virtual const char* what() const throw()
+{
+return "Marshall Exception";
+}
+
+} marshallexception;
 
 TDate parse_string_ddmmyyyy(const std::string& s, int& day, int& month, int& year)
 {
@@ -35,6 +49,141 @@ TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
 //  sscanf(s.c_str(), "%2d/%2d/%4d", &day, &month, &year);
 //  return JpmcdsDate(year, month, day-1);
 //}
+
+vector< vector<double> > cds_coupon_schedule(
+    string accrual_start_date, /* (I) maturity date of cds as DD/MM/YYYY */
+    string maturity_date, /* (I) maturity date of cds as DD/MM/YYYY */
+    string coupon_interval, /* (I) maturity date of cds as DD/MM/YYYY */
+    string day_count_convention, /* (I) day_count_convention Act/360 */
+    string stub_method, /* (I) stub_method F/S/20 */
+    string holiday_filename, /* (I) day_count_convention Act/360 */
+    double coupon_rate, /* (I) coupon_rate 1.0 1% */
+    double notional, /* (I) notional 1.0 MM */
+    int verbose
+){
+
+
+    static char *routine = "isda_cds_payment_schedule";
+
+    // outer return vector
+    vector < vector<double> > allinone;
+    // inner return vector
+    vector <double> allinone_base;
+    vector <double> allinone_date;
+    vector <double> allinone_amount;
+
+    TDateInterval  couponInterval;
+    TStubMethod    stubMethod;
+    TCashFlowList  *cashFlowList;
+    //double         notional;
+    //double         couponRate;
+    long int       paymentDcc;
+
+    //notional = 1.0;
+    //couponRate = 1.0;
+    paymentDcc = 0;
+
+    TDate maturity_date_jpm, accrual_start_date_jpm;
+
+    int start_s = clock();
+
+    try{
+
+    /////////////////////////////
+    // parse char* to jpm dates
+    /////////////////////////////
+
+    maturity_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(maturity_date);
+    accrual_start_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(accrual_start_date);
+
+    char* c_coupon_interval = const_cast<char*>(coupon_interval.c_str());
+    if (JpmcdsStringToDateInterval(c_coupon_interval, routine, &couponInterval) != SUCCESS)
+    {
+    throw marshallexception;
+    }
+
+    char* c_stub_method = const_cast<char*>(stub_method.c_str());
+    if (JpmcdsStringToStubMethod(c_stub_method, &stubMethod) != SUCCESS)
+    {
+    throw marshallexception;
+    }
+
+
+    char* c_day_count_convention = const_cast<char*>(day_count_convention.c_str());
+    if (JpmcdsStringToDayCountConv(c_day_count_convention, &paymentDcc) != SUCCESS)
+    {
+    throw marshallexception;
+    }
+
+    char* c_holiday_filename = const_cast<char*>(holiday_filename.c_str());
+
+    cashFlowList = JpmcdsCdsFeeLegFlows
+    (accrual_start_date_jpm,
+    maturity_date_jpm,
+    &couponInterval,
+    &stubMethod,
+    notional,
+    coupon_rate,
+    paymentDcc,
+    'F',
+    c_holiday_filename);
+
+    if (cashFlowList == NULL) {
+        std::cout << cashFlowList << std::endl;
+        std::cout << "bad cashFlowList" << std::endl;
+        throw marshallexception;
+    }
+
+    // decompose TCashFlowList into a vector object
+    int idx = 0;
+    TMonthDayYear mdy;
+
+    for (idx = 0; idx < cashFlowList->fNumItems; idx++)
+    {
+
+    // TODO: move into function call
+    std::stringstream ss;
+
+    if (JpmcdsDateToMDY(cashFlowList->fArray[idx].fDate, &mdy) != SUCCESS)
+    {
+        throw marshallexception;
+    }
+    if (JpmcdsNormalizeMDY(&mdy) != SUCCESS)
+    {
+        throw marshallexception;
+    }
+
+    ss << std::setw(2) << std::setfill('0') << mdy.day;
+    ss << std::setw(2) << std::setfill('0') << mdy.month;
+    ss << std::setw(4) << std::setfill('0') << mdy.year;
+
+    // convert stream to string
+    std::string s = ss.str();
+
+    allinone_date.push_back(std::stoi(s));
+    allinone_amount.push_back(cashFlowList->fArray[idx].fAmount);
+    }
+
+    // status ok!
+    allinone_base.push_back(1);
+    allinone_base.push_back((clock() - start_s));
+
+    // push back all vectors
+    allinone.push_back(allinone_base);
+    allinone.push_back(allinone_date);
+    allinone.push_back(allinone_amount);
+
+    }
+    catch(exception &e)
+    {
+    std::cout << e.what() << std::endl;
+    allinone_base.push_back(-1);
+    allinone_base.push_back((clock() - start_s));
+    }
+
+    return allinone;
+
+};
 
 vector< vector<double> > cds_all_in_one(
 	string trade_date,						/* (I) trade date of cds as DD/MM/YYYY */
