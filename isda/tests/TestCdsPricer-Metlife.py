@@ -84,7 +84,9 @@ class MyTestCase(unittest.TestCase):
         # expand tuple
         pv_dirty, pv_clean, ai, cs01, dv01, duration_in_milliseconds = f[0]
         pvbp6m, pvbp1y, pvbp2y, pvbp3y, pvbp4y, pvbp5y, pvbp7y, pvbp10y = f[1]
+        print(pv_dirty*1e6, pv_clean*1e6, ai*1e6, 100+pv_clean*1e2/self.notional)
 
+        self.assertAlmostEqual(102.04, 100+pv_clean*1e2/self.notional, 2)
         self.assertAlmostEqual(0.04222146729753646, pv_dirty)
         self.assertAlmostEqual(0.040832578408647575, pv_clean)
         self.assertAlmostEqual(0.001388888888888884, ai)
