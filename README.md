@@ -10,6 +10,39 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## 1.0.12 Release Notes ##
+
+New function to compute the discount rate from bootstrapped interest rate curve. Simply 
+pass in a list of rates and tenors; the value date of the rates and a simple list of future
+casflow dates. The return is a list discount factors; one for each date in the future. 
+
+```
+ def test_discount_factor(self):
+        """ discount factor from ir rates bootstrapped """
+
+        from isda.isda import cds_discount_rate_ir_tenor_dates
+    
+        swap_rates = [-0.00369, -0.00340, -0.00329, -0.00271, -0.00219, -0.00187, -0.00149, 0.000040, 0.00159,
+                           0.00303, 0.00435, 0.00559, 0.00675, 0.00785, 0.00887]
+        swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y', '9Y', '10Y']
+        
+        verbose = 0
+        # base date
+        value_date = datetime.datetime(2021, 2, 5)
+        date_list = list()
+        date_list.append(value_date.strftime('%d/%m/%Y'))
+        for month in range(10):
+            value_date = value_date + relativedelta(months=6)
+            date_list.append(value_date.strftime('%d/%m/%Y'))
+
+        f = cds_discount_rate_ir_tenor_dates(value_date.strftime('%d/%m/%Y'),
+                                             date_list,
+                                             swap_rates,
+                                             swap_tenors,
+                                             verbose
+                                             )
+```
+
 ## MarkIT Online Single Name or Index CDS Pricer ##
 
 Useful for those folks whom don't have access to the BBG CDSW page; this resource can be used to check pv_clean, dirty, accrued and cds price.
