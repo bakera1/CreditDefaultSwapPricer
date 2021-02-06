@@ -11,6 +11,14 @@
 
 std::vector<double> average (std::vector< std::vector<double> > i_matrix);
 
+std::vector< double > cds_discount_rate_ir_tenor_dates(
+	std::string value_date,						/* (I) date to value the cds DD/MM/YYYY */
+	std::vector<std::string> value_dates,		/* (I) date to value the cds DD/MM/YYYY */
+	std::vector<double> swap_rates, 			/* (I) swap rates */
+	std::vector<std::string> swap_tenors,		/* (I) swap tenors "1M", "2M" */
+	int verbose
+);
+
 std::vector< std::vector<double> > cds_coupon_schedule(
     std::string accrual_start_date, /* (I) maturity date of cds as DD/MM/YYYY */
     std::string maturity_date, /* (I) maturity date of cds as DD/MM/YYYY */

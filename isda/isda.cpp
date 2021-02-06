@@ -17,7 +17,8 @@
 #include "schedule.h"
 #include "cds.h"
 #include <iomanip>
-
+#include "cxzerocurve.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -49,6 +50,53 @@ TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
 //  sscanf(s.c_str(), "%2d/%2d/%4d", &day, &month, &year);
 //  return JpmcdsDate(year, month, day-1);
 //}
+
+
+
+vector< double > cds_discount_rate_ir_tenor_dates(
+	string value_date,						/* (I) date to value the cds DD/MM/YYYY */
+	vector<string> value_dates,             /* (I) input forward dates DD/MM/YYYY */
+	vector<double> swap_rates, 				/* (I) swap rates */
+	vector<string> swap_tenors,				/* (I) swap tenors "1M", "2M" */
+	int verbose
+) {
+
+	TDate value_date_jpm, tmp_date_jpm;
+	vector <double> allinone;
+	vector<char*> cstrings_expiries{};
+	vector<double> swap_rates_tmp;
+
+	// empty curve pointers
+	TCurve *zerocurve = NULL;
+
+    value_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(value_date);
+
+	for (int r = 0; r < static_cast<int>(swap_rates.size()); r++) {
+		swap_rates_tmp.push_back(swap_rates[r]);
+	}
+
+	for (auto& string : swap_tenors) {
+		cstrings_expiries.push_back(&string.front());
+	}
+
+	// bootstrap discount curve
+	zerocurve = build_zero_interest_rate_curve(value_date_jpm
+		, swap_rates_tmp.data()
+		, cstrings_expiries.data()
+		, verbose);
+
+    for (int s = 0; s < static_cast<int>(value_dates.size()); s++) {
+        tmp_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(value_dates[s]);
+        allinone.push_back(JpmcdsZeroPrice(zerocurve, tmp_date_jpm));
+    }
+
+	FREE(zerocurve);
+
+	reverse(allinone.begin(), allinone.end());
+
+	return allinone;
+
+};
 
 vector< vector<double> > cds_coupon_schedule(
     string accrual_start_date, /* (I) maturity date of cds as DD/MM/YYYY */
