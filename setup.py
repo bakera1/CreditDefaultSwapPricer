@@ -60,7 +60,7 @@ module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
 readme = open('README.md').read()
 
 setup(name='isda',
-       version='1.0.7',
+       version='1.0.16',
        author='Alexander Baker',
        license='MIT',
        author_email='baker.alexander@gmail.com',
