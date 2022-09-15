@@ -32,8 +32,9 @@ swap_tenors = ['1M', '3M', '6M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y',
 
 # economics of trade 1% fixed coupon
 coupon = 100.0
-trade_date = '31/08/2022'
-accrual_start_date = '20/06/2022'
+trade_date = self.dt_trade_date.strftime('%d/%m/%Y')
+settle_date = date_by_adding_business_days(self.dt_trade_date, 3).strftime('%d/%m/%Y')
+accrual_start_date = '21/06/2022'
 maturity_date = '20/12/2026'
 notional = 12.0
 is_buy_protection = 0  
@@ -52,12 +53,12 @@ holiday_filename = f'{unique_filename}.dat'
 holiday_list = [16010101, 20180320]
 
 def save_to_file(*holiday_list):
-    with open(self.holiday_filename, mode='wt', encoding='utf-8') as myfile:
+    with open(holiday_filename, mode='wt', encoding='utf-8') as myfile:
         for lines in holiday_list:
             myfile.write('\n'.join(str(line) for line in lines))
             myfile.write('\n')
 
-save_to_file(self.holiday_list)
+save_to_file(holiday_list)
 
 # just for measuring performance
 wall_time_list = list()
@@ -66,6 +67,7 @@ for credit_spread, recovery_rate in zip(credit_spread_list, recovery_rate_list):
     f = compute_isda_upfront(trade_date,
                              maturity_date,
                              accrual_start_date,
+                             settle_date,
                              recovery_rate,
                              coupon,
                              notional,
