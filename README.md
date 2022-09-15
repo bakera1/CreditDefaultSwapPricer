@@ -16,6 +16,12 @@ New function to compute the upfront fee using the ISDA calculator. The is_rofr f
 bootstrapping for the sofr interest rate. The code below will give you a perfect match to CDSW and the https://cds.ihsmarkit.com/converter.jsp
 calculators. The function api has been extended to include fixed and floating rate swap frequency and day count convention.
 
+```
+$pip install isda==1.0.22
+```
+The Python code example below shows how you can setup a trade to compute clean and dirty settlement amounts. The SOFR rates 
+are downloadable from MarkIT.
+
 ```python
 
 import uuid
@@ -32,8 +38,9 @@ swap_tenors = ['1M', '3M', '6M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y',
 
 # economics of trade 1% fixed coupon
 coupon = 100.0
-trade_date = self.dt_trade_date.strftime('%d/%m/%Y')
-settle_date = date_by_adding_business_days(self.dt_trade_date, 3).strftime('%d/%m/%Y')
+settlement_period_days = 3
+trade_date = dt_trade_date.strftime('%d/%m/%Y')
+settle_date = date_by_adding_business_days(dt_trade_date, settlement_period_days).strftime('%d/%m/%Y')
 accrual_start_date = '21/06/2022'
 maturity_date = '20/12/2026'
 notional = 12.0
