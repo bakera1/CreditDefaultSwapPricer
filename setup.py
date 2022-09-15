@@ -4,7 +4,7 @@ from setuptools import setup, Extension
 module1 = Extension('_isda', extra_compile_args=['-std=c++11'],
                     include_dirs=['/usr/include/python3.6'],
                     library_dirs=['/usr/lib/python3.6'],
-                    define_macros=[],
+                    define_macros=[('LINUX', None)],
                     sources=['isda/example.c',
                              'isda/main.c',
                              'isda/busday.c',
