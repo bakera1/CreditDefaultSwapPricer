@@ -16,7 +16,7 @@ New function to compute the upfront fee using the ISDA calculator. The is_rofr f
 bootstrapping for the sofr interest rate. The code below will give you a perfect match to CDSW and the https://cds.ihsmarkit.com/converter.jsp
 calculators. The function api has been extended to include fixed and floating rate swap frequency and day count convention.
 
-```
+```python
 
 import uuid
 from isda.isda import compute_isda_upfront
