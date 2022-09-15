@@ -98,7 +98,7 @@ New function to compute the discount rate from bootstrapped interest rate curve.
 pass in a list of rates and tenors; the value date of the rates and a simple list of future
 casflow dates. The return is a list discount factors; one for each date in the future. 
 
-```
+```python
  def test_discount_factor(self):
         """ discount factor from ir rates bootstrapped """
 
@@ -151,7 +151,7 @@ $pip install isda
 
 Example code to compute intrinsic price of CDS or iTraxx index.
 
-```
+```python
 
 def test_sell_protection_index(self):
         """ method to specifically price an index cds """
@@ -286,7 +286,7 @@ The codebase and build scripts rely on Python2.7; we plan to migrate to Python3 
 
 Additional code has been added the all_in_one_cds method to invoke the JpmCdscdsParSpread() to compute par spreads. The internal call re-uses the swap_spread tenor list as the par spread tenors and will compute a par spread for each tenor. The vector of par spreads is then returned in an additional vector across the results interface and can easily be accessed in Python as shown below. 
 
-```
+```python
 credit_spreads = [0.00137467867844589]*8
 swap_tenors = ['1M', '2M', '3M', '6M', '9M', '1Y', '2Y', '3Y', 
             '4Y', '5Y', '6Y', '7Y', '8Y', '9Y, 
@@ -341,7 +341,7 @@ A new TestCdsPricer class has been added to the project which aims to lock in th
 
 The test cases are setup to asset values that have been hand validated to 11 decimal places with the MarkIT and BBG calculators. The signs have also been validated against market convension.
 
-```
+```python
 self.assertAlmostEquals(-1.23099324435, pv_dirty)
 self.assertAlmostEquals(-1.19210435546, pv_clean)
 self.assertAlmostEquals(0.0388888888889, ai)
@@ -366,7 +366,7 @@ This repo includes a make.bat file intended to build the project on most Windows
 
 Use the following steps to clone, make and then finally test the project.
 
-```
+```python
 git clone https://github.com/bakera1/CreditDefaultSwapPricer.git
 cd CreditDefaultSwapPricer
 make.bat
@@ -374,13 +374,13 @@ make.bat
 
 The build step should result in the _isda.pyd and isda.py file being copied into the cds directory. You can then test the binary with the following steps
 
-```
+```python
 python isda_test.py
 ```
 
 The following example output should then be shown on the console from the Python script.
 
-```
+```python
 C:\github\CreditDefaultSwapPricer\cds>python isda_test.py
 23/01/2018      pv_dirty (-1.07226)     cs01 (-8298.48) dv01 (-9.87001e-05)     pvbp5y 0.00049088    5yeqnot (16.9053)  1day roll (-1806.69)    time (32.0)
 24/01/2018      pv_dirty (-1.0707)      cs01 (-8286.24) dv01 (-9.78226e-05)     pvbp5y 0.000490599   5yeqnot (16.8901)  1day roll (-1773.74)    time (51.0)
@@ -411,7 +411,7 @@ You might see the following error message when executing the make.bat file on wi
 
 Edit the file C:\Python27\include\pyconfig.h to comment out line #286 as below; this allows the compilation and linking to complete.
 
-```
+```C++
 #if (__GNUC__==2) && (__GNUC_MINOR__<=91)
 #warning "Please use an up-to-date version of gcc! (>2.91 recommended)"
 #endif
