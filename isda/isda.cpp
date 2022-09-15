@@ -35,14 +35,14 @@ TDate parse_string_ddmmyyyy(const std::string& s, int& day, int& month, int& yea
 {
   sscanf(s.c_str(), "%2d/%2d/%4d", &day, &month, &year);
   return JpmcdsDate(year, month, day);
-}
+};
 
 TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
 {
   int day, month, year;
   sscanf(s.c_str(), "%2d/%2d/%4d", &day, &month, &year);
   return JpmcdsDate(year, month, day);
-}
+};
 
 //TDate parse_string_ddmmyyyy_to_jpmcdsdate_minus_one(const std::string& s)
 //{
@@ -52,6 +52,187 @@ TDate parse_string_ddmmyyyy_to_jpmcdsdate(const std::string& s)
 //}
 
 
+vector< double >  compute_isda_upfront(
+ string trade_date,						    /* (I) trade date of cds as DD/MM/YYYY */
+ string maturity_date,						/* (I) maturity date of cds as DD/MM/YYYY */
+ string accrual_start_date,				    /* (I) maturity date of cds as DD/MM/YYYY */
+ string settle_date,                        /* (I) settlement date T+3 business days*/
+ double recovery_rate,				        /* (I) recover rate of the curve in basis points */
+ double coupon_rate,						/* (I) CouponRate (e.g. 0.05 = 5% = 500bp) */
+ double notional,							/* (I) Notional MM */
+ int is_buy_protection,						/* (I) direction of credit risk */
+ vector<double> swap_rates, 				/* (I) swap rates */
+ vector<string> swap_tenors,			    /* (I) swap tenors "1M", "2M" */
+ double par_spread,                         /* (I) par spread */
+ int is_rofr,							    /* (I) rofr rates or libor */
+ string holiday_filename,                   /* (I) YYMMDD holiday.dat filename */
+ string swap_floating_day_count_convention, /* (I) swap_floating_payment_frequency ACT/360 */
+ string swap_fixed_day_count_convention,    /* (I) swap_fixed_day_count_convention 30/360*/
+ string swap_fixed_payment_frequency,       /* (I) swap_fixed_payment_frequency 1Y */
+ string swap_floating_payment_frequency,    /* (I) swap_floating_payment_frequency 1Y */
+ int verbose
+)
+{
+
+    char  **lines = NULL;
+    int     i;
+
+    // empty curve pointers
+    TCurve *zerocurve = NULL;
+    vector <double> allinone;
+    int start_s = clock();
+    int isPriceClean = 0;
+
+    try {
+
+        TDate trade_date_jpm, maturity_date_jpm,
+        accrual_start_date_jpm, minus_1d_maturity_date_jpm, settle_date_jpm;
+
+        vector<char*> cstrings_expiries{};
+        vector<double> swap_rates_tmp;
+        double coupon_rate_in_basis_points = coupon_rate / 10000.0;
+        double upfront_charge_dirty;
+        double upfront_charge_clean;
+        string strings_type;
+
+
+        /////////////////////////////
+        // parse char* to jpm dates
+        /////////////////////////////
+
+        trade_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(trade_date);
+        maturity_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(maturity_date);
+        accrual_start_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(accrual_start_date);
+        settle_date_jpm = parse_string_ddmmyyyy_to_jpmcdsdate(settle_date);
+
+
+        if (verbose == 1) {
+            std::cout << "trade_date_jpm " << trade_date_jpm << std::endl;
+            std::cout << "accrual_start_date_jpm " << accrual_start_date_jpm << std::endl;
+            std::cout << "maturity_date_jpm " << maturity_date_jpm << std::endl;
+        }
+
+        for (int r = 0; r < static_cast<int>(swap_rates.size()); r++) {
+            swap_rates_tmp.push_back(swap_rates[r]);
+        }
+
+        for (auto& string : swap_tenors) {
+            cstrings_expiries.push_back(&string.front());
+        }
+
+        char* c_holiday_filename = const_cast<char*>(holiday_filename.c_str());
+
+        if (is_rofr == 1){
+
+            for (auto& string : swap_tenors) {
+                strings_type += "S";
+            }
+
+            if (verbose == 1) {
+                std::cout << strings_type << std::endl;
+            }
+            char* c_strings_type = const_cast<char*>(strings_type.c_str());
+
+            // swap conventions
+            char* c_swap_floating_day_count_convention = const_cast<char*>(swap_floating_day_count_convention.c_str());
+            char* c_swap_fixed_day_count_convention = const_cast<char*>(swap_fixed_day_count_convention.c_str());
+            char* c_swap_fixed_payment_frequency = const_cast<char*>(swap_fixed_payment_frequency.c_str());
+            char* c_swap_floating_payment_frequency = const_cast<char*>(swap_floating_payment_frequency.c_str());
+
+            // bootstrap discount curve for libor
+            zerocurve = build_zero_interest_rate_curve_rofr(trade_date_jpm
+                , swap_rates_tmp.data()
+                , cstrings_expiries.data()
+                , static_cast<int>(swap_rates.size())
+                , c_strings_type
+                , c_swap_floating_day_count_convention
+                , c_swap_fixed_day_count_convention
+                , c_swap_fixed_payment_frequency
+                , c_swap_floating_payment_frequency
+                , c_holiday_filename
+                , verbose);
+        } else {
+            // bootstrap discount curve for rofr
+            zerocurve = build_zero_interest_rate_curve(trade_date_jpm
+                    , swap_rates_tmp.data()
+                    , cstrings_expiries.data()
+                    , verbose);
+        }
+
+        if (zerocurve == NULL){
+            if (verbose == 1) {
+                std::cout << "zerocurve == NULL " << std::endl;
+            }
+            throw marshallexception;;
+        }
+
+        if (verbose == 1) {
+            std::cout << "called build_zero_interest_rate_curve_rofr OK. " << std::endl;
+        }
+
+        if (verbose == 1) {
+            std::cout << "called calling calculate_upfront_charge (dirty) ... " << std::endl;
+        }
+
+        // get upfront charge
+        upfront_charge_dirty = calculate_upfront_charge(trade_date_jpm,
+                    maturity_date_jpm,
+                    accrual_start_date_jpm,
+                    settle_date_jpm,
+                    zerocurve,
+                    coupon_rate_in_basis_points,
+                    par_spread,
+                    recovery_rate,
+                    notional,
+                    c_holiday_filename,
+                    isPriceClean,
+                    verbose);
+
+        if (verbose == 1) {
+            std::cout << "called calling calculate_upfront_charge (dirty) OK. " << std::endl;
+            std::cout << "called calling calculate_upfront_charge (clean) ... " << std::endl;
+        }
+
+        isPriceClean = 1;
+        upfront_charge_clean = calculate_upfront_charge(trade_date_jpm,
+                    maturity_date_jpm,
+                    accrual_start_date_jpm,
+                    settle_date_jpm,
+                    zerocurve,
+                    coupon_rate_in_basis_points,
+                    par_spread,
+                    recovery_rate,
+                    notional,
+                    c_holiday_filename,
+                    isPriceClean,
+                    verbose);
+
+        if (verbose == 1) {
+            std::cout << "called calling calculate_upfront_charge (clean) OK. " << std::endl;
+        }
+
+        allinone.push_back(upfront_charge_dirty);
+        allinone.push_back(upfront_charge_clean);
+        allinone.push_back(upfront_charge_dirty-upfront_charge_clean);
+        allinone.push_back(1);
+        allinone.push_back((clock() - start_s));
+
+         FREE(zerocurve);
+    }
+
+    catch(exception &e)
+    {
+
+        allinone.push_back(0.0);
+        allinone.push_back(0.0);
+        allinone.push_back(0.0);
+        allinone.push_back(-1);
+        allinone.push_back((clock() - start_s));
+
+    }
+
+    return allinone;
+};
 
 vector< double > cds_discount_rate_ir_tenor_dates(
 	string value_date,						/* (I) date to value the cds DD/MM/YYYY */
@@ -600,7 +781,8 @@ vector< vector<double> > cds_all_in_one(
 				, is_dirty_price
 				, verbose);
 
-			scenario_tenors_pvclean.push_back(roll_pvclean * notional * credit_risk_direction_scale_factor);			scenario_tenors_pvdirty.push_back(roll_pvdirty * notional * credit_risk_direction_scale_factor);			
+			scenario_tenors_pvclean.push_back(roll_pvclean * notional * credit_risk_direction_scale_factor);
+			scenario_tenors_pvdirty.push_back(roll_pvdirty * notional * credit_risk_direction_scale_factor);
 
 		}
 
@@ -1224,7 +1406,7 @@ vector< vector<double> > cds_index_all_in_one(
 
 	return allinone;
 
-}
+};
 
 
 vector<double> average (vector< vector<double> > i_matrix) {

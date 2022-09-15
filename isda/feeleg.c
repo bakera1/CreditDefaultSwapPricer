@@ -59,7 +59,7 @@ static int FeeLegAI
 
 /*
 ***************************************************************************
-** Calculates the PV of aJpmcdsCdsFeeLegPV fee leg with fixed fee payments.
+** Calculates the PV of a fee leg with fixed fee payments.
 ***************************************************************************
 */
 int JpmcdsFeeLegPV
@@ -135,13 +135,7 @@ int JpmcdsFeeLegPV
     for (i = 0; i < fl->nbDates; ++i)
     {
         double thisPv = 0;
-
-		if (fl->accStartDates[i] > fl->accEndDates[i]){
-			printf("JpmcdsFeeLegPV::i = %d\n", (int)i);
-			printf("JpmcdsFeeLegPV::startDates = %d\n", (int)fl->accStartDates[i]);
-			printf("JpmcdsFeeLegPV::endDates = %d\n", (int)fl->accEndDates[i]);
-		}
-
+        
         if (FeePaymentPVWithTimeLine (fl->accrualPayConv,
                                       today,
                                       stepinDate,
@@ -279,10 +273,6 @@ static int FeePaymentPVWithTimeLine
         myPv = amount * survival * discount;
         
         /* also need to calculate accrual PV */
-
-        //printf("JpmcdsAccrualOnDefaultPVWithTimeLine::stepinDate + obsOffset = %d\n", (int)(stepinDate + obsOffset));
-        //printf("JpmcdsAccrualOnDefaultPVWithTimeLine::accStartDate + obsOffset = %d\n", (int)(accStartDate + obsOffset));
-        //printf("JpmcdsAccrualOnDefaultPVWithTimeLine::accEndDate + obsOffset = %d\n", (int)(accEndDate + obsOffset));
         
         if (JpmcdsAccrualOnDefaultPVWithTimeLine(today,
                                                  stepinDate + obsOffset,
@@ -347,12 +337,6 @@ int JpmcdsAccrualOnDefaultPVWithTimeLine
     TDate  subStartDate;
 
     TDateList  *tl = NULL;
-
-	//if (endDate < startDate){
-	//	printf("JpmcdsAccrualOnDefaultPVWithTimeLine::endDate = %d\n", (int)(endDate));
-	//	printf("JpmcdsAccrualOnDefaultPVWithTimeLine::startDate = %d\n", (int)(startDate));
-    //	printf("JpmcdsAccrualOnDefaultPVWithTimeLine::endDate > startDate = %d\n", (int)(endDate > startDate));
-    //}
 
     REQUIRE (endDate > startDate);
     REQUIRE (discCurve != NULL);

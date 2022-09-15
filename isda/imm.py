@@ -1,4 +1,3 @@
-
 import calendar
 import unittest
 import datetime
@@ -32,6 +31,19 @@ bakera@:~/workspace$ python imm.py
 06/03/2019 [('6M', '20/06/2019'), ('1Y', '20/12/2019'), ('2Y', '20/12/2020'), ('3Y', '20/12/2021'), ('5Y', '20/12/2023'), ('7Y', '20/12/2025')]
 """
 
+
+def date_by_adding_business_days(from_date, add_days):
+    business_days_to_add = add_days
+    current_date = from_date
+    while business_days_to_add > 0:
+        current_date += datetime.timedelta(days=1)
+        weekday = current_date.weekday()
+        if weekday >= 5:  # sunday = 6
+            continue
+        business_days_to_add -= 1
+    return current_date
+
+
 def add_month(date):
     month_days = calendar.monthrange(date.year, date.month)[1]
     candidate = date + datetime.timedelta(days=month_days)
@@ -39,9 +51,11 @@ def add_month(date):
         if candidate.day != date.day \
         else candidate
 
+
 def remove_month(date):
     candidate = date.replace(day=1) - datetime.timedelta(days=1)
     return candidate.replace(day=date.day)
+
 
 def move_n_months(date, i, n, direction='add'):
     if i == n:
@@ -50,10 +64,10 @@ def move_n_months(date, i, n, direction='add'):
         i += 1
         return move_n_months(add_month(date) if direction == 'add' else remove_month(date), i, n, direction)
 
+
 def next_imm(s_date,
              semi_annual_roll_start=datetime.datetime(2015, 12, 20),
              imm_month_list=[3, 6, 9, 12], imm_semi_annual_roll_months=[3, 9]):
-
     imm_date_count = 0
     imm_day_of_month = 20
     months_between_imm_dates = 3
@@ -79,6 +93,7 @@ def next_imm(s_date,
     # adjust day for day of week? Modified Following
     return datetime.datetime(s_date.year, s_date.month, imm_day_of_month)
 
+
 def imm_date_vector(start_date,
                     tenor_list=[0.5, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30],
                     format='%d/%m/%Y'):
@@ -98,9 +113,12 @@ def imm_date_vector(start_date,
     """
 
     # need a better date add that knows which month?
-    return [(x, next_imm(move_n_months(start_date, 0, (6 if x == 0.5 else x * 12)))) for x in tenor_list] if format == '' \
+    return [(x, next_imm(move_n_months(start_date, 0, (6 if x == 0.5 else x * 12)))) for x in
+            tenor_list] if format == '' \
         else [('{0}{1}'.format((6 if x == 0.5 else x), ('Y' if x >= 1 else 'M')),
-               next_imm(move_n_months(start_date, 0, (6 if x == 0.5 else x * 12))).strftime(format)) for x in tenor_list]
+               next_imm(move_n_months(start_date, 0, (6 if x == 0.5 else x * 12))).strftime(format)) for x in
+              tenor_list]
+
 
 class MyTestCase(unittest.TestCase):
 
@@ -108,7 +126,7 @@ class MyTestCase(unittest.TestCase):
         self.one_day = datetime.timedelta(1)
         self.__format__ = '%d/%m/%Y'
         self.__tenor_list__ = [0.5, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30]
-        #self.__tenor_list_short__ = [0.5, 1, 2, 3, 5, 7]
+        # self.__tenor_list_short__ = [0.5, 1, 2, 3, 5, 7]
         self.saturday = 5
         self.sunday = 6
 
@@ -119,56 +137,55 @@ class MyTestCase(unittest.TestCase):
 
         s_date = datetime.datetime(2017, 3, 20)
 
-        real_result = ['20/03/2017', '20/09/2017','20/06/2017']
+        real_result = ['20/03/2017', '20/09/2017', '20/06/2017']
 
         local_result = [s_date.strftime(self.__format__),
-                 move_n_months(s_date, 0, 6).strftime(self.__format__),
-                 next_imm(s_date).strftime(self.__format__)]
+                        move_n_months(s_date, 0, 6).strftime(self.__format__),
+                        next_imm(s_date).strftime(self.__format__)]
 
-        for (r,l) in zip(real_result, local_result):
+        for (r, l) in zip(real_result, local_result):
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
-
 
     def test_single_rolldate_day_before_rolldate(self):
 
         # accepted results
         real_result = [('6M', '20/06/2017'),
-                   ('1Y', '20/12/2017'),
-                   ('2Y', '20/12/2018'),
-                   ('3Y', '20/12/2019'),
-                   ('5Y', '20/12/2021'),
-                   ('7Y', '20/12/2023')]
+                       ('1Y', '20/12/2017'),
+                       ('2Y', '20/12/2018'),
+                       ('3Y', '20/12/2019'),
+                       ('5Y', '20/12/2021'),
+                       ('7Y', '20/12/2023')]
 
         sdate = datetime.datetime(2017, 3, 17)
         tenor_list = [0.5, 1, 2, 3, 5, 7]
         local_result = imm_date_vector(start_date=sdate,
-                                 tenor_list=tenor_list,
-                                 format='%d/%m/%Y')
+                                       tenor_list=tenor_list,
+                                       format='%d/%m/%Y')
 
-        #print sdate, local_result
+        # print sdate, local_result
 
-        for (r,l) in zip(real_result, local_result):
+        for (r, l) in zip(real_result, local_result):
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
 
     def test_single_rolldate_day_after_rolldate(self):
 
         # accepted results
         real_result = [('6M', '20/12/2017'),
-                   ('1Y', '20/06/2018'),
-                   ('2Y', '20/06/2019'),
-                   ('3Y', '20/06/2020'),
-                   ('5Y', '20/06/2022'),
-                   ('7Y', '20/06/2024')]
+                       ('1Y', '20/06/2018'),
+                       ('2Y', '20/06/2019'),
+                       ('3Y', '20/06/2020'),
+                       ('5Y', '20/06/2022'),
+                       ('7Y', '20/06/2024')]
 
         sdate = datetime.datetime(2017, 3, 20)
         tenor_list = [0.5, 1, 2, 3, 5, 7]
         local_result = imm_date_vector(start_date=sdate,
-                                 tenor_list=tenor_list,
-                                 format='%d/%m/%Y')
+                                       tenor_list=tenor_list,
+                                       format='%d/%m/%Y')
 
-        #print sdate, local_result
+        # print sdate, local_result
 
-        for (r,l) in zip(real_result, local_result):
+        for (r, l) in zip(real_result, local_result):
             self.assertTrue(r[0] == l[0] and r[1] == l[1])
 
     def o_test_rolldate(self):
@@ -194,8 +211,8 @@ class MyTestCase(unittest.TestCase):
 
             # compute the imm date vector result
             result = imm_date_vector(start_date,
-                            tenor_list=self.__tenor_list__,
-                            format=self.__format__)
+                                     tenor_list=self.__tenor_list__,
+                                     format=self.__format__)
 
             day_count += 1
             print(start_date.strftime(self.__format__), result)
@@ -206,5 +223,6 @@ class MyTestCase(unittest.TestCase):
             # check the results from calculation
             self.assertTrue(True)
 
+
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()

@@ -379,7 +379,7 @@ EXPORT TCurve* build_zero_interest_rate_curve(
 	if (JpmcdsStringToDateInterval("1Y", routine, &ivlSwapFixedPaymentFrequency) != SUCCESS)
         goto done;
 
-	if (JpmcdsStringToDateInterval("6M", routine, &ivlSwapFloatingPaymentFrequency) != SUCCESS)
+	if (JpmcdsStringToDateInterval("1Y", routine, &ivlSwapFloatingPaymentFrequency) != SUCCESS)
         goto done;
 
     if (JpmcdsDateIntervalToFreq(&ivlSwapFixedPaymentFrequency, &swapFixedFrequency) != SUCCESS)
@@ -455,32 +455,220 @@ done:
     return zc;
 }
 
+
+EXPORT TCurve* build_zero_interest_rate_curve_rofr(
+ TDate baseDate,			/* (I) integer base start date JpmCdsDate */
+ double *rates,			    /* (I) double array with 14 elements */
+ char **expiries,		    /* (I) array of char* of tenor strings "1M", "2M", "3M", "6M", "9M", "1Y", "2Y", "3Y", "4Y", "5Y", "6Y", "7Y", "8Y", "9Y" */
+ int n,                     /* (I) array len of rates */
+ char *types,               /* (I) array of rate types "MMMMMMSSSSSSSSS" */
+ char* swap_floatingDayCountConvention,
+ char* swap_fixedDayCountConvention,
+ char* swap_fixedPaymentFrequency,
+ char* swap_floatingPaymentFrequency,
+ char* holiday_filename,
+ int verbose
+)
+{
+    static char  *routine = "build_zero_interest_rate_curve_rofr";
+    TCurve       *zc = NULL;
+    TDate        *dates = NULL;
+    TDate         baseDateShifted;
+    long          swapFloatingDayCountConvention;
+    TDateInterval ivlSwapFixedPaymentFrequency;
+    TDateInterval ivlSwapFloatingPaymentFrequency;
+    TDateInterval ivl2;
+    long          swapFixedDayCountConvention;
+    double        swapFixedFrequency;
+    double        swapFloatingFrequency;
+    char          badDayConv = 'M';
+    int           i;
+
+    int            status = 1;
+    char           **lines = NULL;
+
+    if (JpmcdsErrMsgFileName(routine, 1) != SUCCESS){
+    		goto done;
+    }
+
+	if(verbose){
+    	printf("BaseDate = %d\n", (int)baseDate);
+    }
+    	// move forward 2 days, today (base), tomorrow and spot!
+    if (JpmcdsStringToDateInterval("2D", routine, &ivl2) != SUCCESS)
+	{
+		goto done;
+	}
+
+	/*int  JpmcdsDateFromBusDaysOffset
+(TDate     fromDate,        (I) input date
+ long      offset,          (I) number of business days
+ char     *holidayFile,     (I) holiday file specification
+ TDate    *result)          (O) resulting business date
+{*/
+
+	if (JpmcdsDateFromBusDaysOffset(baseDate, 2, "None", &baseDateShifted) != SUCCESS)
+	{
+		goto done;
+	}
+
+	/*if (JpmcdsDateFwdThenAdjust(baseDate, &ivl2, JPMCDS_BAD_DAY_NONE, "None", &baseDateShifted) != SUCCESS)
+	{
+		goto done;
+	}*/
+
+	/*if (JpmcdsDtFwdAny(baseDate, &ivl2, &baseDateShifted) != SUCCESS)
+	{
+		goto done;
+	}*/
+
+	if(verbose){
+    	printf("build_zero_interest_rate_curve_rofr::baseDate = %d\n", (int)baseDate);
+    	printf("build_zero_interest_rate_curve_rofr::baseDateShifted = %d\n", (int)baseDateShifted);
+    }
+
+	if (JpmcdsStringToDayCountConv(swap_floatingDayCountConvention, &swapFloatingDayCountConvention) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDayCountConv(swap_fixedDayCountConvention, &swapFixedDayCountConvention) != SUCCESS)
+        goto done;
+
+	if (JpmcdsStringToDateInterval(swap_fixedPaymentFrequency, routine, &ivlSwapFixedPaymentFrequency) != SUCCESS)
+        goto done;
+
+	if (JpmcdsStringToDateInterval(swap_floatingPaymentFrequency, routine, &ivlSwapFloatingPaymentFrequency) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateIntervalToFreq(&ivlSwapFixedPaymentFrequency, &swapFixedFrequency) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateIntervalToFreq(&ivlSwapFloatingPaymentFrequency, &swapFloatingFrequency) != SUCCESS)
+        goto done;
+
+    dates = NEW_ARRAY(TDate, n);
+    for (i = 0; i < n; i++)
+    {
+        TDateInterval tmp;
+
+        if (JpmcdsStringToDateInterval(expiries[i], routine, &tmp) != SUCCESS)
+        {
+            JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+            goto done;
+        }
+
+        if (JpmcdsDateFwdThenAdjust(baseDateShifted, &tmp, JPMCDS_BAD_DAY_NONE, "None", dates+i) != SUCCESS)
+        {
+            JpmcdsErrMsg ("%s: invalid interval for element[%d].\n", routine, i);
+            goto done;
+        }
+
+        if(verbose){
+    	    printf("build_zero_interest_rate_curve_rofr::i = %d \n", (int)i);
+    	    printf("build_zero_interest_rate_curve_rofr::dates = %d \n", dates[i]);
+        }
+    }
+
+	/*
+EXPORT TCurve* JpmcdsBuildIRZeroCurve(
+    TDate      valueDate,        (I) Value date
+    char      *instrNames,       (I) Array of 'M' or 'S'
+    TDate     *dates,            (I) Array of swaps dates
+    double    *rates,            (I) Array of swap rates
+    long       nInstr,           (I) Number of benchmark instruments
+    long       mmDCC,            (I) DCC of MM instruments
+    long       fixedSwapFreq,    (I) Fixed leg frequency
+    long       floatSwapFreq,    (I) Floating leg frequency
+    long       fixedSwapDCC,     (I) DCC of fixed leg
+    long       floatSwapDCC,     (I) DCC of floating leg
+    long       badDayConv,       (I) Bad day convention
+    char      *holidayFile)      (I) Holiday file
+{*/
+
+	if(verbose){
+    	printf("calling JpmcdsBuildIRZeroCurve...\n");
+    }
+
+    zc = JpmcdsBuildIRZeroCurve(
+            baseDateShifted,
+            types,
+            dates,
+            rates,
+            n,
+            swapFloatingDayCountConvention,
+            (long) swapFixedFrequency,
+            (long) swapFloatingFrequency,
+            swapFixedDayCountConvention,
+            swapFloatingDayCountConvention,
+            badDayConv,
+            holiday_filename);
+
+
+    if(verbose){
+    	printf("calling JpmcdsBuildIRZeroCurve OK!\n");
+    }
+
+    status = 0;
+
+done:
+    FREE(dates);
+
+    if (status != 0){
+		printf("\n");
+		printf("Error log contains:\n");
+		printf("------------------:\n");
+
+		lines = JpmcdsErrGetMsgRecord();
+		if (lines == NULL)
+			printf("(no log contents)\n");
+		else
+		{
+			for(i = 0; lines[i] != NULL; i++)
+			{
+				if (strcmp(lines[i],"") != 0)
+					printf("%s\n", lines[i]);
+			}
+		}
+    }
+
+    return zc;
+}
+
 /*
 ***************************************************************************
 ** Calculate upfront charge.
 ***************************************************************************
 */
 EXPORT double calculate_upfront_charge
-(TCurve* curve, 		/* (I) interest rate curve */
-double couponRate, 		/* (I) fixed coupon payable */
-int verbose				/* (I) used to toggle echo info output */
+(
+ TDate baseDate,				/* (I) base start date  */
+ TDate maturityDate,			/* (I) cds scheduled termination date  */
+ TDate effectiveDate,			/* (I) accrual from start date  */
+ TDate settleDate,              /* (I) settlementDate 3 business days forward of baseDate */
+ TCurve* curve, 		        /* (I) interest rate curve */
+ double coupon_rate, 		    /* (I) fixed coupon payable in bps */
+ double par_spread,             /* (I) par spread in bps*/
+ double recovery_rate,          /* (I) recover rate as decimal 0.4 */
+ double notional,               /* (I) notional */
+ char* holiday_filename,        /* (I) holiday file pointer */
+ int isPriceClean,              /* (I) is clean price upfront */
+ int verbose				    /* (I) used to toggle echo info output */
 )
 {
-    static char  *routine = "CalcUpfrontCharge";
+    static char  *routine = "calculate_upfront_charge";
     TDate         today;
     TDate         valueDate;
     TDate         startDate;
     TDate         benchmarkStart;
-    TDate         stepinDate;
+    TDate         stepInDate;
+    /*TDate         settleDate;*/
     TDate         endDate;
-    TBoolean      payAccOnDefault = TRUE;
+    TBoolean      payAccOnDefault = 1;
     TDateInterval ivl;
+    TDateInterval ivl2;
+    TDateInterval  ivlCashSettle;
     TStubMethod   stub;
     long          dcc;
-    double        parSpread = 3600;
-    double        recoveryRate = 0.4;
-    TBoolean      isPriceClean = FALSE;
-    double        notional = 1e7;
+    /*TBoolean      isPriceClean = FALSE;*/
     double        result = -1.0;
 
     if (curve == NULL)
@@ -489,21 +677,45 @@ int verbose				/* (I) used to toggle echo info output */
         goto done;
     }
 
-    today          = JpmcdsDate(2008, 2, 1);
-    valueDate      = JpmcdsDate(2008, 2, 1);
-    benchmarkStart = JpmcdsDate(2008, 2, 2);
-    startDate      = JpmcdsDate(2008, 2, 8);
-    endDate        = JpmcdsDate(2008, 2, 12);
-    stepinDate     = JpmcdsDate(2008, 2, 9);
 
     if (JpmcdsStringToDayCountConv("Act/360", &dcc) != SUCCESS)
         goto done;
 
-    if (JpmcdsStringToDateInterval("1S", routine, &ivl) != SUCCESS)
+    if (JpmcdsStringToDateInterval("Q", routine, &ivl) != SUCCESS)
         goto done;
+
+    if (JpmcdsStringToDateInterval("1D", routine, &ivl2) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDateInterval("3D", routine, &ivlCashSettle) != SUCCESS)
+	{
+		goto done;
+	}
 
     if (JpmcdsStringToStubMethod("f/s", &stub) != SUCCESS)
         goto done;
+
+    if (JpmcdsDateFwdThenAdjust(baseDate, &ivl2, JPMCDS_BAD_DAY_NONE, "None", &stepInDate) != SUCCESS)
+	{
+		goto done;
+	}
+
+	/*if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "None", &settleDate) != SUCCESS)
+	{
+		goto done;
+	}*/
+
+    if(verbose){
+            printf("\n\ntoday = %d\n", (int)baseDate);
+            printf("valueDate = %d\n", (int)settleDate);
+            printf("benchmarkStartDate = %d\n", (int)effectiveDate);
+            printf("stepInDate = %d\n", (int)stepInDate);
+            printf("startDate = %d\n", (int)effectiveDate);
+            printf("endDate = %d\n", (int)maturityDate);
+            printf("coupon_rate = %f\n", coupon_rate);
+            printf("isPriceClean = %d\n", isPriceClean);
+            printf("recovery_rate = %f\n", recovery_rate);
+        }
 
        /*
 
@@ -530,99 +742,69 @@ int verbose				/* (I) used to toggle echo info output */
 	 double         *upfrontCharge)
        */
 
-    if (JpmcdsCdsoneUpfrontCharge(today,
-                                  valueDate,
-                                  benchmarkStart,
-                                  stepinDate,
-                                  startDate,
-                                  endDate,
-                                  couponRate / 10000.0,
+    if (JpmcdsCdsoneUpfrontCharge(baseDate,
+                                  settleDate,
+                                  effectiveDate,
+                                  stepInDate,
+                                  effectiveDate,
+                                  maturityDate,
+                                  coupon_rate ,
                                   payAccOnDefault,
                                   &ivl,
                                   &stub,
                                   dcc,
                                   'F',
-                                  "None",
+                                  holiday_filename,
                                   curve,
-                                  parSpread / 10000.0,
-                                  recoveryRate,
+                                  par_spread ,
+                                  recovery_rate,
                                   isPriceClean,
                                   &result) != SUCCESS) goto done;
+
+
+    /*TCurve           *flatSpreadCurve = NULL;
+
+    flatSpreadCurve = JpmcdsCleanSpreadCurve (
+        baseDate,
+        curve,
+        effectiveDate,
+        stepInDate,
+        settleDate,
+        1,
+        &maturityDate,
+        &par_spread,
+        NULL,
+        recovery_rate,
+        payAccOnDefault,
+        &ivl,
+        dcc,
+        &stub,
+        'F',
+		"None");
+
+    if (flatSpreadCurve == NULL)
+        goto done;
+
+    if (JpmcdsCdsPrice(baseDate,
+                       settleDate,
+                       stepInDate,
+                       effectiveDate,
+                       maturityDate,
+                       coupon_rate,
+                       payAccOnDefault,
+                       &ivl,
+                       &stub,
+                       dcc,
+                       'F',
+			           "None",
+                       curve,
+                       flatSpreadCurve,
+                       recovery_rate,
+                       isPriceClean,
+                       &result) != SUCCESS) goto done;*/
+
 done:
     return result * notional;
-}
-
-int compute_isda_upfront(
-double coupon, 		/* (I) upfront fixed coupon */
-int verbose			/* (I) flag to indicate if we should echo output to stdout */
-)
-{
-    int     status = 1;
-    char    version[256];
-    char  **lines = NULL;
-    int     i;
-    TCurve *zerocurve = NULL;
-    int baseDate;
-
-    if (JpmcdsVersionString(version) != SUCCESS)
-        goto done;
-
-    /* print library version */
-    printf("starting...\n");
-    printf("%s\n", version);
-
-    /* enable logging */
-    printf("enabling logging...\n");
-    if (JpmcdsErrMsgEnableRecord(20, 128) != SUCCESS) /* ie. 20 lines, each of max length 128 */
-        goto done;
-
-    /* construct IR zero curve */
-    printf("building zero curve...\n");
-
-    char         *expiries[14] = {"1M", "2M", "3M", "6M", "9M", "1Y", "2Y", "3Y", "4Y", "5Y", "6Y", "7Y", "8Y", "9Y"};
-    double        rates[14] = {1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9};
-
-	baseDate = JpmcdsDate(2008, 1, 3);
-    zerocurve = build_zero_interest_rate_curve(baseDate, rates, expiries, verbose);
-    if (zerocurve == NULL)
-        goto done;
-
-    /* get discount factor */
-    printf("\n");
-    printf("Discount factor on 3rd Jan 08 = %f\n", JpmcdsZeroPrice(zerocurve, JpmcdsDate(2008,1,3)));
-    printf("Discount factor on 3rd Jan 09 = %f\n", JpmcdsZeroPrice(zerocurve, JpmcdsDate(2009,1,3)));
-    printf("Discount factor on 3rd Jan 17 = %f\n", JpmcdsZeroPrice(zerocurve, JpmcdsDate(2017,1,3)));
-
-    /* get upfront charge */
-    printf("\n");
-    printf("Upfront charge @ cpn = %fbps   =  %f\n", coupon, calculate_upfront_charge(zerocurve, coupon, verbose));
-
-    /* return 'no error' */
-    status = 0;
-
-done:
-    if (status != 0)
-        printf("\n*** ERROR ***\n");
-
-    /* print error log contents */
-    printf("\n");
-    printf("Error log contains:\n");
-    printf("------------------:\n");
-
-    lines = JpmcdsErrGetMsgRecord();
-    if (lines == NULL)
-        printf("(no log contents)\n");
-    else
-    {
-        for(i = 0; lines[i] != NULL; i++)
-        {
-            if (strcmp(lines[i],"") != 0)
-                printf("%s\n", lines[i]);
-        }
-    }
-
-    FREE(zerocurve);
-    return status;
 }
 
 EXPORT double calculate_cds_price(

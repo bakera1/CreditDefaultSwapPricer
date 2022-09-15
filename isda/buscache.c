@@ -23,11 +23,6 @@
 #define stricmp strcasecmp
 #endif
 
-#if defined(_WIN32) || defined(_WIN64) 
-#define strcasecmp _mbsicmp
-#define strncasecmp _mbsicmp 
-#endif
-
 /*---------------------------------------------------------------------------
  *                  MACROS used in this file.
  *---------------------------------------------------------------------------

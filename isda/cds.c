@@ -155,12 +155,6 @@ TFeeLeg* JpmcdsCdsFeeLegMake
         dl = JpmcdsNewDateListFromDates(dates, 2);
     } else
     {
-
-    	//printf("JpmcdsDateListMakeRegular::startDate = %d\n", (int)(startDate));
-        //printf("JpmcdsDateListMakeRegular::endDate = %d\n", (int)(endDate));
-        //printf("JpmcdsDateListMakeRegular::dateInterval = %d\n", (int)(dateInterval));
-        //printf("JpmcdsDateListMakeRegular::stubType = %d\n", (int)(stubType));
-
         dl = JpmcdsDateListMakeRegular (startDate, endDate, dateInterval, stubType);
     }
     if (dl == NULL)
@@ -194,10 +188,6 @@ TFeeLeg* JpmcdsCdsFeeLegMake
 
         if (JpmcdsBusinessDay (nextDate, badDayConv, calendar, &nextDateAdj) != SUCCESS)
             goto done;
-
-		//printf("JpmcdsCdsFeeLegMake::i = %d\n", (int)(i));
-        //printf("JpmcdsCdsFeeLegMake::accStartDates[i] = %d\n", (int)(prevDateAdj));
-        //printf("JpmcdsCdsFeeLegMake::accEndDates[i] = %d\n", (int)(nextDateAdj));
 
         fl->accStartDates[i] = prevDateAdj;
         fl->accEndDates[i]   = nextDateAdj;
@@ -332,12 +322,6 @@ EXPORT int JpmcdsCdsPrice
     /* all other requirements can be handled by the routines we call */
 
     valueDate = settleDate;
-
-	//printf("JpmcdsCdsPrice::today = %d\n", (int)today);
-	//printf("JpmcdsCdsPrice::valueDate = %d\n", (int)valueDate);
-    //printf("JpmcdsCdsPrice::stepinDate = %d\n", (int)stepinDate);
-    //printf("JpmcdsCdsPrice::startDate = %d\n", (int)startDate);
-    //printf("JpmcdsCdsPrice::endDate = %d\n", (int)endDate);
 
     if (JpmcdsCdsFeeLegPV(today,
                           valueDate,

@@ -216,8 +216,6 @@ static int onePeriodIntegral
     df1 = JpmcdsForwardZeroPrice(discCurve, today, MAX(today, startDate));
     loss = 1.0 - recoveryRate;
 
-    //printf("loss %f", loss);
-
     for (i = 1; i < tl->fNumItems; ++i)
     {
         double lambda;

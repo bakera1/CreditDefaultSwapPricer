@@ -43,6 +43,20 @@ extern "C" double calculate_cds_price(
  int verbose
 );
 
+extern "C" TCurve* build_zero_interest_rate_curve_rofr(
+ TDate baseDate,
+ double *rates,
+ char **expiries,
+ int n,
+ char *types,
+ char* swap_floatingDayCountConvention,
+ char* swap_fixedDayCountConvention,
+ char* swap_fixedPaymentFrequency,
+ char* swap_floatingPaymentFrequency,
+ char* c_holiday_filename,
+ int verbose
+ );
+
 extern "C" TCurve* build_zero_interest_rate_curve2(
  TDate baseDate,
  double *rates,
@@ -70,10 +84,17 @@ extern "C" TCurve* build_credit_spread_par_curve(
 );
 
 extern "C" double calculate_upfront_charge(
- TCurve* curve,
- double couponRate,
- int verbose
+ TDate baseDate,				/* (I) base start date  */
+ TDate maturityDate,			/* (I) cds scheduled termination date  */
+ TDate effectiveDate,			/* (I) accrual from start date  */
+ TDate settleDate,              /* (I) settlementDate 3 business days forward of baseDate */
+ TCurve* curve, 		        /* (I) interest rate curve */
+ double coupon_rate, 		    /* (I) fixed coupon payable in bps */
+ double par_spread,             /* (I) par spread in bps*/
+ double recovery_rate,          /* (I) recover rate as decimal 0.4 */
+ double notional,               /* (I) notional */
+ char* holiday_filename,        /* (I) holiday file pointer */
+ int isPriceClean,              /* (I) is clean price upfront */
+ int verbose				    /* (I) used to toggle echo info output */
  );
-
-int compute_isda_upfront(double coupon);
 

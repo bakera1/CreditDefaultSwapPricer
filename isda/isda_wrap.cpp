@@ -18,7 +18,7 @@
 
 #ifdef __cplusplus
 /* SwigValueWrapper is described in swig.swg */
-template<typename T> class SwigValueWrapper {
+template<typename T> class SwigValueWrapper {compute_isda_upfront
   struct SwigMovePointer {
     T *ptr;
     SwigMovePointer(T *p) : ptr(p) { }

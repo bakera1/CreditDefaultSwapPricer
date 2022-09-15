@@ -157,127 +157,143 @@ typedef struct    /* parameters for passing into the solver */
 ***************************************************************************
 */
 int  JpmcdsZCAddSwaps(            /* adds a strip of swaps to ZCurve */
- ZCurve          *zc,               /* (M) ZCurve to add to        */
- TCurve          *discZC,           /* (I) Discount zero curve     */
- TDate           *inDates,          /* (I) MatDates; adj. if badDayList!=0*/
- double          *inRates,          /* (I) Fixed rates (0.06 for 6%) */
- int              numSwaps,         /* (I) # instruments to add    */
- int              fixedSwapFreq,    /* (I) Fixed leg freq          */
- int              floatSwapFreq,    /* (I) Floating leg freq       */
- long             fixDayCountConv,  /* (I) Convention for fixed leg*/
- long             floatDayCountConv,/* (I) Convention for float leg*/
- long             interpType,       /* (I) Zero interpolation method */
- TInterpData     *interpData,       /* (I) Zero interpolation data */
- TBadDayList     *badDayList,       /* (I) Bad-good day pairs; if non-NULL */
-                                    /*     maturity dates must be adjusted */
- TBadDayAndStubPos badDayAndStubPos,/* (I) See JpmcdsBusinessDay      */
- char            *holidayFile)      /* (I) See JpmcdsBusinessDay      */
+	ZCurve          *zc,               /* (M) ZCurve to add to        */
+	TCurve          *discZC,           /* (I) Discount zero curve     */
+	TDate           *inDates,          /* (I) MatDates; adj. if badDayList!=0*/
+	double          *inRates,          /* (I) Fixed rates (0.06 for 6%) */
+	int              numSwaps,         /* (I) # instruments to add    */
+	int              fixedSwapFreq,    /* (I) Fixed leg freq          */
+	int              floatSwapFreq,    /* (I) Floating leg freq       */
+	long             fixDayCountConv,  /* (I) Convention for fixed leg*/
+	long             floatDayCountConv,/* (I) Convention for float leg*/
+	long             interpType,       /* (I) Zero interpolation method */
+	TInterpData     *interpData,       /* (I) Zero interpolation data */
+	TBadDayList     *badDayList,       /* (I) Bad-good day pairs; if non-NULL */
+	/*     maturity dates must be adjusted */
+	TBadDayAndStubPos badDayAndStubPos,/* (I) See JpmcdsBusinessDay      */
+	char            *holidayFile)      /* (I) See JpmcdsBusinessDay      */
 {
-   static char    routine[] = "JpmcdsZCAddSwaps";
-   int            status = FAILURE;       /* Until proven successful */
+	static char    routine[] = "JpmcdsZCAddSwaps";
+	int            status = FAILURE;       /* Until proven successful */
 
-   TBoolean       oneAlreadyAdded;        /* If a swap was already added */
-   int            i;                      /* loops over all instruments */
+	TBoolean       oneAlreadyAdded;        /* If a swap was already added */
+	int            i;                      /* loops over all instruments */
 
-   TSwapDates    *swapDates = NULL;         /* Dates from caller */
-   double        *swapRates = NULL;
+	TSwapDates    *swapDates = NULL;         /* Dates from caller */
+	double        *swapRates = NULL;
 
-   TSwapDates    *newDates = NULL;        /* Swap dates w/ synthetics */
-   double        *newRates = NULL;        /* Swap rates w/ synthetics */
+	TSwapDates    *newDates = NULL;        /* Swap dates w/ synthetics */
+	double        *newRates = NULL;        /* Swap rates w/ synthetics */
 
-   TBoolean       useFastZC = FALSE;      /* whether to use swap zc */
-   long           badDayConv;
-   TStubPos       stubPos;
+	TBoolean       useFastZC = FALSE;      /* whether to use swap zc */
+	long           badDayConv;
+	TStubPos       stubPos;
 
 
-   if (zc == NULL || zc->numItems<1)     /* need a ZCurve to start with */
-   {
-       JpmcdsErrMsg("%s: input zero curve must contain data.\n",routine);
-       goto done;
-   }
+	if (zc == NULL)     /* need a ZCurve to start with */
+	{
+		JpmcdsErrMsg("%s: input zero curve must contain data.\n", routine);
+		goto done;
+	}
 
-   if (JpmcdsBadDayAndStubPosSplit(badDayAndStubPos, &badDayConv, &stubPos) != SUCCESS)
-        goto done;
+	if (JpmcdsBadDayAndStubPosSplit(badDayAndStubPos, &badDayConv, &stubPos) != SUCCESS)
+		goto done;
 
-   if (badDayList != NULL && badDayConv != JPMCDS_BAD_DAY_NONE)
-   {
-       JpmcdsErrMsg("%s: Bad days can be defined either by badDayList or\n"
-                 "\tbadDayConv, but not both.\n", routine);
-       goto done;
-   }
+	if (badDayList != NULL && badDayConv != JPMCDS_BAD_DAY_NONE)
+	{
+		JpmcdsErrMsg("%s: Bad days can be defined either by badDayList or\n"
+			"\tbadDayConv, but not both.\n", routine);
+		goto done;
+	}
 
-   /* Set up TSwapDates with input swap maturity dates. */
-   if (badDayList != NULL)    /* This means dates are adjusted already */
-   {
-       swapDates = JpmcdsSwapDatesNewFromAdjusted
-           (zc->valueDate, fixedSwapFreq, inDates, numSwaps, badDayList);
-       if (swapDates == NULL)
-           goto done;
-   }
-   else                         /* Dates NOT adjusted */
-   {
-       swapDates = JpmcdsSwapDatesNewFromOriginal
-           (zc->valueDate, fixedSwapFreq, inDates, numSwaps, 
-            badDayList, badDayConv, holidayFile);
-       if (swapDates == NULL)
-           goto done;
-   }
+	/* Set up TSwapDates with input swap maturity dates. */
+	if (badDayList != NULL)    /* This means dates are adjusted already */
+	{
+		swapDates = JpmcdsSwapDatesNewFromAdjusted
+			(zc->valueDate, fixedSwapFreq, inDates, numSwaps, badDayList);
+		if (swapDates == NULL)
+			goto done;
+	}
+	else                         /* Dates NOT adjusted */
+	{
+		swapDates = JpmcdsSwapDatesNewFromOriginal
+			(zc->valueDate, fixedSwapFreq, inDates, numSwaps,
+			badDayList, badDayConv, holidayFile);
+		if (swapDates == NULL)
+			goto done;
+	}
 
-   /* Just to keep date/rate names the same. */
-   swapRates = inRates;
+	/* Just to keep date/rate names the same. */
+	swapRates = inRates;
 
-   oneAlreadyAdded = FALSE;
+	oneAlreadyAdded = FALSE;
 
-   /* Add individual swap instruments  */
-   for (i=0;  i < swapDates->numDates; i++)       
-   {
-       /* Add those beyond stub zero curve
-        */
-       if (swapDates->adjusted[i] > zc->date[zc->numItems-1])
-       {
-           /* Check if optimization okay. Note linear forwards
-            * not OK because they must include intermed. fwds.
-            */
-           if (oneAlreadyAdded                                      && 
-               discZC ==  NULL                                      &&
-               swapRates[i-1] != 0.0                              &&
-               swapDates->adjusted[i-1] == zc->date[zc->numItems-1] &&
-               swapDates->previous[i] == swapDates->original[i-1]   &&
-               swapDates->onCycle[i]                                &&
-               interpType != JPMCDS_LINEAR_FORWARDS)
-           {
-               /* Optimization: compute from last
-                */
-               if (AddSwapFromPrevious
-                   (zc,
-                    swapDates->adjusted[i], swapRates[i],
-                    1.0,
-                    swapDates->adjusted[i-1], swapRates[i-1],
-                    1.0,
-                    fixDayCountConv) == FAILURE)
-               {
-                   goto done;
-               }
-           }          
-           else             /* No efficiency */
-           {
-               if (JpmcdsZCAddSwap
-                   (zc, discZC,
-                    1.0,
-                    swapDates->original[i], swapDates->onCycle[i],
-                    swapRates[i],
-                    fixedSwapFreq, floatSwapFreq,
-                    fixDayCountConv, floatDayCountConv,
-                    interpType, interpData,
-                    badDayList,
-                    badDayAndStubPos, holidayFile)==FAILURE)
-               {
-                   goto done;
-               }
-               oneAlreadyAdded = TRUE;
-           } /* else  */
-       } /* if (swapDates->adjusted[i] > zc->date[zc->numItems-1]) */
-   } /* for (i=0;  i < swapDates->numDates; i++)  */
+	/* Add individual swap instruments  */
+	for (i = 0; i < swapDates->numDates; i++)
+	{
+		/* Add those beyond stub zero curve
+		 */
+		if (zc->numItems > 0 && swapDates->adjusted[i] > zc->date[zc->numItems - 1])
+		{
+			/* Check if optimization okay. Note linear forwards
+			 * not OK because they must include intermed. fwds.
+			 */
+			if (oneAlreadyAdded                                      &&
+				discZC == NULL                                      &&
+				swapRates[i - 1] != 0.0                              &&
+				swapDates->adjusted[i - 1] == zc->date[zc->numItems - 1] &&
+				swapDates->previous[i] == swapDates->original[i - 1] &&
+				swapDates->onCycle[i] &&
+				interpType != JPMCDS_LINEAR_FORWARDS)
+			{
+				/* Optimization: compute from last
+				 */
+				if (AddSwapFromPrevious
+					(zc,
+					swapDates->adjusted[i], swapRates[i],
+					1.0,
+					swapDates->adjusted[i - 1], swapRates[i - 1],
+					1.0,
+					fixDayCountConv) == FAILURE)
+				{
+					goto done;
+				}
+			}
+			else             /* No efficiency */
+			{
+				if (JpmcdsZCAddSwap
+					(zc, discZC,
+					1.0,
+					swapDates->original[i], swapDates->onCycle[i],
+					swapRates[i],
+					fixedSwapFreq, floatSwapFreq,
+					fixDayCountConv, floatDayCountConv,
+					interpType, interpData,
+					badDayList,
+					badDayAndStubPos, holidayFile) == FAILURE)
+				{
+					goto done;
+				}
+				oneAlreadyAdded = TRUE;
+			}
+		} /* if (zc->numItems > 0 && swapDates->adjusted[i] > zc->date[zc->numItems - 1]) */
+		else {
+			if (JpmcdsZCAddSwap
+				(zc, discZC,
+				1.0,
+				swapDates->original[i], swapDates->onCycle[i],
+				swapRates[i],
+				fixedSwapFreq, floatSwapFreq,
+				fixDayCountConv, floatDayCountConv,
+				interpType, interpData,
+				badDayList,
+				badDayAndStubPos, holidayFile) == FAILURE)
+			{
+				goto done;
+			}
+			oneAlreadyAdded = TRUE;
+		} /* else */
+	}/* for (i=0;  i < swapDates->numDates; i++)  */
 
    status = SUCCESS;
    

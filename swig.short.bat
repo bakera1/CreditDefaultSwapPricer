@@ -1,0 +1,1 @@
+swig -c++ -python isda/isda.i
