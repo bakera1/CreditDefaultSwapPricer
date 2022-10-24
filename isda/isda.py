@@ -775,6 +775,9 @@ class VecVecString(object):
 _isda.VecVecString_swigregister(VecVecString)
 
 
+def calculate_spread_from_upfront_charge(trade_date, maturity_date, accrual_start_date, settle_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, upfront_charge, is_rofr, is_upfront_clean, holiday_filename, swap_floating_day_count_convention, swap_fixed_day_count_convention, swap_fixed_payment_frequency, swap_floating_payment_frequency, verbose):
+    return _isda.calculate_spread_from_upfront_charge(trade_date, maturity_date, accrual_start_date, settle_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, upfront_charge, is_rofr, is_upfront_clean, holiday_filename, swap_floating_day_count_convention, swap_fixed_day_count_convention, swap_fixed_payment_frequency, swap_floating_payment_frequency, verbose)
+
 def compute_isda_upfront(trade_date, maturity_date, accrual_start_date, settle_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, par_spread, is_rofr, holiday_filename, swap_floating_day_count_convention, swap_fixed_day_count_convention, swap_fixed_payment_frequency, swap_floating_payment_frequency, verbose):
     return _isda.compute_isda_upfront(trade_date, maturity_date, accrual_start_date, settle_date, recovery_rate, coupon_rate, notional, is_buy_protection, swap_rates, swap_tenors, par_spread, is_rofr, holiday_filename, swap_floating_day_count_convention, swap_fixed_day_count_convention, swap_fixed_payment_frequency, swap_floating_payment_frequency, verbose)
 

@@ -23,6 +23,183 @@
 #include "ldate.h"
 #include "stub.h"
 
+
+EXPORT double calculate_spread_from_upfront_charge
+(
+ TDate baseDate,				/* (I) base start date  */
+ TDate maturityDate,			/* (I) cds scheduled termination date  */
+ TDate effectiveDate,			/* (I) accrual from start date  */
+ TDate settleDate,              /* (I) settlementDate 3 business days forward of baseDate */
+ TCurve* curve, 		        /* (I) interest rate curve */
+ double coupon_rate, 		    /* (I) fixed coupon payable in bps */
+ double upfront_charge,         /* (I) upfront_charge */
+ double recovery_rate,          /* (I) recover rate as decimal 0.4 */
+ double notional,               /* (I) notional */
+ char* holiday_filename,        /* (I) holiday file pointer */
+ int isPriceClean,              /* (I) is clean price upfront */
+ int verbose				    /* (I) used to toggle echo info output */
+)
+{
+    static char  *routine = "calculate_spread_from_upfront_charge";
+    TDate         today;
+    TDate         valueDate;
+    TDate         startDate;
+    TDate         benchmarkStart;
+    TDate         stepInDate;
+    /*TDate         settleDate;*/
+    TDate         endDate;
+    TBoolean      payAccOnDefault = 1;
+    TDateInterval ivl;
+    TDateInterval ivl2;
+    TDateInterval  ivlCashSettle;
+    TStubMethod   stub;
+    long          dcc;
+    TBoolean      isPriceCleanInner = FALSE;
+    double        result = -1.0;
+
+    if (curve == NULL)
+    {
+        JpmcdsErrMsg("CalcUpfrontCharge: NULL IR zero curve passed\n");
+        goto done;
+    }
+
+    // if price is clean then pay accrued at start
+    if (isPriceClean != 0)
+    {
+        isPriceCleanInner = TRUE;
+    }
+
+    if (JpmcdsStringToDayCountConv("Act/360", &dcc) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDateInterval("Q", routine, &ivl) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDateInterval("1D", routine, &ivl2) != SUCCESS)
+        goto done;
+
+    if (JpmcdsStringToDateInterval("3D", routine, &ivlCashSettle) != SUCCESS)
+	{
+		goto done;
+	}
+
+    if (JpmcdsStringToStubMethod("f/s", &stub) != SUCCESS)
+        goto done;
+
+    if (JpmcdsDateFwdThenAdjust(baseDate, &ivl2, JPMCDS_BAD_DAY_NONE, "None", &stepInDate) != SUCCESS)
+	{
+		goto done;
+	}
+
+	/*if (JpmcdsDateFwdThenAdjust(baseDate, &ivlCashSettle, JPMCDS_BAD_DAY_MODIFIED, "None", &settleDate) != SUCCESS)
+	{
+		goto done;
+	}*/
+
+    if(verbose){
+            printf("\n\ntoday = %d\n", (int)baseDate);
+            printf("valueDate = %d\n", (int)settleDate);
+            printf("benchmarkStartDate = %d\n", (int)effectiveDate);
+            printf("stepInDate = %d\n", (int)stepInDate);
+            printf("startDate = %d\n", (int)effectiveDate);
+            printf("endDate = %d\n", (int)maturityDate);
+            printf("coupon_rate = %f\n", coupon_rate);
+            printf("isPriceClean = %d\n", isPriceClean);
+            printf("isPriceCleanInner = %d\n", isPriceCleanInner);
+            printf("recovery_rate = %f\n", recovery_rate);
+        }
+
+       /*
+
+
+	EXPORT int JpmcdsCdsoneUpfrontCharge
+	(TDate           today,
+	 TDate           valueDate,
+	 TDate           benchmarkStartDate,  start date of benchmark CDS for
+										  internal clean spread bootstrapping
+	 TDate           stepinDate,
+	 TDate           startDate,
+	 TDate           endDate,
+	 double          couponRate,
+	 TBoolean        payAccruedOnDefault,
+	 TDateInterval  *dateInterval,
+	 TStubMethod    *stubType,
+	 long            accrueDCC,
+	 long            badDayConv,
+	 char           *calendar,
+	 TCurve         *discCurve,
+	 double          oneSpread,
+	 double          recoveryRate,
+	 TBoolean        payAccruedAtStart,
+	 double         *upfrontCharge)
+       */
+
+    if (JpmcdsCdsoneSpread(baseDate,
+                                  settleDate,
+                                  effectiveDate,
+                                  stepInDate,
+                                  effectiveDate,
+                                  maturityDate,
+                                  coupon_rate ,
+                                  payAccOnDefault,
+                                  &ivl,
+                                  &stub,
+                                  dcc,
+                                  'F',
+                                  holiday_filename,
+                                  curve,
+                                  upfront_charge ,
+                                  recovery_rate,
+                                  isPriceCleanInner,
+                                  &result) != SUCCESS) goto done;
+
+
+    /*TCurve           *flatSpreadCurve = NULL;
+
+    flatSpreadCurve = JpmcdsCleanSpreadCurve (
+        baseDate,
+        curve,
+        effectiveDate,
+        stepInDate,
+        settleDate,
+        1,
+        &maturityDate,
+        &par_spread,
+        NULL,
+        recovery_rate,
+        payAccOnDefault,
+        &ivl,
+        dcc,
+        &stub,
+        'F',
+		"None");
+
+    if (flatSpreadCurve == NULL)
+        goto done;
+
+    if (JpmcdsCdsPrice(baseDate,
+                       settleDate,
+                       stepInDate,
+                       effectiveDate,
+                       maturityDate,
+                       coupon_rate,
+                       payAccOnDefault,
+                       &ivl,
+                       &stub,
+                       dcc,
+                       'F',
+			           "None",
+                       curve,
+                       flatSpreadCurve,
+                       recovery_rate,
+                       isPriceClean,
+                       &result) != SUCCESS) goto done;*/
+
+done:
+    return result;
+}
+
+
 EXPORT TCurve* build_credit_spread_par_curve(
  TDate baseDate,				/* (I) base start date  */
  TCurve *discountCurve, 		/* (I) interest rate curve */

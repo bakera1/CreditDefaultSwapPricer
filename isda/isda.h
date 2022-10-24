@@ -9,6 +9,29 @@
 
 #include <vector>
 
+std::vector< double >  calculate_spread_from_upfront_charge (
+ std::string trade_date,						    /* (I) trade date of cds as DD/MM/YYYY */
+ std::string maturity_date,						    /* (I) maturity date of cds as DD/MM/YYYY */
+ std::string accrual_start_date,				    /* (I) maturity date of cds as DD/MM/YYYY */
+ std::string settle_date,                           /* (I) settlement date T+3 business days*/
+ double recovery_rate,					            /* (I) recover rate of the curve in basis points */
+ double coupon_rate,							    /* (I) CouponRate (e.g. 0.05 = 5% = 500bp) */
+ double notional,								    /* (I) Notional MM */
+ int is_buy_protection,							    /* (I) direction of credit risk */
+ std::vector<double> swap_rates, 				    /* (I) swap rates */
+ std::vector<std::string> swap_tenors,			    /* (I) swap tenors "1M", "2M" */
+ double upfront_charge,                             /* (I) upfront charge */
+ int is_rofr,							            /* (I) rofr rates or libor */
+ int is_upfront_clean,						/* (I) is_upfront_clean = 0 means dirty is_upfront_clean = 1 means clean  */
+ std::string holiday_filename,                      /* (I) YYMMDD holiday.dat filename */
+ std::string swap_floating_day_count_convention,    /* (I) swap_floating_payment_frequency ACT/360 */
+ std::string swap_fixed_day_count_convention,       /* (I) swap_fixed_day_count_convention 30/360*/
+ std::string swap_fixed_payment_frequency,          /* (I) swap_fixed_payment_frequency 1Y */
+ std::string swap_floating_payment_frequency,       /* (I) swap_floating_payment_frequency 1Y */
+ int verbose
+ );
+
+
 std::vector< double >  compute_isda_upfront(
  std::string trade_date,						    /* (I) trade date of cds as DD/MM/YYYY */
  std::string maturity_date,						    /* (I) maturity date of cds as DD/MM/YYYY */

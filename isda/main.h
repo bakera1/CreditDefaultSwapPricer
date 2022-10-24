@@ -98,3 +98,19 @@ extern "C" double calculate_upfront_charge(
  int verbose				    /* (I) used to toggle echo info output */
  );
 
+
+extern "C" double calculate_spread_from_upfront_charge
+(
+ TDate baseDate,				/* (I) base start date  */
+ TDate maturityDate,			/* (I) cds scheduled termination date  */
+ TDate effectiveDate,			/* (I) accrual from start date  */
+ TDate settleDate,              /* (I) settlementDate 3 business days forward of baseDate */
+ TCurve* curve, 		        /* (I) interest rate curve */
+ double coupon_rate, 		    /* (I) fixed coupon payable in bps */
+ double upfront_charge,         /* (I) upfront_charge */
+ double recovery_rate,          /* (I) recover rate as decimal 0.4 */
+ double notional,               /* (I) notional */
+ char* holiday_filename,        /* (I) holiday file pointer */
+ int isPriceClean,              /* (I) is clean price upfront */
+ int verbose				    /* (I) used to toggle echo info output */
+);
