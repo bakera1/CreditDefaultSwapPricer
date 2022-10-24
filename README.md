@@ -10,6 +10,158 @@ Credit Default Swap Pricer project brings together the [ISDA CDS pricer](http://
 
 Potential future measures might include Equivalent Notional, Par Spread and Risky CS01, these measures are likely to be added as part of the next full release candidate.
 
+## 1.0.24 Release Notes ##
+
+New function to compute the conventional spread from either dirty or clean upfront fee. 
+
+```
+$pip install isda==1.0.24
+```
+
+
+```python
+
+import uuid
+from isda.isda import compute_isda_upfront
+from isda.imm import date_by_adding_business_days
+
+is_rofr = 1
+swap_rates = [0.002979, 0.006419, 0.010791, 0.015937, 0.018675, 0.018777, 0.018998, 0.019199, 
+               0.019409, 0.019639, 0.019958, 0.020279, 0.020649, 0.021399, 0.021989, 0.02138, 
+               0.019411]
+
+swap_tenors = ['1M', '3M', '6M', '1Y', '2Y', '3Y', '4Y', '5Y', '6Y', '7Y', '8Y', '9Y', '10Y', '12Y',
+                '15Y', '20Y', '30Y']
+
+# economics of trade 1% fixed coupon
+coupon = 100.0
+settlement_period_days = 3
+trade_date = dt_trade_date.strftime('%d/%m/%Y')
+settle_date = date_by_adding_business_days(dt_trade_date, settlement_period_days).strftime('%d/%m/%Y')
+accrual_start_date = '21/06/2022'
+maturity_date = '20/12/2026'
+notional = 12.0
+is_buy_protection = 0  
+verbose = 0
+credit_spread_list = [65 / 10000]
+recovery_rate_list = [0.4]
+
+""" EUR ACT/360, 30/360, 1Y, 1Y """
+swapFixedDayCountConvention = 'ACT/360'
+swapFloatingDayCountConvention = 'ACT/360'
+swapFixedPaymentFrequency = '1Y'
+swapFloatingPaymentFrequency = '1Y'
+
+unique_filename = str(uuid.uuid4())
+holiday_filename = f'{unique_filename}.dat'
+holiday_list = [16010101, 20180320]
+
+def save_to_file(*holiday_list):
+    with open(holiday_filename, mode='wt', encoding='utf-8') as myfile:
+        for lines in holiday_list:
+            myfile.write('\n'.join(str(line) for line in lines))
+            myfile.write('\n')
+
+save_to_file(holiday_list)
+
+# just for measuring performance
+wall_time_list = list()
+
+for credit_spread, recovery_rate in zip(credit_spread_list, recovery_rate_list):
+    f = compute_isda_upfront(trade_date,
+                             maturity_date,
+                             accrual_start_date,
+                             settle_date,
+                             recovery_rate,
+                             coupon,
+                             notional,
+                             is_buy_protection,
+                             swap_rates,
+                             swap_tenors,
+                             credit_spread,
+                             is_rofr,
+                             holiday_filename,
+                             swapFloatingDayCountConvention,
+                             swapFixedDayCountConvention,
+                             swapFixedPaymentFrequency,
+                             swapFloatingPaymentFrequency,
+                             verbose)
+
+    upfront_charge_dirty, upfront_charge_clean, accrued_interest, status, duration_in_milliseconds = f
+
+    wall_time_list.append(float(duration_in_milliseconds))
+    print(f"credit_spread {credit_spread * 10000.:,.2f} "
+          f"recovery_rate {recovery_rate:,.2f} "
+          f"accrued_interest {accrued_interest * 1e6:,.2f} "
+          f"clean_settlement_amount {(upfront_charge_clean) * 1e6:,.2f} "
+          f"dirty_settlement_amount: {(upfront_charge_dirty) * 1e6:,.2f} ")
+
+    #
+    # re-compute the original traded spread from clean upfront
+    #
+
+    is_charge_clean = 1
+    f_clean = calculate_spread_from_upfront_charge(self.trade_date,
+                                                   self.maturity_date,
+                                                   self.accrual_start_date,
+                                                   self.settle_date,
+                                                   recovery_rate,
+                                                   self.coupon,
+                                                   self.notional,
+                                                   self.is_buy_protection,
+                                                   self.swap_rates,
+                                                   self.swap_tenors,
+                                                   upfront_charge_clean,
+                                                   self.is_rofr,
+                                                   is_charge_clean,
+                                                   self.holiday_filename,
+                                                   self.swapFloatingDayCountConvention,
+                                                   self.swapFixedDayCountConvention,
+                                                   self.swapFixedPaymentFrequency,
+                                                   self.swapFloatingPaymentFrequency,
+                                                   self.verbose)
+
+    upfront_spread_from_clean_upfront, status, duration_in_milliseconds = f_clean
+
+    wall_time_list.append(float(duration_in_milliseconds))
+    print(f"upfront_charge_dirty {upfront_charge_dirty :,.2f} "
+          f"recovery_rate {recovery_rate:,.2f} "
+          f"upfront_spread {(upfront_spread_from_clean_upfront * 10000) :,.6f} ")
+
+    #
+    # re-compute the original traded spread from dirty upfront
+    #
+
+    is_charge_clean = 0
+    f_dirty = calculate_spread_from_upfront_charge(self.trade_date,
+                                                   self.maturity_date,
+                                                   self.accrual_start_date,
+                                                   self.settle_date,
+                                                   recovery_rate,
+                                                   self.coupon,
+                                                   self.notional,
+                                                   self.is_buy_protection,
+                                                   self.swap_rates,
+                                                   self.swap_tenors,
+                                                   upfront_charge_dirty,
+                                                   self.is_rofr,
+                                                   is_charge_clean,
+                                                   self.holiday_filename,
+                                                   self.swapFloatingDayCountConvention,
+                                                   self.swapFixedDayCountConvention,
+                                                   self.swapFixedPaymentFrequency,
+                                                   self.swapFloatingPaymentFrequency,
+                                                   self.verbose)
+
+    upfront_spread_from_dirty_upfront, status, duration_in_milliseconds = f_dirty
+
+    wall_time_list.append(float(duration_in_milliseconds))
+    print(f"upfront_charge_dirty {upfront_charge_dirty :,.2f} "
+          f"recovery_rate {recovery_rate:,.2f} "
+          f"upfront_spread {(upfront_spread_from_dirty_upfront * 10000) :,.6f} ")
+
+```
+
 ## 1.0.22 Release Notes ##
 
 New function to compute the upfront fee using the ISDA calculator. The is_rofr flag is used to toggle the correct
